@@ -1,12 +1,181 @@
-<!DOCTYPE html><html lang='de'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Finanzplaner v34.1</title><link rel='manifest' href='manifest.webmanifest'><style>
-body{margin:0;font-family:-apple-system,Arial;background:#F3F4F6;color:#111827}header{background:#111827;color:#fff;padding:18px}nav{display:flex;gap:8px;overflow:auto;padding:12px;background:#fff;position:sticky;top:0}.tab{border:1px solid #D1D5DB;border-radius:999px;padding:8px 14px;background:#fff}.tab.active{background:#111827;color:#fff}.wrap{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.metric{background:#F8FAFC;border-radius:12px;padding:12px}.muted{color:#6B7280;font-size:13px}input{width:100%;padding:10px;border:1px solid #D1D5DB;border-radius:8px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #EEE}.row:last-child{border:none}button{padding:10px 14px;border:none;border-radius:8px;background:#2563EB;color:#fff}
-</style></head><body><header><h2>Finanzplaner v34.1 Premium</h2><div>KR8 • Stufe4 + Vorweggewährung = Stufe6</div></header><nav><button class='tab active' onclick="show('dash',this)">Dashboard</button><button class='tab' onclick="show('budget',this)">Budget</button><button class='tab' onclick="show('lohn',this)">Lohn</button></nav><div class='wrap'>
-<section id='dash' class='page'><div class='card'><div class='muted'>Auszahlungsmonat</div><h2>September 2026</h2><div class='grid'><div class='metric'><div class='muted'>Netto</div><h3 id='netto'>1.933,37 €</h3></div><div class='metric'><div class='muted'>Fixkosten</div><h3>1.404,11 €</h3></div><div class='metric'><div class='muted'>Tagessatz</div><h3 id='tag'>17,64 €</h3></div><div class='metric'><div class='muted'>Wochensatz</div><h3 id='woche'>123,49 €</h3></div></div></div><div class='card'><h3>Verfügbares Budget</h3><h1 id='budgetTop'>529,26 €</h1><div class='muted'>Identische Logik wie v34: Budget nach Abzug aller Fixkosten, daraus werden Tagessatz und Wochensatz berechnet.</div></div></section>
-<section id='budget' class='page' style='display:none'><div class='card'><h3>Monatsbudget</h3><div class='row'><span>Reguläres Netto</span><b>1.933,37 €</b></div><div class='row'><span>Fixkosten</span><b>1.404,11 €</b></div><div class='row'><span>Schichtzuschläge</span><input id='zulage' type='number' value='0' style='width:120px'></div><div class='row'><span>Sonderausgaben</span><input id='sonder' type='number' value='0' style='width:120px'></div><hr><div class='row'><b>Budget</b><b id='budgetCalc'>529,26 €</b></div><div class='row'><b>Tagessatz</b><b id='tagCalc'>17,64 €</b></div><div class='row'><b>Wochensatz</b><b id='wocheCalc'>123,49 €</b></div><button onclick='recalc()'>Neu berechnen</button></div></section>
-<section id='lohn' class='page' style='display:none'><div class='card'><h3>TV-L Stammdaten</h3><div class='row'><span>Entgeltgruppe</span><b>KR 8</b></div><div class='row'><span>Tarifstufe</span><b>4</b></div><div class='row'><span>Vorweggewährung</span><b>+2 → Stufe 6</b></div><div class='row'><span>Arbeitszeit</span><b>23,1 h (60 %)</b></div><div class='row'><span>Praxisanleiter</span><b>54,89 €</b></div><p class='muted'>Zeitnachweise werden später ergänzt. Zuschläge werden 2 Monate zeitversetzt dem Auszahlungsmonat zugeordnet.</p></div></section></div><script>
-const FIX=1404.11,NET=1933.37;
-function euro(v){return v.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'}
-function recalc(){const z=Number(document.getElementById('zulage').value)||0;const s=Number(document.getElementById('sonder').value)||0;const b=NET-FIX+z-s;const t=b/30;const w=t*7;['budgetCalc','budgetTop'].forEach(id=>document.getElementById(id).textContent=euro(b));['tagCalc','tag'].forEach(id=>document.getElementById(id).textContent=euro(t));['wocheCalc','woche'].forEach(id=>document.getElementById(id).textContent=euro(w));localStorage.setItem('zulage',z);localStorage.setItem('sonder',s)}
-function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.style.display='none');document.getElementById(id).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}
-document.getElementById('zulage').value=localStorage.getItem('zulage')||0;document.getElementById('sonder').value=localStorage.getItem('sonder')||0;recalc();
-</script></body></html>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f5f7">
+<title>Mein Geldplan · v34</title>
+<style>
+:root{
+ --bg:#f3f5f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+ --accent:#111827;--soft:#f8fafc;--green:#15803d;--orange:#b45309;--red:#b91c1c;--blue:#2563eb;
+ --shadow:0 10px 28px rgba(15,23,42,.06);--radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#eef1f6 0%,var(--bg) 180px);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+header{position:sticky;top:0;background:rgba(243,245,249,.90);backdrop-filter:blur(22px);z-index:10;padding:16px 16px 11px;border-bottom:1px solid rgba(229,231,235,.9)}
+.headline{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;max-width:860px;margin:auto}
+h1{margin:0;font-size:29px;letter-spacing:-.6px}.sub{margin-top:3px;color:var(--muted);font-size:13px}
+.status-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(21,128,61,.10);margin-top:9px}
+nav{display:flex;gap:8px;overflow:auto;padding:10px 16px;background:rgba(243,245,249,.92);position:sticky;top:76px;z-index:9;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
+nav button{white-space:nowrap;border:1px solid var(--line);background:rgba(255,255,255,.9);color:var(--text);border-radius:999px;padding:9px 14px;font-weight:700;box-shadow:0 2px 8px rgba(15,23,42,.03)}
+nav button.active{background:#111827;color:#fff;border-color:#111827}
+main{max-width:860px;margin:auto;padding:10px 14px 48px}
+.view{animation:fade .18s ease}.hidden{display:none!important}@keyframes fade{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}
+section{background:var(--card);border:1px solid rgba(229,231,235,.9);border-radius:var(--radius);margin:13px 0;padding:17px;box-shadow:var(--shadow)}
+h2{font-size:18px;margin:0 0 13px;letter-spacing:-.2px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;font-weight:650}
+input,select{width:100%;padding:12px 13px;border:1px solid #d6dae1;border-radius:14px;font-size:17px;background:#fff;color:var(--text);outline:none;transition:.15s}
+input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39,.05)}
+.row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:11px 0;align-items:center}.row:last-child{border-bottom:0}.v{font-weight:750;text-align:right;white-space:nowrap}
+.big{font-size:29px}.good{color:var(--green)}.warn{color:var(--orange)}.red{color:var(--red)}
+.badge{display:inline-block;padding:6px 9px;background:#eef2ff;border-radius:999px;font-size:11px;font-weight:700;margin:2px 4px 2px 0}.badge.neutral{background:#f1f5f9;color:#475569}.badge.green{background:#ecfdf3;color:#166534}.badge.red{background:#fef2f2;color:#991b1b}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}.primary{width:100%;border:0;background:#111827;color:#fff;padding:14px;border-radius:14px;font-size:16px;font-weight:750;box-shadow:0 8px 18px rgba(17,24,39,.10)}
+.secondary{background:#f1f5f9;color:#111827;box-shadow:none}.danger{background:#b91c1c}
+.hero{background:linear-gradient(145deg,#111827 0%,#243047 100%);color:#fff;border:0;box-shadow:0 18px 36px rgba(15,23,42,.18)}
+.hero .hero-muted{color:rgba(255,255,255,.68)} .hero .big{color:#fff}.hero .subcard{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);border-radius:17px;padding:12px}
+.hero-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px}.metric-title{font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:650}.metric{font-size:22px;font-weight:800;letter-spacing:-.3px}.metric.small{font-size:17px}
+.progress{height:10px;background:#e9edf3;border-radius:999px;overflow:hidden}.progress>span{display:block;height:100%;background:#111827;border-radius:inherit;width:0;transition:width .25s ease}
+.chart{display:flex;gap:10px;align-items:flex-end;height:160px;padding:10px 4px 0}.bar-wrap{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;min-width:0}.bar{width:100%;background:linear-gradient(180deg,#111827,#64748b);border-radius:12px 12px 5px 5px;min-height:4px}.bar-label{font-size:10px;text-align:center;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-value{font-size:10px;text-align:center;font-weight:750}
+.fix-item{display:grid;grid-template-columns:1fr 120px 42px;gap:8px;align-items:center;margin:8px 0}.fix-item input{min-width:0}.fix-item button{border:0;background:#f1f1f3;border-radius:12px;font-size:24px;height:48px}
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.kpi{background:var(--soft);border:1px solid var(--line);border-radius:17px;padding:13px}.kpi .label{font-size:11px;color:var(--muted)}.kpi .value{font-size:20px;font-weight:800;margin-top:3px}
+.forecast-card{background:var(--soft);border:1px solid var(--line);border-radius:17px;padding:13px;margin:8px 0}.forecast-head{display:flex;justify-content:space-between;gap:10px}.forecast-amount{font-size:22px;font-weight:850}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px}.mini .t{font-size:10px;color:var(--muted)}.mini .n{font-weight:800;margin-top:2px}
+.empty{padding:22px 10px;text-align:center;color:var(--muted)}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.hero-grid{grid-template-columns:1fr 1fr}.hero-grid .wide{grid-column:1/-1}.kpi-grid{grid-template-columns:1fr 1fr}.mini-grid{grid-template-columns:1fr 1fr}.fix-item{grid-template-columns:1fr 105px 42px}}
+@media(max-width:430px){.hero-grid{grid-template-columns:1fr}.hero-grid .wide{grid-column:auto}.big{font-size:26px}.metric{font-size:21px}}
+</style>
+</head>
+<body>
+<header><div class="headline"><div><h1>Mein Geldplan</h1><div class="sub">Dein persönliches Budget · lokal auf diesem Gerät</div></div><div class="status-dot" title="Lokale Datenspeicherung"></div></div></header>
+<nav>
+  <button class="tab active" data-tab="uebersicht">Übersicht</button>
+  <button class="tab" data-tab="budget">Budget</button>
+  <button class="tab" data-tab="verlauf">Verlauf</button>
+  <button class="tab" data-tab="prognose">Gehaltsprognose</button>
+  <button class="tab" data-tab="fixkosten">Fixkosten</button>
+  <button class="tab" data-tab="einstellungen">Mehr</button>
+</nav>
+
+<main>
+<!-- ÜBERSICHT -->
+<div id="uebersicht" class="view">
+<section class="hero">
+  <div class="hero-grid">
+    <div class="subcard wide"><div class="hero-muted">Insgesamt verfügbar</div><div class="big" id="ovAvailable">–</div><div class="hero-muted" id="ovNextPay">–</div></div>
+    <div class="subcard"><div class="hero-muted">Girokonto</div><div class="metric" id="ovGiro">–</div></div>
+    <div class="subcard"><div class="hero-muted">Bargeld</div><div class="metric" id="ovCash">–</div></div>
+  </div>
+</section>
+<section>
+  <h2>Dein aktueller Plan</h2>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Tage bis Lohn</div><div class="value" id="ovPayDays">–</div></div>
+    <div class="kpi"><div class="label">Tagessatz</div><div class="value good" id="ovDay">–</div></div>
+    <div class="kpi"><div class="label">Wochensatz</div><div class="value good" id="ovWeek">–</div></div>
+    <div class="kpi"><div class="label">Nächste Abhebung</div><div class="value" id="ovNextWithdraw">–</div></div>
+  </div>
+  <div style="margin-top:14px"><div class="row"><span>Budgetfortschritt bis nächstem Lohn</span><span class="v" id="ovProgressText">–</span></div><div class="progress"><span id="ovProgress"></span></div></div>
+</section>
+<section>
+  <h2>Diese Lohnperiode</h2>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Fixkosten</div><div class="value" id="ovFix">–</div></div>
+    <div class="kpi"><div class="label">Zusätzliche Ausgaben</div><div class="value red" id="ovCycleExpenses">–</div></div>
+    <div class="kpi"><div class="label">Bargeldbestand</div><div class="value" id="ovCashKpi">–</div></div>
+    <div class="kpi"><div class="label">Lohnzyklen</div><div class="value" id="ovSalaryCount">–</div></div>
+  </div>
+</section>
+<section>
+  <h2>Letzte Bewegungen</h2>
+  <div id="ovRecent"></div>
+  <button class="primary secondary" id="openHistoryBtn" style="margin-top:10px">Gesamten Verlauf öffnen</button>
+</section>
+</div>
+
+<!-- BUDGET -->
+<div id="budget" class="view hidden">
+<section>
+<h2>Mein aktuelles Budget</h2>
+<div class="row"><span>Girokonto</span><span class="v" id="mainGiro">–</span></div>
+<div class="grid" style="margin-top:8px"><div><label>Vorhandenes Bargeld (€)</label><input id="bCarryCash" type="number" step=".01" min="0" placeholder="z. B. 20"></div></div>
+<div class="row"><span>Bargeld</span><span class="v" id="mainCash">–</span></div>
+<div class="row"><span><b>Insgesamt verfügbar</b></span><span class="v big good" id="mainAvailable">–</span></div>
+<div class="row"><span>Nächster Lohn</span><span class="v" id="mainNextPay">–</span></div>
+<div class="row"><span>Bis nächste Abhebung</span><span class="v" id="mainDays">–</span></div>
+<div class="row"><span><b>Tagessatz</b></span><span class="v big good" id="mainDay">–</span></div>
+<div class="row"><span><b>Wochensatz</b></span><span class="v big good" id="mainWeek">–</span></div>
+<div class="note" id="budgetNote">Tagessatz und Wochensatz beziehen Giro + vorhandenes Bargeld ein und teilen das verfügbare Geld durch die verbleibenden Tage bis zum nächsten Lohn.</div>
+</section>
+
+<section>
+<h2>Girokonto buchen</h2>
+<div class="grid">
+<div><label>Zahlungseingang (€)</label><input id="giroIncome" type="number" step=".01" placeholder="z. B. 100"></div>
+<div><label>Ausgabe (€)</label><input id="giroExpense" type="number" step=".01" placeholder="z. B. 45,20"></div>
+<div><label>Beschreibung</label><input id="giroText" type="text" placeholder="z. B. Einkauf, Erstattung"></div>
+</div>
+<button class="primary" style="margin-top:12px" id="incomeBtn">Zahlungseingang buchen</button>
+<button class="primary secondary" style="margin-top:8px" id="expenseBtn">Ausgabe buchen</button>
+<div class="row"><span><b>Aktueller Kontostand</b></span><span class="v big good" id="giroCurrent">–</span></div>
+<div class="grid" style="margin-top:12px"><div><label>Kontostand korrigieren auf (€)</label><input id="giroCorrection" type="number" step=".01" placeholder="z. B. 153,30"></div></div>
+<button class="primary secondary" style="margin-top:8px" id="correctionBtn">Kontostand korrigieren</button>
+</section>
+
+<section><h2>Zusätzliche Ausgaben – laufender Lohnzyklus</h2><div id="cycleExpenseList"></div><div class="note">Mit dem nächsten Lohn beginnt automatisch eine neue Liste; historische Buchungen bleiben erhalten.</div></section>
+
+<section>
+<h2>Sonntag: Was abheben?</h2>
+<div class="kpi-grid">
+<div class="kpi"><div class="label">Girokonto</div><div class="value" id="sGiro">–</div></div>
+<div class="kpi"><div class="label">Bargeld</div><div class="value" id="sCash">–</div></div>
+<div class="kpi"><div class="label">Verfügbar</div><div class="value" id="sTotal">–</div></div>
+<div class="kpi"><div class="label">Orientierung 7 Tage</div><div class="value" id="sSuggested">–</div></div>
+</div>
+<div style="margin-top:12px"><label>Tatsächlich abheben (€)</label><input id="sWithdrawAmount" type="number" step="1" inputmode="decimal" placeholder="z. B. 110"></div>
+<button class="primary" style="margin-top:12px" id="withdrawBtn">Abheben & buchen</button>
+<div class="row"><span>Girokonto nach Abhebung</span><span class="v" id="sAfter">–</span></div>
+<div class="row"><span>Nächste Abhebung</span><span class="v" id="nextWithdrawalDate">–</span></div>
+<div class="row"><span>Tage bis nächste Abhebung</span><span class="v" id="withdrawalDays">–</span></div>
+<div class="note" id="withdrawalHint">Du entscheidest selbst, wie viel du abhebst.</div>
+</section>
+
+<section><h2>Lohn buchen</h2><div class="grid"><div><label>Nettolohn (€)</label><input id="salaryAmount" type="number" step=".01" placeholder="z. B. 2.900"></div><div><label>Beschreibung</label><input id="salaryText" type="text" placeholder="z. B. Lohn September"></div></div><button class="primary" style="margin-top:12px" id="salaryBtn">Lohn buchen & Fixkosten abziehen</button><div class="note">Nur der tatsächlich ausgezahlte Nettolohn verändert dein Budget. Die Prognose greift niemals automatisch ein.</div></section>
+</div>
+
+<!-- VERLAUF -->
+<div id="verlauf" class="view hidden">
+<section><h2>Kontoverlauf</h2><div class="note">Alle Buchungen werden chronologisch angezeigt. Abhebungen werden separat ausgewiesen, weil sie nur Geld vom Giro ins Bargeld verschieben.</div><div id="fullTxList"></div></section>
+<section><h2>Monatsvergleich</h2><div id="monthlyCompare"></div><div class="note">Einnahmen und Ausgaben werden nach Buchungsdatum zusammengefasst. Abhebungen und reine Kontokorrekturen werden nicht als Verbrauch gezählt.</div></section>
+<section><h2>Monatsverlauf</h2><div id="monthlyChart" class="chart"></div></section>
+</div>
+
+<!-- FIXKOSTEN -->
+<div id="fixkosten" class="view hidden">
+<section><h2>Meine Fixkosten</h2><div class="note" style="margin-bottom:10px">Hier verwaltest du deine festen monatlichen Ausgaben. Die Summe wird beim „Lohn buchen“ automatisch einmal je Lohnzyklus vom Girokonto abgezogen.</div><div id="fixItems"></div><button class="primary secondary" style="margin-top:10px" id="addFixBtn">+ Fixkosten hinzufügen</button><div class="row" style="margin-top:12px"><span><b>Gesamte monatliche Fixkosten</b></span><span class="v big" id="fixTotal">–</span></div></section>
+</div>
+
+<!-- PROGNOSE -->
+<div id="prognose" class="view hidden">
+<section><h2>Gehaltsprognose</h2><div class="note">Zeitnachweise werden mit zwei Monaten Verzögerung eingeordnet. Die Prognose bleibt rein informativ und verändert dein Budget nicht.</div><div class="grid" style="margin-top:12px"><div><label>Zeitnachweis (PDF)</label><input id="timeReportFiles" type="file" accept="application/pdf" multiple></div><div><label>Unterhaltspflichten</label><input id="pDependents" type="number" step="1" min="0" max="5" value="2"></div></div><button class="primary" style="margin-top:12px" id="timeReportBtn">Zeitnachweis(e) auswerten</button><div class="note" id="timeReportStatus">Lade einen oder mehrere Zeitnachweise hoch.</div><div id="timeReportPreview" class="hidden"></div></section>
+<section><h2>Prognosen nach Auszahlungsmonat</h2><div id="forecastTableWrap"><div class="empty">Noch kein Zeitnachweis eingelesen.</div></div></section>
+<section><h2>Prognose des ausgewählten Zeitnachweises</h2><div class="kpi-grid"><div class="kpi"><div class="label">Abrechnungsmonat</div><div class="value" id="rMonth">–</div></div><div class="kpi"><div class="label">Auszahlungsmonat</div><div class="value" id="rPayoutMonth">–</div></div><div class="kpi"><div class="label">Geschätztes Netto</div><div class="value" id="pNettoBasis">–</div></div><div class="kpi"><div class="label">Voraussichtliche Auszahlung</div><div class="value good" id="pPayout">–</div></div></div><div class="row"><span>Regel-Netto aus Abrechnungen</span><span class="v" id="pBaseNet">–</span></div><div class="row"><span>Variable steuerpflichtige Bestandteile netto</span><span class="v" id="pVariableNet">–</span></div><div class="row"><span>Entgeltbasis gesamt (Brutto-Schätzung)</span><span class="v" id="pBrutto">–</span></div><div class="row"><span>Davon geschützte Zuschläge</span><span class="v good" id="pProtected">–</span></div><div class="row"><span>Pfändungsrelevantes Netto</span><span class="v" id="pPfNetto">–</span></div><div class="row"><span>Pfändung</span><span class="v red" id="pGarnish">–</span></div><div class="row"><span>Zulage</span><span class="v" id="pShiftAllowance">–</span></div><div class="row"><span>Variable Zuschläge / Ø §21 gesamt</span><span class="v" id="pSurcharges">–</span></div><div class="note" id="pShiftSummary">–</div><div class="note">Netto-Schätzung anhand deiner hochgeladenen Bezügemitteilungen kalibriert; der variable steuer-/SV-pflichtige Anteil wird aus dem historischen Muster geschätzt. Geschützte Zuschläge werden separat ausgewiesen und nicht in das pfändungsrelevante Netto eingerechnet.</div></section>
+<section><h2>Prognosegrafik</h2><div id="forecastChart" class="chart"></div></section>
+<section><h2>Erkannte Zeitlohnarten</h2><div id="reportDetails"></div><div class="note">Die Zeitlohnarten werden direkt aus dem PDF übernommen. Unbekannte Codes werden nicht stillschweigend interpretiert.</div></section>
+<section><h2>Tarif-/Pfändungsgrundlagen</h2><div class="row"><span>KR 8 / Stufe 6 ab 01.04.2026</span><span class="v">4.468,47 €</span></div><div class="row"><span>Dokumentierte Berechnungsbasis Zeitzuschläge</span><span class="v">4.052,74 €</span></div><div class="row"><span>Nachtarbeit</span><span class="v">20 %</span></div><div class="row"><span>Sonntagsarbeit</span><span class="v">25 %</span></div><div class="row"><span>Samstag 13–21 Uhr</span><span class="v">0,64 €/h</span></div><div class="row"><span>Pfändungstabelle ab 01.07.2026</span><span class="v">2 Unterhaltspflichten</span></div></section>
+</div>
+
+<!-- MEHR -->
+<div id="einstellungen" class="view hidden">
+<section><h2>Daten sichern</h2><p class="note">Sichere alle lokalen Daten inklusive Kontobewegungen, Bargeld, Fixkosten und eingelesener Zeitnachweise als Datei.</p><button class="primary" id="exportBtn">Daten sichern</button><div style="margin-top:12px"><label>Gespeicherte Daten wiederherstellen</label><input id="importFile" type="file" accept="application/json,.json"></div><button class="primary secondary" style="margin-top:8px" id="importBtn">Daten wiederherstellen</button><div class="note" id="backupStatus">Die Sicherung bleibt auf deinem Gerät bzw. dort, wo du die Datei speicherst.</div></section>
+<section><h2>Testmodus</h2><p class="note">Damit andere die App mit eigenen Werten testen können, lassen sich alle gespeicherten Eingaben und Buchungen hier zurücksetzen.</p><button class="primary danger" id="resetBtn" style="margin-top:12px">Alle Eingaben & Buchungen löschen</button></section>
+</div>
+
+<p class="note" style="text-align:center;margin:22px 8px 0">Alle Berechnungen laufen lokal im Browser. Die App speichert keine Kontodaten online.</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="app.js?v=34"></script>
+
+</body></html>
