@@ -278,24 +278,6 @@ function protectedSurchargeCalc(rows){
  };
 }
 function allowanceFromRows(rows){var wech=rows.some(function(r){return r.code==='5211'||r.label.toLowerCase().indexOf('wech')>=0;});var schi=rows.some(function(r){return r.code==='5212'||r.label.toLowerCase().indexOf('schiz')>=0;});return {wech:wech,schi:schi};}
-function garnishment2026(net,dependents){
- dependents=Math.max(0,Math.min(5,Number(dependents)||0));
- if(net<=1589.99)return 0;
- if(net>4866.30){
-   // For the 2-dependent column, the fixed table value at the ceiling is 936.94 € and the excess is fully attachable.
-   var base=dependents===2?936.94:(dependents===1?1231.00:dependents===0?1219.40:dependents===3?0:0);
-   // Full generic columns are not embedded; for this app the user's 2 dependents are the calibrated/default case.
-   if(dependents!==2){return Math.max(0,net-1587.40);}
-   return 936.94+(net-4866.30);
- }
- if(dependents!==2){
-   // Conservative fallback: use the 2-dependent table when a different number is selected only if supported; otherwise show zero.
-   dependents=2;
- }
- if(net<2520)return 0;
- var band=Math.floor((Math.min(net,4866.29)-2520)/10);
- return Math.round((0.94+band*4)*100)/100;
-}
 function estimateNetFromGross(gross){
  var refGross=2743.15+150; // documented 60% base plus possible Wechselschichtzulage
  var refNet=1933.37;
@@ -309,25 +291,19 @@ function reportVariableExtras(rep,a,p){
  var taxableExtrasGross=shiftAllowance+p.saturdayPay+averagePay;
  return {shiftAllowance:shiftAllowance,averageUnits:avgUnits,averagePay:averagePay,taxableExtrasGross:taxableExtrasGross};
 }
-function calculateReportForecast(rep,dependents){
+function calculateReportForecast(rep){
  var p=protectedSurchargeCalc(rep.rows),a=allowanceFromRows(rep.rows),base=payrollBaseForReport(rep),v=reportVariableExtras(rep,a,p);
- // Die Basis ist das tatsächlich beobachtete Regel-Netto aus den Abrechnungen.
- // Nur variable, steuer-/SV-pflichtige Bestandteile werden zusätzlich geschätzt.
  var taxableExtraNet=v.taxableExtrasGross*PAYROLL_CALIBRATION.taxableExtraNetRate;
  var protected=p.nightPay+p.sundayPay;
- var estimatedLegalNet=base.legalNet+taxableExtraNet+protected;
- // Pfändung nur auf den nicht geschützten Teil anwenden.
- var estimatedPfNet=Math.max(0,base.legalNet+taxableExtraNet);
- var garnish=garnishment2026(estimatedPfNet,dependents);
- var payout=estimatedLegalNet-garnish;
+ var estimatedNet=base.legalNet+taxableExtraNet+protected;
  var pm=payoutMonthFor(rep.year,rep.month);
  return {
   report:rep,payoutYear:pm.year,payoutMonth:pm.month,
   baseGross:base.gross,baseLegalNet:base.legalNet,
   taxableGross:base.gross+v.taxableExtrasGross,
   taxableExtrasGross:v.taxableExtrasGross,taxableExtraNet:taxableExtraNet,
-  netBase:estimatedLegalNet,protected:protected,estimatedPfNet:estimatedPfNet,
-  garnish:garnish,payout:payout,shiftAllowance:v.shiftAllowance,
+  netBase:estimatedNet,protected:protected,
+  payout:estimatedNet,shiftAllowance:v.shiftAllowance,
   averageUnits:v.averageUnits,averagePay:v.averagePay,
   allowanceType:a.wech?'Wechselschichtzulage §43':a.schi?'Schichtzulage §43':'keine aus Zeitlohnarten',p:p
  };
@@ -339,29 +315,26 @@ function renderReportDetails(rep,forecast){
  if($('rPayoutMonth'))$('rPayoutMonth').textContent=formatMonth(forecast.payoutYear,forecast.payoutMonth);
  if($('pBrutto'))$('pBrutto').textContent=eur(forecast.taxableGross);
  if($('pNettoBasis'))$('pNettoBasis').textContent=eur(forecast.netBase);
- if($('pProtected'))$('pProtected').textContent=eur(forecast.protected);
- if($('pBaseNet'))$('pBaseNet').textContent=eur(forecast.baseLegalNet);
+  if($('pBaseNet'))$('pBaseNet').textContent=eur(forecast.baseLegalNet);
  if($('pVariableNet'))$('pVariableNet').textContent=eur(forecast.taxableExtraNet);
- if($('pPfNetto'))$('pPfNetto').textContent=eur(forecast.estimatedPfNet);
- if($('pGarnish'))$('pGarnish').textContent=eur(forecast.garnish);
- if($('pPayout'))$('pPayout').textContent=eur(forecast.payout);
+   if($('pPayout'))$('pPayout').textContent=eur(forecast.payout);
  if($('pShiftAllowance'))$('pShiftAllowance').textContent=forecast.shiftAllowance?eur(forecast.shiftAllowance)+' · '+forecast.allowanceType:forecast.allowanceType;
  if($('pSurcharges'))$('pSurcharges').textContent=eur(forecast.protected+forecast.p.saturdayPay+forecast.averagePay);
  if($('pShiftSummary'))$('pShiftSummary').textContent=forecast.p.nightHours.toFixed(2)+' h Nacht · '+forecast.p.sunHours.toFixed(2)+' h Sonntag · '+forecast.p.saturdayHours.toFixed(2)+' h Samstag · Ø §21 '+forecast.averageUnits.toFixed(2)+' · geschützte Zuschläge '+eur(forecast.protected);
 }
 function renderForecastTable(){
  var box=$('forecastTableWrap');if(!box)return;var arr=reportStore.slice().sort(function(a,b){return (a.year*12+a.month)-(b.year*12+b.month);});if(!arr.length){box.innerHTML='<div class="empty">Noch kein Zeitnachweis eingelesen.</div>';return;}
- var dep=num('pDependents');box.innerHTML=arr.map(function(rep){var f=calculateReportForecast(rep,dep);return '<div class="forecast-card"><div class="forecast-head"><span><b>'+esc(formatMonth(rep.year,rep.month))+'</b><br><span class="note">Auszahlung: '+esc(formatMonth(f.payoutYear,f.payoutMonth))+'</span></span><span class="badge '+(f.shiftAllowance?'green':'neutral')+'">'+esc(f.allowanceType)+'</span></div><div class="mini-grid"><div class="mini"><div class="t">Netto</div><div class="n">'+eur(f.estimatedPfNet)+'</div></div><div class="mini"><div class="t">Pfändung</div><div class="n red">'+eur(f.garnish)+'</div></div><div class="mini"><div class="t">Auszahlung</div><div class="n good">'+eur(f.payout)+'</div></div></div></div>';}).join('');renderForecastChart(arr,dep);
+ box.innerHTML=arr.map(function(rep){var f=calculateReportForecast(rep);return '<div class="forecast-card"><div class="forecast-head"><span><b>'+esc(formatMonth(rep.year,rep.month))+'</b><br><span class="note">Auszahlung: '+esc(formatMonth(f.payoutYear,f.payoutMonth))+'</span></span><span class="badge '+(f.shiftAllowance?'green':'neutral')+'">'+esc(f.allowanceType)+'</span></div><div class="mini-grid"><div class="mini"><div class="t">Netto</div><div class="n">'+eur(f.netBase)+'</div></div><div class="mini"><div class="t">Auszahlung</div><div class="n good">'+eur(f.payout)+'</div></div></div></div>';}).join('');renderForecastChart(arr);
 }
-function renderForecastChart(arr,dep){var box=$("forecastChart");if(!box)return;if(!arr.length){box.innerHTML='<div class="empty">Noch keine Prognosen.</div>';return;}var vals=arr.map(function(r){return calculateReportForecast(r,dep).payout;}),max=Math.max.apply(null,vals.concat([1]));box.innerHTML=arr.map(function(rep){var f=calculateReportForecast(rep,dep),h=Math.max(5,Math.round((f.payout/max)*125));return '<div class="bar-wrap"><div class="bar-value">'+eur(f.payout)+'</div><div class="bar" style="height:'+h+'px" title="'+esc(formatMonth(rep.year,rep.month))+' → '+esc(formatMonth(f.payoutYear,f.payoutMonth))+'"></div><div class="bar-label">'+monthName(rep.month).slice(0,3)+'</div></div>';}).join('');}
+function renderForecastChart(arr){var box=$("forecastChart");if(!box)return;if(!arr.length){box.innerHTML='<div class="empty">Noch keine Prognosen.</div>';return;}var vals=arr.map(function(r){return calculateReportForecast(r).payout;}),max=Math.max.apply(null,vals.concat([1]));box.innerHTML=arr.map(function(rep){var f=calculateReportForecast(rep),h=Math.max(5,Math.round((f.payout/max)*125));return '<div class="bar-wrap"><div class="bar-value">'+eur(f.payout)+'</div><div class="bar" style="height:'+h+'px" title="'+esc(formatMonth(rep.year,rep.month))+' → '+esc(formatMonth(f.payoutYear,f.payoutMonth))+'"></div><div class="bar-label">'+monthName(rep.month).slice(0,3)+'</div></div>';}).join('');}
 function ensurePdfJs(){if(!window.pdfjsLib)throw new Error('PDF-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen.');window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';return window.pdfjsLib;}
 async function readPdfLines(file){var pdfjs=await ensurePdfJs(),buf=await file.arrayBuffer(),pdf=await pdfjs.getDocument({data:buf}).promise,lines=[];for(var p=1;p<=pdf.numPages;p++){var page=await pdf.getPage(p),tc=await page.getTextContent();lines=lines.concat(groupPdfText(tc.items));}return lines;}
 async function importTimeReports(){var files=$('timeReportFiles')&&$('timeReportFiles').files,status=$('timeReportStatus');if(!files||!files.length){alert('Bitte mindestens einen Zeitnachweis als PDF auswählen.');return;}status.textContent='Zeitnachweis wird ausgelesen …';$('timeReportBtn').disabled=true;var ok=0,errors=[];
  try{for(var i=0;i<files.length;i++){try{var lines=await readPdfLines(files[i]),rep=parseTimeReports(lines);rep.id=rep.year+'-'+String(rep.month+1).padStart(2,'0');rep.sourceName=files[i].name;rep.importedAt=new Date().toISOString();var existing=reportStore.findIndex(function(x){return x.id===rep.id;});if(existing>=0)reportStore[existing]=rep;else reportStore.push(rep);ok++;lastParsedReport=rep;}catch(e){errors.push(files[i].name+': '+e.message);}}
- saveReports(reportStore);if(lastParsedReport){var f=calculateReportForecast(lastParsedReport,num('pDependents'));renderReportDetails(lastParsedReport,f);}renderForecastTable();var preview=$('timeReportPreview');if(preview){preview.classList.remove('hidden');preview.innerHTML='<div class="note"><b>'+ok+' Zeitnachweis(e) übernommen.</b>'+(errors.length?'<br>'+errors.map(esc).join('<br>'):'')+'</div>';}
+ saveReports(reportStore);if(lastParsedReport){var f=calculateReportForecast(lastParsedReport);renderReportDetails(lastParsedReport,f);}renderForecastTable();var preview=$('timeReportPreview');if(preview){preview.classList.remove('hidden');preview.innerHTML='<div class="note"><b>'+ok+' Zeitnachweis(e) übernommen.</b>'+(errors.length?'<br>'+errors.map(esc).join('<br>'):'')+'</div>';}
  status.textContent=errors.length?'Import abgeschlossen; einige Dateien konnten nicht vollständig verarbeitet werden.':'Import abgeschlossen. Zeitlohnarten und Zuschläge wurden berechnet.';
  }catch(e){status.textContent='Import fehlgeschlagen: '+e.message;} $('timeReportBtn').disabled=false;}
-function showLatestForecast(){reportStore=loadReports();renderForecastTable();if(!lastParsedReport&&reportStore.length){lastParsedReport=reportStore[reportStore.length-1];renderReportDetails(lastParsedReport,calculateReportForecast(lastParsedReport,num('pDependents')));}}
+function showLatestForecast(){reportStore=loadReports();renderForecastTable();if(!lastParsedReport&&reportStore.length){lastParsedReport=reportStore[reportStore.length-1];renderReportDetails(lastParsedReport,calculateReportForecast(lastParsedReport));}}
 function correctGiro(){var target=num("giroCorrection");if(target<0){alert("Bitte einen gültigen Kontostand eingeben.");return;}var current=currentGiro(),delta=target-current;if(Math.abs(delta)<0.005){$("giroCorrection").value="";alert("Der Kontostand entspricht bereits dem eingegebenen Wert.");return;}bookTransaction(delta,"Kontostand korrigiert","correction",{target:target,cycle:activeCycleKey()});$("giroCorrection").value="";refresh();}
 function resetApp(){if(!confirm("Wirklich alle gespeicherten Eingaben und Buchungen löschen?"))return;["meinGeldplanGiroTx","meinGeldplanCash","meinGeldplanFixItems","meinGeldplanMonthlyFix","meinGeldplanTimeReports"].forEach(function(k){localStorage.removeItem(k);});location.reload();}
 function refresh(){renderTx();renderCycleExpenses();updateBudget();sunday();renderOverview();if($('giroCurrent'))$('giroCurrent').textContent=eur(currentGiro());showLatestForecast();if(!$('verlauf').classList.contains('hidden')){renderMonthlyCompare();renderMonthlyChart();}}
@@ -371,7 +344,6 @@ function init(){
  if($('bCarryCash'))$('bCarryCash').value=cashBalance().toFixed(2);
  if($('incomeBtn'))$('incomeBtn').onclick=addIncome;if($('expenseBtn'))$('expenseBtn').onclick=addExpense;if($('withdrawBtn'))$('withdrawBtn').onclick=withdraw;if($('salaryBtn'))$('salaryBtn').onclick=addSalary;if($('resetBtn'))$('resetBtn').onclick=resetApp;if($('timeReportBtn'))$('timeReportBtn').onclick=importTimeReports;if($('correctionBtn'))$('correctionBtn').onclick=correctGiro;if($('addFixBtn'))$('addFixBtn').onclick=addFixItem;if($('exportBtn'))$('exportBtn').onclick=exportData;if($('importBtn'))$('importBtn').onclick=importData;
  if($('openHistoryBtn'))$('openHistoryBtn').onclick=function(){openTab('verlauf');};
- if($('pDependents'))$('pDependents').addEventListener('input',function(){renderForecastTable();if(lastParsedReport)renderReportDetails(lastParsedReport,calculateReportForecast(lastParsedReport,num('pDependents')));});
  document.querySelectorAll('input,select').forEach(function(el){if(el.classList.contains('fix-name')||el.classList.contains('fix-amount')||el.id==='importFile'||el.id==='timeReportFiles')return;el.addEventListener('input',function(){if(el.id==='bCarryCash')saveCash(num('bCarryCash'));refresh();});el.addEventListener('change',function(){if(el.id==='bCarryCash')saveCash(num('bCarryCash'));refresh();});});
  document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){openTab(b.dataset.tab);});});
  openTab('uebersicht');refresh();setInterval(refresh,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)refresh();});
