@@ -1,24 +1,137 @@
-<!DOCTYPE html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Finanzplaner v34</title><link rel="stylesheet" href="style.css"></head>
-<body><div class="container">
-<header><h1>Finanz- & Urlaubsplanung</h1><p>Version 34 – Grundgerüst</p></header>
-<section class="card"><h2>Arbeitsverhältnis</h2>
-<label>Entgeltgruppe</label><input id="gruppe">
-<label>Stufe</label><input id="stufe" type="number">
-<label>Wochenarbeitszeit</label><input id="stunden" type="number" step="0.1">
-<small>Arbeitgeber: Freistaat Bayern (TV-L Bayern)</small></section>
-<section class="card"><h2>Monatliches Einkommen</h2>
-<label>Nettoeinkommen</label><input id="netto" type="number">
-<h3>Sparziele</h3>
-<label>Urlaub</label><input id="urlaub" type="number">
-<label>Auto</label><input id="auto" type="number">
-<label>Sonstige Rücklagen</label><input id="sonstiges" type="number"></section>
-<section class="card"><h2>Fixkosten</h2><div id="kostenListe"></div>
-<div class="row"><input id="nameNeu" placeholder="Bezeichnung"><input id="betragNeu" type="number" placeholder="€"><button onclick="addExpense()">+</button></div></section>
-<section class="card"><h2>Monatsübersicht</h2><div class="summary">
-<div><span>Einkommen</span><strong id="sumIncome">0 €</strong></div>
-<div><span>Fixkosten</span><strong id="sumExpenses">0 €</strong></div>
-<div><span>Sparen</span><strong id="sumSaving">0 €</strong></div>
-<div><span>Verfügbar</span><strong id="sumLeft">0 €</strong></div>
-</div></section></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f5f7">
+<title>Mein Geldplan v34</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#171717;--muted:#747474;--line:#e6e6e8;--accent:#111;--green:#15803d;--orange:#b45309;--red:#b91c1c;--blue:#2563eb}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+header{position:sticky;top:0;background:rgba(245,245,247,.94);backdrop-filter:blur(18px);z-index:10;padding:18px 16px 12px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:29px;letter-spacing:-.5px}.sub{margin-top:3px;color:var(--muted);font-size:14px}
+nav{display:flex;gap:8px;overflow:auto;padding:10px 16px;background:var(--bg);position:sticky;top:79px;z-index:9}nav button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;font-weight:600;cursor:pointer}nav button.active{background:#111;color:#fff}
+main{max-width:820px;margin:auto;padding:10px 14px 48px}.view.hidden{display:none}section{background:var(--card);border:1px solid var(--line);border-radius:20px;margin:12px 0;padding:16px}
+h2{font-size:19px;margin:0 0 14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}input,select{width:100%;padding:12px;border:1px solid #d6d6da;border-radius:12px;font-size:17px;background:#fff}input:focus,select:focus{outline:2px solid #dbeafe;border-color:#93c5fd}
+.row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:11px 0}.row:last-child{border-bottom:0}.v{font-weight:700;text-align:right}.big{font-size:29px}.good{color:var(--green)}.warn{color:var(--orange)}.red{color:var(--red)}.muted{color:var(--muted)}
+.badge{display:inline-block;padding:6px 9px;background:#f0f0f2;border-radius:999px;font-size:12px;margin:2px 4px 2px 0}.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}.primary{width:100%;border:0;background:#111;color:#fff;padding:14px;border-radius:13px;font-size:16px;font-weight:700;cursor:pointer}.secondary{border:1px solid var(--line);background:#fff;color:#111;padding:10px 12px;border-radius:11px;cursor:pointer;font-weight:600}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:14px;background:#f8f8fa;border-radius:15px}.stat .k{font-size:12px;color:var(--muted)}.stat .n{font-size:22px;font-weight:750;margin-top:4px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.toggle:last-child{border-bottom:0}.toggle input{width:auto;transform:scale(1.25)}
+.table{width:100%;border-collapse:collapse;font-size:14px}.table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}.table th:first-child,.table td:first-child{text-align:left}.table tr:last-child td{border-bottom:0}
+.list{margin-top:10px}.expense{display:grid;grid-template-columns:2fr 1fr 44px;gap:8px;align-items:center;margin-bottom:8px}.expense button{height:44px}.danger{background:#f1f1f3;border:0;border-radius:10px;color:#111;cursor:pointer}
+.footer-actions{display:flex;gap:8px;margin-top:14px}.footer-actions>*{flex:1}
+@media(max-width:700px){.statgrid{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>Mein Geldplan v34</h1><div class="sub">Lohn · Budget · Sparen · TV-L · Datenstand 2026</div></header>
+<nav>
+<button class="tab active" data-tab="uebersicht">Übersicht</button>
+<button class="tab" data-tab="lohn">Lohn</button>
+<button class="tab" data-tab="budget">Budget</button>
+<button class="tab" data-tab="sparen">Sparen</button>
+<button class="tab" data-tab="tvl">TV-L</button>
+</nav>
+<main>
+<div id="uebersicht" class="view">
+<section><h2>Deine aktuelle Lohnbasis</h2>
+<div class="statgrid">
+<div class="stat"><div class="k">Reguläres Netto</div><div class="n good" id="dashNetto">–</div></div>
+<div class="stat"><div class="k">Laufendes Brutto</div><div class="n" id="dashBrutto">–</div></div>
+<div class="stat"><div class="k">Teilzeit</div><div class="n" id="dashPct">–</div></div>
+<div class="stat"><div class="k">TV-L</div><div class="n">KR 8 / 3</div></div>
+</div>
+<div class="note">Reguläres Netto aus der tatsächlichen Abrechnung ohne Nacht-, Sonntags-, Feiertags-, Mehrarbeits- und sonstige variable Schichtzuschläge. Das JobBike wird für die Budgetlogik nicht berücksichtigt.</div>
+</section>
+<section><h2>Feste laufende Bestandteile</h2><div id="dashComponents"></div></section>
+<section><h2>Was ist bewusst getrennt?</h2>
+<div class="row"><span>Reguläres Einkommen</span><span class="v good">Basis</span></div>
+<div class="row"><span>Variable Schicht-/Zeit-Zuschläge</span><span class="v">separat</span></div>
+<div class="row"><span>Jahressonderzahlung</span><span class="v">November / separat</span></div>
+<div class="row"><span>Reale Konten</span><span class="v">noch nicht angelegt</span></div>
+</section>
+</div>
+
+<div id="lohn" class="view hidden">
+<section><h2>Persönliche Lohnbasis</h2><div class="grid">
+<div><label>Entgeltgruppe</label><input id="lGroup" value="KR 8"></div>
+<div><label>Stufe</label><input id="lStep" type="number" value="3"></div>
+<div><label>Arbeitszeit pro Woche</label><input id="lHours" type="number" step="0.1" value="23.1"></div>
+<div><label>Vollzeitbasis pro Woche</label><input id="lFullHours" type="number" step="0.1" value="38.5"></div>
+<div><label>Reguläres Netto – verifiziert</label><input id="lNettoBase" type="number" step=".01" value="1933.37"></div>
+<div><label>Netto-Faktor für Planwerte</label><input id="lNetFactor" type="number" step=".0001" value="0.7047992272"></div>
+</div><div class="note">Das verifizierte Netto stammt aus den Bezügemitteilungen 06/2026–08/2026. Der Faktor dient nur für Planwerte, wenn eine zusätzliche feste Zulage zugeschaltet wird; er ersetzt keine neue Lohnabrechnung.</div></section>
+
+<section><h2>Fixe laufende Entgeltbestandteile</h2><div id="fixedRows"></div>
+<div class="row"><span><b>Laufendes Gesamtbrutto</b></span><span class="v" id="fixedGross">–</span></div>
+</section>
+
+<section><h2>Zusätzliche feste Zulagen</h2>
+<div class="toggle"><span>Ständige Wechselschichtzulage nach § 43 TV-L</span><input id="useWechsel" type="checkbox"></div>
+<div class="row"><span>Aktueller Tarifwert Vollzeit</span><span class="v" id="wechselFull">250,00 €</span></div>
+<div class="row"><span>Teilzeitwert bei <span id="pctText">60,0 %</span></span><span class="v" id="wechselPart">150,00 €</span></div>
+<div class="toggle"><span>Ständige Schichtzulage nach § 43 TV-L</span><input id="useShift" type="checkbox"></div>
+<div class="row"><span>Aktueller Tarifwert Vollzeit</span><span class="v">100,00 €</span></div>
+<div class="row"><span>Teilzeitwert bei <span id="pctText2">60,0 %</span></span><span class="v" id="shiftPart">60,00 €</span></div>
+<div class="note">Die Bezügemitteilungen zeigen eine Schichtzulage nach §43 in einer Rückrechnung, aber keine aktuell ausgewiesene Wechselschichtzulage. Deshalb sind beide Optionen zunächst aus und werden nicht in das reguläre Netto eingerechnet.</div>
+</section>
+
+<section><h2>Reguläres Einkommen</h2>
+<div class="row"><span>Reguläres Netto laut Abrechnung</span><span class="v" id="nettoBaseOut">–</span></div>
+<div class="row"><span>Zusatz durch aktivierte feste Zulagen – Planwert</span><span class="v" id="netExtra">0,00 €</span></div>
+<div class="row"><span><b>Reguläres Netto für die Budgetplanung</b></span><span class="v big good" id="planNetto">–</span></div>
+<div class="note">Variable Zuschläge aus Nacht, Sonntag, Feiertag, Samstag, Mehrarbeit, Einspringen usw. bleiben hiervon getrennt.</div>
+</section>
+
+<section><h2>Variable Schicht- und Zeit-Zuschläge</h2><div class="grid">
+<div><label>Nacht</label><input class="variable" id="vNight" type="number" step=".01" placeholder="0,00"></div>
+<div><label>Sonntag</label><input class="variable" id="vSunday" type="number" step=".01" placeholder="0,00"></div>
+<div><label>Feiertag</label><input class="variable" id="vHoliday" type="number" step=".01" placeholder="0,00"></div>
+<div><label>Samstag / sonstige Zeit</label><input class="variable" id="vSaturday" type="number" step=".01" placeholder="0,00"></div>
+<div><label>Mehrarbeit / Überstunden</label><input class="variable" id="vOvertime" type="number" step=".01" placeholder="0,00"></div>
+<div><label>Sonstige Einmal-/Sonderbeträge</label><input class="variable" id="vOther" type="number" step=".01" placeholder="0,00"></div>
+</div>
+<div class="row"><span><b>Variable Zuschläge gesamt</b></span><span class="v" id="variableTotal">0,00 €</span></div>
+</section>
+</div>
+
+<div id="budget" class="view hidden">
+<section><h2>Monatsbudget</h2><div class="grid">
+<div><label>Nettoeinkommen für den Monat (€)</label><input id="bNetto" type="number" step=".01" placeholder="1933,37"></div>
+<div><label>Fixkosten (€)</label><input id="bFix" type="number" step=".01" placeholder="0,00"></div>
+<div><label>Zusätzliches Sparen (€)</label><input id="bSave" type="number" step=".01" placeholder="0,00"></div>
+<div><label>Tage bis zum nächsten Lohn</label><input id="bDays" type="number" step="1" placeholder=""></div>
+<div><label>Ziel-Wochensatz (€)</label><input id="bTarget" type="number" step=".01" placeholder=""></div>
+</div>
+<div class="row"><span>Nach Fixkosten</span><span class="v" id="bRest">–</span></div>
+<div class="row"><span>Nach Sparen</span><span class="v" id="bRestSave">–</span></div>
+<div class="row"><span>Tagessatz</span><span class="v" id="bDay">–</span></div>
+<div class="row"><span><b>Wochensatz</b></span><span class="v big good" id="bWeek">–</span></div>
+<div class="row"><span>Über / unter Ziel</span><span class="v" id="bDiff">–</span></div>
+</section>
+<section><h2>Fixkosten</h2><div id="expenseList"></div><div class="expense"><input id="expenseName" placeholder="z. B. Miete"><input id="expenseAmount" type="number" step=".01" placeholder="€"><button class="primary" style="width:auto" id="addExpense">+</button></div><div class="row"><span><b>Fixkosten gesamt</b></span><span class="v" id="expenseTotal">0,00 €</span></div></section>
+<section><h2>Sonderausgaben</h2><div class="grid"><div><label>Betrag (€)</label><input id="specialAmount" type="number" step=".01" placeholder=""></div><div><label>Datum</label><input id="specialDate" type="date"></div><div><label>Kategorie</label><select id="specialCategory"><option>Kind</option><option>Auto</option><option>Haushalt</option><option>Freizeit</option><option>Urlaub</option><option>Sonstiges</option></select></div><div><label>Beschreibung</label><input id="specialText" placeholder=""></div></div><button class="primary" id="addSpecial" style="margin-top:12px">Sonderausgabe hinzufügen</button><div id="specialList" class="list"></div><div class="row"><span><b>Sonderausgaben gesamt</b></span><span class="v" id="specialTotal">0,00 €</span></div></section>
+</div>
+
+<div id="sparen" class="view hidden">
+<section><h2>Sparziele – noch ohne echte Konten</h2><div class="grid"><div><label>Urlaub: aktueller Stand (€)</label><input id="sVacationStart" type="number" step=".01" placeholder=""></div><div><label>Urlaub: monatliche Rate (€)</label><input id="sVacationRate" type="number" step=".01" placeholder=""></div><div><label>Auto: aktueller Stand (€)</label><input id="sCarStart" type="number" step=".01" placeholder=""></div><div><label>Auto: monatliche Rate (€)</label><input id="sCarRate" type="number" step=".01" placeholder=""></div><div><label>Sonstige Rücklage: aktueller Stand (€)</label><input id="sOtherStart" type="number" step=".01" placeholder=""></div><div><label>Sonstige Rücklage: monatliche Rate (€)</label><input id="sOtherRate" type="number" step=".01" placeholder=""></div></div><div class="note">Es werden noch keine realen Konten oder IBANs hinterlegt. Die Sparziele sind reine Planwerte im Browser.</div></section>
+<section><h2>Prognose</h2><div class="grid3"><div><label>Horizont (Monate)</label><input id="saveMonths" type="number" step="1" placeholder="12"></div><div><label>Gesamtrate pro Monat</label><div class="stat"><div class="n" id="saveMonthly">–</div></div></div><div><label>Prognose insgesamt</label><div class="stat"><div class="n good" id="saveForecast">–</div></div></div></div><div class="row"><span>Urlaub</span><span class="v" id="saveVacation">–</span></div><div class="row"><span>Auto</span><span class="v" id="saveCar">–</span></div><div class="row"><span>Sonstige Rücklage</span><span class="v" id="saveOther">–</span></div></section>
+</div>
+
+<div id="tvl" class="view hidden">
+<section><h2>TV-L: deine Tarifbasis</h2><div class="grid"><div><label>Tarif</label><input value="TV-L / Anlage C / §43" disabled></div><div><label>Entgelt</label><input value="KR 8 / Stufe 3" disabled></div><div><label>Teilzeit</label><input value="23,1 / 38,5 Std. = 60 %" disabled></div><div><label>Aktuelle Tabelle</label><input value="01.04.2026–28.02.2027" disabled></div></div></section>
+<section><h2>Tarifentwicklung für KR 8 / Stufe 3</h2><table class="table"><thead><tr><th>Zeitraum</th><th>Vollzeit</th><th>60 %</th><th>Plan-Hinweis</th></tr></thead><tbody><tr><td>01.04.2026–28.02.2027</td><td>3.837,08 €</td><td>2.302,25 €</td><td>aktuelle Basis</td></tr><tr><td>ab 01.03.2027</td><td>3.913,82 €</td><td>2.348,29 €</td><td>+2,0 %</td></tr><tr><td>ab 01.01.2028</td><td>3.952,96 €</td><td>2.371,78 €</td><td>+1,0 %</td></tr></tbody></table><div class="note">Die Fortschreibung erhöht hier nur das Tabellenentgelt. Individuelle/lokale Zulagen werden nicht automatisch dynamisiert, solange ihre eigene Regelung nicht belegt ist.</div></section>
+<section><h2>Schicht- und Wechselschichtzulagen ab 01.07.2026</h2><table class="table"><thead><tr><th></th><th>Vollzeit</th><th>60 %</th></tr></thead><tbody><tr><td>ständige Wechselschicht</td><td>250,00 €</td><td>150,00 €</td></tr><tr><td>ständige Schichtarbeit</td><td>100,00 €</td><td>60,00 €</td></tr></tbody></table><div class="note">Für nicht ständig geleistete Wechselschicht-/Schichtarbeit gelten Stundenbeträge statt Monatsbeträgen. Diese variable Logik wird in v34 bewusst separat gehalten.</div></section>
+<section><h2>Jahressonderzahlung</h2><div class="row"><span>TV-L-Satz für EG 5–8</span><span class="v">88,14 %</span></div><div class="row"><span>2025 tatsächlich ausgewiesene Sonderzahlung</span><span class="v">3.635,06 € brutto</span></div><div class="note">Die tatsächliche Sonderzahlung hängt von der tariflichen Bemessungsgrundlage und dem relevanten Durchschnittszeitraum ab. Die 2025-Zahlung bleibt deshalb Referenz und wird nicht als pauschaler Monatslohn verbucht.</div></section>
+<section><h2>Historische Plausibilitätsprüfung</h2><div class="row"><span>2025 Bruttoarbeitslohn laut Lohnsteuerbescheinigung</span><span class="v">51.137,55 €</span></div><div class="row"><span>2025 einbehaltene Lohnsteuer</span><span class="v">7.452,79 €</span></div><div class="row"><span>Aktuelles reguläres Netto 06–08/2026</span><span class="v good">1.933,37 €</span></div><div class="note">Die drei vorliegenden Abrechnungen 06/2026, 07/2026 und 08/2026 weisen dieselbe reguläre laufende Bruttozusammensetzung und dasselbe gesetzliche Netto aus; Rückrechnungen und variable Zuschläge werden separat behandelt.</div></section>
+</div>
+
+<section><div class="footer-actions"><button class="secondary" id="resetApp">Eingaben zurücksetzen</button><button class="secondary" id="exportData">Daten exportieren</button></div><p class="note">Alle Eingaben bleiben ausschließlich lokal im Browser. Es werden keine Kontodaten online übertragen.</p></section>
+</main>
+<script src="app.js"></script>
+</body></html>
