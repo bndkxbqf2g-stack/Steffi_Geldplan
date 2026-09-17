@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Finanzplaner v34</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="container">
+<header><h1>Finanz- & Urlaubsplanung</h1><p>Version 34 – Grundgerüst</p></header>
+<section class="card"><h2>Arbeitsverhältnis</h2>
+<label>Entgeltgruppe</label><input id="gruppe">
+<label>Stufe</label><input id="stufe" type="number">
+<label>Wochenarbeitszeit</label><input id="stunden" type="number" step="0.1">
+<small>Arbeitgeber: Freistaat Bayern (TV-L Bayern)</small></section>
+<section class="card"><h2>Monatliches Einkommen</h2>
+<label>Nettoeinkommen</label><input id="netto" type="number">
+<h3>Sparziele</h3>
+<label>Urlaub</label><input id="urlaub" type="number">
+<label>Auto</label><input id="auto" type="number">
+<label>Sonstige Rücklagen</label><input id="sonstiges" type="number"></section>
+<section class="card"><h2>Fixkosten</h2><div id="kostenListe"></div>
+<div class="row"><input id="nameNeu" placeholder="Bezeichnung"><input id="betragNeu" type="number" placeholder="€"><button onclick="addExpense()">+</button></div></section>
+<section class="card"><h2>Monatsübersicht</h2><div class="summary">
+<div><span>Einkommen</span><strong id="sumIncome">0 €</strong></div>
+<div><span>Fixkosten</span><strong id="sumExpenses">0 €</strong></div>
+<div><span>Sparen</span><strong id="sumSaving">0 €</strong></div>
+<div><span>Verfügbar</span><strong id="sumLeft">0 €</strong></div>
+</div></section></div><script src="app.js"></script></body></html>
