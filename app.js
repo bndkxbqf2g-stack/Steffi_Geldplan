@@ -187,23 +187,29 @@ function sunday(){
 // schätzen nur die variablen Zeitbezüge. Das ist stabiler als ein grober
 // Brutto->Netto-Faktor.
 var PAYROLL_CALIBRATION={
-  // 2026 vor der Entgelt-/Zulagenänderung ab 01.04.2026
-  preApr2026:{gross:4360.85,legalNet:2767.80},
-  // Regelabrechnungen ab 04/2026 zeigen durchgehend diese Basis
-  fromApr2026:{gross:2743.15,legalNet:1933.37},
-  // Aus den Rückrechnungs-Perioden 2026 ergibt sich für steuer-/SV-pflichtige
-  // variable Bezüge ein sehr stabiler Auszahlungsfaktor um 48,2 %.
+  // Dokumentierte laufende Abrechnung Juni bis August 2026:
+  // KR 8 / Stufe 3 bei 60 % + Pflegezulage + Vorweggewährung + Universitätszulage + Praxisanleiterzulage.
+  documentedCurrent:{gross:2743.15,legalNet:1933.37},
+  // Ab 01.10.2026: tarifliche Stufe 4, Vorweggewährung +2 => effektive Berechnungsstufe 6.
+  // Tabellenentgelt KR 8 / Stufe 6: 4.468,47 € Vollzeit -> 2.681,08 € bei 60 %.
+  // Feste Zulagen aus den vorliegenden Abrechnungen: Pflege 54,00 € + Uni 98,11 € + Praxisanleitung 54,89 €.
+  fromOct2026:{gross:2888.08},
+  // Historisch kalibrierter Nettanteil für variable steuer-/SV-pflichtige Bestandteile.
   taxableExtraNetRate:0.482,
-  // Durchschnitt-VM §21 wird in den jüngsten Abrechnungen mit 1,44 €/Einheit
-  // ausgewiesen (z. B. 7 × 1,44 € = 10,08 €).
   average21Rate:7.63,
   nightSurchargeRate:4.58,
   sundaySurchargeRate:5.73,
   saturdayRate:0.64
 };
+function estimatedRegularNetFromGross(gross){
+  if(!(gross>0))return 0;
+  return gross*(PAYROLL_CALIBRATION.documentedCurrent.legalNet/PAYROLL_CALIBRATION.documentedCurrent.gross);
+}
 function payrollBaseForReport(rep){
-  var y=Number(rep.year)||0,m=Number(rep.month)||0;
-  return (y>2026 || (y===2026&&m>=3))?PAYROLL_CALIBRATION.fromApr2026:PAYROLL_CALIBRATION.preApr2026;
+  var pm=payoutMonthFor(Number(rep.year)||0,Number(rep.month)||0);
+  var idx=pm.year*12+pm.month, oct2026=2026*12+9;
+  if(idx>=oct2026)return {gross:PAYROLL_CALIBRATION.fromOct2026.gross,legalNet:estimatedRegularNetFromGross(PAYROLL_CALIBRATION.fromOct2026.gross),historical:false};
+  return {gross:PAYROLL_CALIBRATION.documentedCurrent.gross,legalNet:PAYROLL_CALIBRATION.documentedCurrent.legalNet,historical:true};
 }
 
 
@@ -285,7 +291,7 @@ function estimateNetFromGross(gross){
  return gross*(refNet/refGross);
 }
 function reportVariableExtras(rep,a,p){
- var shiftAllowance=a.wech?150:(a.schi?60:0);
+ var shiftAllowance=a.wech?90:(a.schi?36:0);
  var avgUnits=rep.rows.filter(function(r){return r.code==='5161';}).reduce(function(s,r){return s+(Number(r.qty)||0);},0);
  var averagePay=avgUnits*PAYROLL_CALIBRATION.average21Rate;
  var taxableExtrasGross=shiftAllowance+p.saturdayPay+averagePay;

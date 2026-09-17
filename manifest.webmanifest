@@ -5,7 +5,7 @@
   "display": "standalone",
   "background_color": "#f5f5f7",
   "theme_color": "#111111",
-  "description": "Persönlicher Lohn-, Budget-, Pfändungs- und Sparrechner.",
+  "description": "Persönlicher Lohn-, Budget-, Sparrechner.",
   "icons": [
     {
       "src": "icon.svg",
