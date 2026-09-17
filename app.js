@@ -193,7 +193,7 @@ var PAYROLL_CALIBRATION={
   // Ab 01.10.2026: tarifliche Stufe 4, Vorweggewährung +2 => effektive Berechnungsstufe 6.
   // Tabellenentgelt KR 8 / Stufe 6: 4.468,47 € Vollzeit -> 2.681,08 € bei 60 %.
   // Feste Zulagen aus den vorliegenden Abrechnungen: Pflege 54,00 € + Uni 98,11 € + Praxisanleitung 54,89 €.
-  fromOct2026:{gross:2888.08},
+  fromOct2026:{gross:2888.08,legalNet:1991.00},
   // Historisch kalibrierter Nettanteil für variable steuer-/SV-pflichtige Bestandteile.
   taxableExtraNetRate:0.482,
   average21Rate:7.63,
@@ -208,7 +208,7 @@ function estimatedRegularNetFromGross(gross){
 function payrollBaseForReport(rep){
   var pm=payoutMonthFor(Number(rep.year)||0,Number(rep.month)||0);
   var idx=pm.year*12+pm.month, oct2026=2026*12+9;
-  if(idx>=oct2026)return {gross:PAYROLL_CALIBRATION.fromOct2026.gross,legalNet:estimatedRegularNetFromGross(PAYROLL_CALIBRATION.fromOct2026.gross),historical:false};
+  if(idx>=oct2026)return {gross:PAYROLL_CALIBRATION.fromOct2026.gross,legalNet:PAYROLL_CALIBRATION.fromOct2026.legalNet,historical:false};
   return {gross:PAYROLL_CALIBRATION.documentedCurrent.gross,legalNet:PAYROLL_CALIBRATION.documentedCurrent.legalNet,historical:true};
 }
 
