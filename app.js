@@ -290,12 +290,36 @@ function estimateNetFromGross(gross){
  if(gross<=0)return 0;
  return gross*(refNet/refGross);
 }
+function einspringHourlyRate(year,month){
+  // Für Einspringen gilt bis einschließlich September 2026 KR 8 / Stufe 5,
+  // ab Oktober 2026 effektiv KR 8 / Stufe 6.
+  var y=Number(year)||0,m=Number(month)||0;
+  var fullTimeMonthly=(y>2026||(y===2026&&m>=9))?4468.47:4226.92;
+  return fullTimeMonthly/(38.5*4.348);
+}
+function einspringFromRows(rep){
+  var matches=rep.rows.filter(function(r){
+    var text=(String(r.label||'')+' '+String(r.description||'')).toLowerCase();
+    return /einspring|eingesprungen/.test(text);
+  });
+  var hours=matches.reduce(function(s,r){return s+Math.max(0,Number(r.qty)||0);},0);
+  var count=matches.filter(function(r){return (Number(r.qty)||0)>0;}).length;
+  return {
+    count:count,
+    hours:hours,
+    hourlyRate:einspringHourlyRate(rep.year,rep.month),
+    premium:count*150,
+    hourlyPay:hours*einspringHourlyRate(rep.year,rep.month),
+    gross:count*150+hours*einspringHourlyRate(rep.year,rep.month)
+  };
+}
 function reportVariableExtras(rep,a,p){
  var shiftAllowance=a.wech?90:(a.schi?36:0);
  var avgUnits=rep.rows.filter(function(r){return r.code==='5161';}).reduce(function(s,r){return s+(Number(r.qty)||0);},0);
  var averagePay=avgUnits*PAYROLL_CALIBRATION.average21Rate;
- var taxableExtrasGross=shiftAllowance+p.saturdayPay+averagePay;
- return {shiftAllowance:shiftAllowance,averageUnits:avgUnits,averagePay:averagePay,taxableExtrasGross:taxableExtrasGross};
+ var eins=einspringFromRows(rep);
+ var taxableExtrasGross=shiftAllowance+p.saturdayPay+averagePay+eins.gross;
+ return {shiftAllowance:shiftAllowance,averageUnits:avgUnits,averagePay:averagePay,einspring:eins,taxableExtrasGross:taxableExtrasGross};
 }
 function calculateReportForecast(rep){
  var p=protectedSurchargeCalc(rep.rows),a=allowanceFromRows(rep.rows),base=payrollBaseForReport(rep),v=reportVariableExtras(rep,a,p);
@@ -310,7 +334,7 @@ function calculateReportForecast(rep){
   taxableExtrasGross:v.taxableExtrasGross,taxableExtraNet:taxableExtraNet,
   netBase:estimatedNet,protected:protected,
   payout:estimatedNet,shiftAllowance:v.shiftAllowance,
-  averageUnits:v.averageUnits,averagePay:v.averagePay,
+  averageUnits:v.averageUnits,averagePay:v.averagePay,einspring:v.einspring,
   allowanceType:a.wech?'Wechselschichtzulage §43':a.schi?'Schichtzulage §43':'keine aus Zeitlohnarten',p:p
  };
 }
@@ -325,7 +349,8 @@ function renderReportDetails(rep,forecast){
  if($('pVariableNet'))$('pVariableNet').textContent=eur(forecast.taxableExtraNet);
    if($('pPayout'))$('pPayout').textContent=eur(forecast.payout);
  if($('pShiftAllowance'))$('pShiftAllowance').textContent=forecast.shiftAllowance?eur(forecast.shiftAllowance)+' · '+forecast.allowanceType:forecast.allowanceType;
- if($('pSurcharges'))$('pSurcharges').textContent=eur(forecast.protected+forecast.p.saturdayPay+forecast.averagePay);
+ if($('pSurcharges'))$('pSurcharges').textContent=eur(forecast.protected+forecast.p.saturdayPay+forecast.averagePay+forecast.einspring.gross);
+ if($('pEinspring'))$('pEinspring').textContent=forecast.einspring.count?forecast.einspring.count+' Dienst(e) · '+forecast.einspring.hours.toFixed(2)+' h · '+eur(forecast.einspring.gross)+' brutto': 'kein Einspringen erkannt';
  if($('pShiftSummary'))$('pShiftSummary').textContent=forecast.p.nightHours.toFixed(2)+' h Nacht · '+forecast.p.sunHours.toFixed(2)+' h Sonntag · '+forecast.p.saturdayHours.toFixed(2)+' h Samstag · Ø §21 '+forecast.averageUnits.toFixed(2)+' · geschützte Zuschläge '+eur(forecast.protected);
 }
 function renderForecastTable(){
