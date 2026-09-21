@@ -107,10 +107,10 @@ function updateBudget(){
  if($('mainAvailable'))$('mainAvailable').textContent=eur(available);
  if($('mainNextPay'))$('mainNextPay').textContent=fmt(nextPay)+' 20:30';
  if($('mainDays'))$('mainDays').textContent=daysW;
- var day=payDays>0?available/payDays:0,week=day*7;
+ var day=payDays>0?giro/payDays:0,week=day*Math.min(7,payDays);
  if($('mainDay'))$('mainDay').textContent=eur(day);
  if($('mainWeek'))$('mainWeek').textContent=eur(week);
- if($('budgetNote'))$('budgetNote').textContent='Die Budgettage zeigen den Zeitraum bis zur nächsten Abhebung. Tagessatz und Wochensatz berechnen sich aus Giro + vorhandenem Bargeld, geteilt durch die verbleibenden Tage bis zum nächsten Lohn. Du bestimmst die tatsächliche Abhebung selbst.';
+ if($('budgetNote'))$('budgetNote').textContent='Die Budgettage zeigen den Zeitraum bis zur nächsten Abhebung. Tagessatz und Wochensatz berechnen sich ausschließlich aus dem Girokontostand, geteilt durch die verbleibenden Tage bis zum nächsten Lohn. Bereits abgehobenes Bargeld verändert diese Berechnung nicht. Du bestimmst die tatsächliche Abhebung selbst.';
  renderFixItems();
 }
 function renderTx(){
@@ -143,9 +143,9 @@ function renderMonthlyChart(){
  box.innerHTML=arr.map(function(x){var y=Number(x.key.slice(0,4)),m=Number(x.key.slice(5))-1,d=x.data,h=Math.max(5,Math.round((Math.max(d.income,d.expenses+d.fixed)/max)*125));return '<div class="bar-wrap"><div class="bar-value">'+eur(d.net)+'</div><div class="bar" title="Einnahmen '+eur(d.income)+' · Ausgaben '+eur(d.expenses+d.fixed)+'" style="height:'+h+'px"></div><div class="bar-label">'+monthName(m).slice(0,3)+' '+String(y).slice(2)+'</div></div>';}).join('');
 }
 function renderOverview(){
- var giro=currentGiro(),cash=cashBalance(),available=giro+cash,payDays=remainingPayDays(),day=payDays>0?available/payDays:0,next=nextWithdrawalDate(),cycle=activeCycleKey();
+ var giro=currentGiro(),cash=cashBalance(),available=giro+cash,payDays=remainingPayDays(),day=payDays>0?giro/payDays:0,week=day*Math.min(7,payDays),next=nextWithdrawalDate(),cycle=activeCycleKey();
  var cycleExp=txs().filter(function(t){return t.type==='expense'&&t.cycle===cycle;}).reduce(function(s,t){return s+Math.abs(Number(t.amount)||0);},0);
- if($("ovAvailable"))$("ovAvailable").textContent=eur(available);if($("ovGiro"))$("ovGiro").textContent=eur(giro);if($("ovCash"))$("ovCash").textContent=eur(cash);if($("ovNextPay"))$("ovNextPay").textContent='Nächster Lohn: '+fmt(currentCyclePayDate());if($("ovPayDays"))$("ovPayDays").textContent=payDays+' Tage';if($("ovDay"))$("ovDay").textContent=eur(day);if($("ovWeek"))$("ovWeek").textContent=eur(day*7);if($("ovNextWithdraw"))$("ovNextWithdraw").textContent=fmt(next);if($("ovFix"))$("ovFix").textContent=eur(fixTotal());if($("ovCycleExpenses"))$("ovCycleExpenses").textContent=eur(cycleExp);if($("ovCashKpi"))$("ovCashKpi").textContent=eur(cash);if($("ovSalaryCount"))$("ovSalaryCount").textContent=txs().filter(function(t){return t.type==='salary';}).length;
+ if($("ovAvailable"))$("ovAvailable").textContent=eur(available);if($("ovGiro"))$("ovGiro").textContent=eur(giro);if($("ovCash"))$("ovCash").textContent=eur(cash);if($("ovNextPay"))$("ovNextPay").textContent='Nächster Lohn: '+fmt(currentCyclePayDate());if($("ovPayDays"))$("ovPayDays").textContent=payDays+' Tage';if($("ovDay"))$("ovDay").textContent=eur(day);if($("ovWeek"))$("ovWeek").textContent=eur(week);if($("ovNextWithdraw"))$("ovNextWithdraw").textContent=fmt(next);if($("ovFix"))$("ovFix").textContent=eur(fixTotal());if($("ovCycleExpenses"))$("ovCycleExpenses").textContent=eur(cycleExp);if($("ovCashKpi"))$("ovCashKpi").textContent=eur(cash);if($("ovSalaryCount"))$("ovSalaryCount").textContent=txs().filter(function(t){return t.type==='salary';}).length;
  var s=latestSalary(),pct=0;if(s){var sd=new Date((s.date||dateKey(new Date()))+'T12:00:00'),pd=currentCyclePayDate(),total=Math.max(1,daysBetweenDates(sd,pd)),elapsed=Math.max(0,Math.min(total,daysBetweenDates(sd,new Date())));pct=(elapsed/total)*100;}if($("ovProgress"))$("ovProgress").style.width=pct.toFixed(1)+'%';if($("ovProgressText"))$("ovProgressText").textContent=Math.round(pct)+' % vergangen';
 }
 function openTab(name){document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('active',x.dataset.tab===name);});document.querySelectorAll('.view').forEach(function(v){v.classList.add('hidden');});var t=$(name);if(t)t.classList.remove('hidden');if(name==='verlauf'){renderTx();renderMonthlyCompare();renderMonthlyChart();}if(name==='prognose'){renderForecastTable();renderPayslipComparison();}}
@@ -169,7 +169,7 @@ function addExpense(){var v=num("giroExpense");if(v<=0){alert("Bitte einen posit
 function withdraw(){var v=num("sWithdrawAmount"),g=currentGiro();if(v<=0){alert("Bitte einen Abhebebetrag eingeben.");return;}if(v>g){alert("Der Abhebebetrag ist höher als dein Girokontostand.");return;}bookTransaction(-v,"Bargeldabhebung","withdrawal",{cycle:activeCycleKey()});saveCash(cashBalance()+v);$("sWithdrawAmount").value="";refresh();}
 function sunday(){
  var konto=currentGiro(),cash=cashBalance(),available=konto+cash,pay=remainingPayDays();
- var day=pay>0?available/pay:0;
+ var day=pay>0?konto/pay:0;
  var suggested=pay>0?day*Math.min(7,pay):0;
  var next=nextWithdrawalDate();
  if($('bCarryCash')&&document.activeElement!==$('bCarryCash'))$('bCarryCash').value=cash>0?cash.toFixed(2):'';
@@ -180,7 +180,7 @@ function sunday(){
  if($('sAfter'))$('sAfter').textContent=eur(konto-num('sWithdrawAmount'));
  if($('nextWithdrawalDate'))$('nextWithdrawalDate').textContent=next?fmt(next):'–';
  if($('withdrawalDays'))$('withdrawalDays').textContent=daysUntilNextWithdrawal();
- if($('withdrawalHint'))$('withdrawalHint').textContent='Der rechnerische 7-Tage-Betrag ist nur eine Orientierung. Du entscheidest selbst, wie viel du abhebst.';
+ if($('withdrawalHint'))$('withdrawalHint').textContent='Der Vorschlag basiert ausschließlich auf dem Girokonto (ohne bereits vorhandenes Bargeld) und ist nur eine Orientierung. Du entscheidest selbst, wie viel du abhebst.';
 }
 // Historisch aus den hochgeladenen Bezügemitteilungen kalibriert.
 // Wir verwenden das tatsächlich ausgewiesene Regel-Netto als Basis und

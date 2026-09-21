@@ -109,7 +109,7 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 <div class="row"><span>Bis nächste Abhebung</span><span class="v" id="mainDays">–</span></div>
 <div class="row"><span><b>Tagessatz</b></span><span class="v big good" id="mainDay">–</span></div>
 <div class="row"><span><b>Wochensatz</b></span><span class="v big good" id="mainWeek">–</span></div>
-<div class="note" id="budgetNote">Tagessatz und Wochensatz beziehen Giro + vorhandenes Bargeld ein und teilen das verfügbare Geld durch die verbleibenden Tage bis zum nächsten Lohn.</div>
+<div class="note" id="budgetNote">Tagessatz und Wochensatz berechnen sich ausschließlich aus dem Girokontostand, geteilt durch die verbleibenden Tage bis zum nächsten Lohn. Bereits abgehobenes Bargeld verändert diese Berechnung nicht.</div>
 </section>
 
 <section>
@@ -180,6 +180,6 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 <p class="note" style="text-align:center;margin:22px 8px 0">Alle Berechnungen laufen lokal im Browser. Die App speichert keine Kontodaten online.</p>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="app.js?v=35"></script>
+<script src="app.js?v=36"></script>
 
 </body></html>
