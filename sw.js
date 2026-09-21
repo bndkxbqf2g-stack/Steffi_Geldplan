@@ -1,3 +1,5 @@
+self.SW_VERSION = 'v37';
+
 self.addEventListener('install',function(){
  self.skipWaiting();
 });

@@ -1,4 +1,4 @@
-# Mein Geldplan v36 – personalisiert
+# Mein Geldplan v37 – personalisiert
 
 Persönlicher Geldplan für die Uniklinik Würzburg mit Budget, Gehaltsprognose, PDF-Zeitnachweisen, Abrechnungsvergleich und lokaler Datensicherung.
 
