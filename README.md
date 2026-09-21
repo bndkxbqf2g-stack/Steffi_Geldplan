@@ -1,6 +1,9 @@
-# Mein Geldplan v34 – personalisiert
+# Mein Geldplan v36 – personalisiert
 
-Originale V34 mit den in diesem Chat bestätigten persönlichen Daten und korrigierter Tarif-/Zuschlagslogik.
+Persönlicher Geldplan für die Uniklinik Würzburg mit Budget, Gehaltsprognose, PDF-Zeitnachweisen, Abrechnungsvergleich und lokaler Datensicherung.
 
+Profil: Steuerklasse I, keine Kirchensteuer, keine Kinder, AOK Bayern. Vertraglich KR 8 Stufe 4 ab Oktober 2026 mit zwei vorweggewährten Lohnstufen, daher Berechnung auf Basis KR 8 Stufe 6.
 
 Einspringen: je erkanntem eingesprungenen Dienst 150 € Prämie plus Stundenentgelt; Stundenentgelt bis 09/2026 nach KR 8 Stufe 5, ab 10/2026 nach KR 8 Stufe 6.
+
+Die Gehaltswerte sind Prognosen aus dokumentierten Abrechnungen und Zeitnachweisen. Pfändungs- und Privatinsolvenzberechnungen sind nicht Bestandteil der App.
