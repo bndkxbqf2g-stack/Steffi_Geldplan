@@ -187,13 +187,16 @@ function sunday(){
 // schätzen nur die variablen Zeitbezüge. Das ist stabiler als ein grober
 // Brutto->Netto-Faktor.
 var PAYROLL_CALIBRATION={
+  employmentRate:0.60,
+  effectiveFullTimeSalary:4468.47,
+  fixedAllowancesFromOct:207.00,
   // Dokumentierte laufende Abrechnung Juni bis August 2026:
   // KR 8 / Stufe 3 bei 60 % + Pflegezulage + Vorweggewährung + Universitätszulage + Praxisanleiterzulage.
   documentedCurrent:{gross:2743.15,legalNet:1933.37},
   // Ab 01.10.2026: tarifliche Stufe 4, Vorweggewährung +2 => effektive Berechnungsstufe 6.
   // Tabellenentgelt KR 8 / Stufe 6: 4.468,47 € Vollzeit -> 2.681,08 € bei 60 %.
   // Feste Zulagen aus den vorliegenden Abrechnungen: Pflege 54,00 € + Uni 98,11 € + Praxisanleitung 54,89 €.
-  fromOct2026:{gross:2888.08,legalNet:1991.00},
+  fromOct2026:{gross:0,legalNet:1991.00},
   // Historisch kalibrierter Nettanteil für variable steuer-/SV-pflichtige Bestandteile.
   taxableExtraNetRate:0.482,
   average21Rate:7.63,
@@ -201,6 +204,7 @@ var PAYROLL_CALIBRATION={
   sundaySurchargeRate:5.73,
   saturdayRate:0.64
 };
+PAYROLL_CALIBRATION.fromOct2026.gross=Math.round((PAYROLL_CALIBRATION.effectiveFullTimeSalary*PAYROLL_CALIBRATION.employmentRate+PAYROLL_CALIBRATION.fixedAllowancesFromOct)*100)/100;
 var PAYROLL_PROFILE={
   employer:'Uniklinik Würzburg',
   tariff:'KR 8',
