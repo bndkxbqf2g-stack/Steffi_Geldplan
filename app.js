@@ -58,7 +58,7 @@ function currentCycleDaysLeft(){
 }
 function weeklyGiroBudget(){
  var giro=currentGiro();
- var daysLeft=currentCycleDaysLeft();
+ var daysLeft=remainingPayDays();
  var cycleDays=Math.min(7,daysLeft);
  var daily=daysLeft>0?giro/daysLeft:0;
  return {day:daily,week:daysLeft>0?daily*cycleDays:0,cycleDays:cycleDays};
@@ -120,7 +120,7 @@ function updateBudget(){
  if($('mainDays'))$('mainDays').textContent=daysW;
  if($('mainDay'))$('mainDay').textContent=eur(cycleBudget.day);
  if($('mainWeek'))$('mainWeek').textContent=eur(cycleBudget.week);
- if($('budgetNote'))$('budgetNote').textContent='Tagessatz und Wochensatz basieren nur auf dem aktuellen Girokontostand und gelten für den nächsten 7-Tage-Zyklus bis zum nächsten Sonntag. Zusatzausgaben und Bargeldabhebungen werden separat gebucht und verringern das Girokonto jeweils nur dann, wenn sie erfasst werden.';
+ if($('budgetNote'))$('budgetNote').textContent='Der Tagessatz berechnet sich aus dem aktuellen Girokontostand geteilt durch die verbleibenden Tage bis zum nächsten Lohn. Der Wochensatz ist der Tagessatz mal 7; am Sonntag wird er mit dem dann aktuellen Giroguthaben neu berechnet. Zusatzausgaben und Bargeldabhebungen verringern das Girokonto, sobald sie erfasst werden.';
  renderFixItems();
 }
 function savingsEntries(){
@@ -207,7 +207,7 @@ function sunday(){
  if($('sAfter'))$('sAfter').textContent=eur(konto-num('sWithdrawAmount'));
  if($('nextWithdrawalDate'))$('nextWithdrawalDate').textContent=next?fmt(next):'–';
  if($('withdrawalDays'))$('withdrawalDays').textContent=daysUntilNextWithdrawal();
- if($('withdrawalHint'))$('withdrawalHint').textContent='Der 7-Tage-Zyklus gilt für das aktuelle Giroguthaben und wird bis zum nächsten Sonntag geführt. Bargeld und Sparen bleiben separat sichtbar und beeinflussen das Girokonto nur über eine Buchung.';
+ if($('withdrawalHint'))$('withdrawalHint').textContent='Der 7-Tage-Betrag wird aus dem aktuellen Giroguthaben und den verbleibenden Tagen bis zum nächsten Lohn berechnet. Am Sonntag kannst du den Betrag neu abheben. Bargeldverbrauch beeinflusst das Girokonto nicht; Abhebungen und Sparbuchungen schon.';
 }
 // Historisch aus den hochgeladenen Bezügemitteilungen kalibriert.
 // Wir verwenden das tatsächlich ausgewiesene Regel-Netto als Basis und
