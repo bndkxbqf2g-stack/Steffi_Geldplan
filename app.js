@@ -58,7 +58,10 @@ function currentCycleDaysLeft(){
 }
 function weeklyGiroBudget(){
  var giro=currentGiro();
- return {day:giro/7,week:giro,cycleDays:7};
+ var daysLeft=currentCycleDaysLeft();
+ var cycleDays=Math.min(7,daysLeft);
+ var daily=daysLeft>0?giro/daysLeft:0;
+ return {day:daily,week:daysLeft>0?daily*cycleDays:0,cycleDays:cycleDays};
 }
 function daysToFollowingSundayFrom(d){
  var dow=d.getDay(),delta=(7-dow)%7;

@@ -7,13 +7,15 @@ function nextSundayDate(fromDate) {
   return target;
 }
 
-function calculateCycleBudget(giroBalance) {
+function calculateCycleBudget(giroBalance, daysRemaining) {
   const giro = Number(giroBalance) || 0;
-  const cycleDays = 7;
+  const remaining = Math.max(1, Number(daysRemaining) || 1);
+  const cycleDays = Math.min(7, remaining);
+  const day = remaining > 0 ? giro / remaining : 0;
   return {
     cycleDays,
-    day: giro / cycleDays,
-    week: giro,
+    day,
+    week: remaining > 0 ? day * cycleDays : 0,
     cycleLabel: '7 Tage'
   };
 }

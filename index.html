@@ -106,10 +106,10 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 <div class="row"><span>Bargeld</span><span class="v" id="mainCash">–</span></div>
 <div class="row"><span><b>Insgesamt verfügbar</b></span><span class="v big good" id="mainAvailable">–</span></div>
 <div class="row"><span>Nächster Lohn</span><span class="v" id="mainNextPay">–</span></div>
-<div class="row"><span>Bis nächste Abhebung</span><span class="v" id="mainDays">–</span></div>
-<div class="row"><span><b>Tagessatz</b></span><span class="v big good" id="mainDay">–</span></div>
-<div class="row"><span><b>Wochensatz</b></span><span class="v big good" id="mainWeek">–</span></div>
-<div class="note" id="budgetNote">Tagessatz und Wochensatz beziehen Giro + vorhandenes Bargeld ein und teilen das verfügbare Geld durch die verbleibenden Tage bis zum nächsten Lohn.</div>
+<div class="row"><span>Bis zum nächsten Kassensturz</span><span class="v" id="mainDays">–</span></div>
+<div class="row"><span><b>Tagesbudget</b></span><span class="v big good" id="mainDay">–</span></div>
+<div class="row"><span><b>Wochenbudget</b></span><span class="v big good" id="mainWeek">–</span></div>
+<div class="note" id="budgetNote">Das Tagesbudget berechnet sich aus dem aktuellen Giroguthaben geteilt durch die verbleibenden Tage bis zum nächsten Kassensturz. Das Wochenbudget entspricht dem Tagesbudget mal 7 bzw. dem verbleibenden Zyklus, falls der letzte Abschnitt kürzer als 7 Tage ist.</div>
 </section>
 
 <section>
@@ -129,25 +129,25 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 <section><h2>Zusätzliche Ausgaben – laufender Lohnzyklus</h2><div id="cycleExpenseList"></div><div class="note">Mit dem nächsten Lohn beginnt automatisch eine neue Liste; historische Buchungen bleiben erhalten.</div></section>
 
 <section>
-<h2>Sonntag: Was abheben?</h2>
+<h2>Kassensturz am Sonntag</h2>
 <div class="kpi-grid">
 <div class="kpi"><div class="label">Girokonto</div><div class="value" id="sGiro">–</div></div>
 <div class="kpi"><div class="label">Bargeld</div><div class="value" id="sCash">–</div></div>
 <div class="kpi"><div class="label">Verfügbar</div><div class="value" id="sTotal">–</div></div>
-<div class="kpi"><div class="label">Orientierung 7 Tage</div><div class="value" id="sSuggested">–</div></div>
+<div class="kpi"><div class="label">7-Tage-Betrag</div><div class="value" id="sSuggested">–</div></div>
 </div>
-<div style="margin-top:12px"><label>Tatsächlich abheben (€)</label><input id="sWithdrawAmount" type="number" step="1" inputmode="decimal" placeholder="z. B. 110"></div>
+<div style="margin-top:12px"><label>Aktuell abheben (€)</label><input id="sWithdrawAmount" type="number" step="1" inputmode="decimal" placeholder="z. B. 110"></div>
 <button class="primary" style="margin-top:12px" id="withdrawBtn">Abheben & buchen</button>
 <div class="row"><span>Girokonto nach Abhebung</span><span class="v" id="sAfter">–</span></div>
-<div class="row"><span>Nächste Abhebung</span><span class="v" id="nextWithdrawalDate">–</span></div>
-<div class="row"><span>Tage bis nächste Abhebung</span><span class="v" id="withdrawalDays">–</span></div>
-<div class="note" id="withdrawalHint">Du entscheidest selbst, wie viel du abhebst.</div>
+<div class="row"><span>Nächster Kassensturz</span><span class="v" id="nextWithdrawalDate">–</span></div>
+<div class="row"><span>Tage bis zum nächsten Kassensturz</span><span class="v" id="withdrawalDays">–</span></div>
+<div class="note" id="withdrawalHint">Der 7-Tage-Betrag ist nur eine Orientierung. Du entscheidest selbst, wie viel Bargeld du für die nächsten Tage abhebst und wie viel du später wieder auffüllst.</div>
 </section>
 
 <section><h2>Lohn buchen</h2><div class="grid"><div><label>Nettolohn (€)</label><input id="salaryAmount" type="number" step=".01" placeholder="z. B. 2.900"></div><div><label>Beschreibung</label><input id="salaryText" type="text" placeholder="z. B. Lohn September"></div></div><button class="primary" style="margin-top:12px" id="salaryBtn">Lohn buchen & Fixkosten abziehen</button><div class="note">Nur der tatsächlich ausgezahlte Nettolohn verändert dein Budget. Die Prognose greift niemals automatisch ein.</div></section>
 
 <section>
-  <h2>Wöchentlich sparen</h2>
+  <h2>Wöchentliches Sparen</h2>
   <div class="grid">
     <div><label>Sparbetrag (€)</label><input id="weeklySaveAmount" type="number" step=".01" min="0" placeholder="z. B. 120"></div>
     <div><label>Beschreibung</label><input id="weeklySaveText" type="text" placeholder="z. B. Wochenrücklage"></div>
