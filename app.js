@@ -27,14 +27,12 @@ function currentCyclePayDate(){
  var s=latestSalary(), upcoming=upcomingPayDate();
  if(!s)return upcoming;
  var sd=new Date((s.date||dateKey(new Date()))+'T20:30:00');
- var next=nextLastBankDayAfter(sd);
- return new Date()<sd?sd:next;
+ return nextLastBankDayAfter(sd);
 }
 function nextPayDateForCycle(){
  var s=latestSalary();
  if(!s)return upcomingPayDate();
- var d=new Date((s.date||dateKey(new Date()))+'T20:30:00');
- return nextLastBankDayAfter(d);
+ return nextLastBankDayAfter(new Date((s.date||dateKey(new Date()))+'T20:30:00'));
 }
 function daysBetweenDates(from,to){var a=new Date(from.getFullYear(),from.getMonth(),from.getDate()),b=new Date(to.getFullYear(),to.getMonth(),to.getDate());return Math.max(0,Math.round((b-a)/86400000));}
 function remainingPayDays(){
