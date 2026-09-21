@@ -372,7 +372,12 @@ function checkForUpdate(){
   return reg.update();
  }).then(function(){
   if(status)status.textContent='Aktualisierung geprüft. App wird neu geladen …';
-  setTimeout(function(){location.reload();},300);
+  if(navigator.serviceWorker.controller){
+   setTimeout(function(){if(!window.__appReloadedForUpdate){window.__appReloadedForUpdate=true;location.reload();}},300);
+  }else{
+   if(button)button.classList.remove('spinning');
+   if(status)status.textContent='Die App ist aktuell.';
+  }
  }).catch(function(){
   if(status)status.textContent='Aktualisierung konnte nicht geprüft werden. Bitte Internetverbindung prüfen.';
   if(button)button.classList.remove('spinning');
