@@ -13,6 +13,16 @@ assert.equal(Number(calculateCycleBudget(2500, 30).day.toFixed(2)), 83.33, '2.50
 assert.equal(Number(calculateCycleBudget(2500, 30).week.toFixed(2)), 583.33, 'Der erste Wochensatz beträgt 583,33 Euro.');
 assert.equal(Number(calculateCycleBudget(1886.67, 23).day.toFixed(2)), 82.03, '1.886,67 Euro auf 23 Tage ergeben 82,03 Euro Tagessatz.');
 assert.equal(Number(calculateCycleBudget(1886.67, 23).week.toFixed(2)), 574.2, 'Der neu berechnete Wochensatz beträgt 574,20 Euro.');
+assert.equal(Number(calculateCycleBudget(71.31, 9, 6).day.toFixed(2)), 23.77, 'Vor der nächsten Abhebung wird auf das Fenster Abhebung→Lohn gerechnet.');
+assert.equal(Number(calculateCycleBudget(71.31, 9, 6).week.toFixed(2)), 71.31, 'Bei 3 Basistagen entspricht der Wochensatz dem gesamten Giroguthaben.');
+assert.equal(calculateCycleBudget(71.31, 9, 6).baseDays, 3, 'Die Basis sind 3 Tage (27., 28., 29.).');
+assert.equal(calculateCycleBudget(71.31, 9, 6).usesWithdrawalWindow, true, 'Bei Abhebung vor Lohn muss das Abhebungsfenster verwendet werden.');
+assert.equal(calculateCycleBudget(1610, 23, 4).baseDays, 19, 'Bei 23 Resttagen und 4 Tagen bis Abhebung wird auf 19 Basistage gerechnet.');
+assert.equal(Number(calculateCycleBudget(1610, 23, 4).day.toFixed(2)), 84.74, 'Tagessatz nach Abhebungsfenster-Basis.');
+assert.equal(Number(calculateCycleBudget(1610, 23, 4).week.toFixed(2)), 593.16, 'Wochensatz bleibt auf max. 7 Tage begrenzt.');
+assert.equal(calculateCycleBudget(210, 5, 7).baseDays, 5, 'Liegt die Abhebung nicht vor dem Lohn, gelten die Resttage ab heute.');
+assert.equal(calculateCycleBudget(210, 5, 7).usesWithdrawalWindow, false, 'Ohne Abhebung vor dem Lohntag darf kein Abhebungsfenster gelten.');
+assert.equal(calculateCycleBudget(210, 9, 9).baseDays, 9, 'Liegt Abhebung und Lohntag am selben Kalendertag, gilt der Fallback auf Resttage.');
 assert.equal(computeCashRefillTarget(50, 120), 70, 'Bargeld wird bis zum Ziel ergänzt.');
 assert.equal(computeCashRefillTarget(200, 120), 0, 'Wenn zu viel Bargeld da ist, bleibt das Ziel unverändert.');
 console.log('budget-logic tests passed');
