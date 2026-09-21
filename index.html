@@ -145,6 +145,17 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 </section>
 
 <section><h2>Lohn buchen</h2><div class="grid"><div><label>Nettolohn (€)</label><input id="salaryAmount" type="number" step=".01" placeholder="z. B. 2.900"></div><div><label>Beschreibung</label><input id="salaryText" type="text" placeholder="z. B. Lohn September"></div></div><button class="primary" style="margin-top:12px" id="salaryBtn">Lohn buchen & Fixkosten abziehen</button><div class="note">Nur der tatsächlich ausgezahlte Nettolohn verändert dein Budget. Die Prognose greift niemals automatisch ein.</div></section>
+
+<section>
+  <h2>Wöchentlich sparen</h2>
+  <div class="grid">
+    <div><label>Sparbetrag (€)</label><input id="weeklySaveAmount" type="number" step=".01" min="0" placeholder="z. B. 120"></div>
+    <div><label>Beschreibung</label><input id="weeklySaveText" type="text" placeholder="z. B. Wochenrücklage"></div>
+  </div>
+  <button class="primary secondary" style="margin-top:12px" id="saveBtn">Wöchentlich sparen</button>
+  <div class="row" style="margin-top:12px"><span><b>Gesamt gespart</b></span><span class="v big good" id="savingsTotal">–</span></div>
+  <div id="savingsList"></div>
+</section>
 </div>
 
 <!-- VERLAUF -->

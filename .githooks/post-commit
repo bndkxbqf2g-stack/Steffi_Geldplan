@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+if [ -z "$branch" ] || [ "$branch" != "main" ]; then
+  exit 0
+fi
+
+if git remote get-url origin >/dev/null 2>&1; then
+  if [ "${DRY_RUN:-0}" = "1" ]; then
+    echo "[hook] Dry run: would push HEAD to origin/main on branch '$branch'"
+    exit 0
+  fi
+
+  echo "[hook] Pushing main to origin/main..."
+  git push origin HEAD:main
+else
+  echo "[hook] No origin remote configured; skipping automatic push."
+fi
