@@ -358,6 +358,27 @@ function renderForecastTable(){
  box.innerHTML=arr.map(function(rep){var f=calculateReportForecast(rep);return '<div class="forecast-card"><div class="forecast-head"><span><b>'+esc(formatMonth(rep.year,rep.month))+'</b><br><span class="note">Auszahlung: '+esc(formatMonth(f.payoutYear,f.payoutMonth))+'</span></span><span class="badge '+(f.shiftAllowance?'green':'neutral')+'">'+esc(f.allowanceType)+'</span></div><div class="mini-grid"><div class="mini"><div class="t">Netto</div><div class="n">'+eur(f.netBase)+'</div></div><div class="mini"><div class="t">Auszahlung</div><div class="n good">'+eur(f.payout)+'</div></div></div></div>';}).join('');renderForecastChart(arr);
 }
 function renderForecastChart(arr){var box=$("forecastChart");if(!box)return;if(!arr.length){box.innerHTML='<div class="empty">Noch keine Prognosen.</div>';return;}var vals=arr.map(function(r){return calculateReportForecast(r).payout;}),max=Math.max.apply(null,vals.concat([1]));box.innerHTML=arr.map(function(rep){var f=calculateReportForecast(rep),h=Math.max(5,Math.round((f.payout/max)*125));return '<div class="bar-wrap"><div class="bar-value">'+eur(f.payout)+'</div><div class="bar" style="height:'+h+'px" title="'+esc(formatMonth(rep.year,rep.month))+' → '+esc(formatMonth(f.payoutYear,f.payoutMonth))+'"></div><div class="bar-label">'+monthName(rep.month).slice(0,3)+'</div></div>';}).join('');}
+function checkForUpdate(){
+ var button=$('updateBtn'),status=$('updateStatus');
+ if(button)button.classList.add('spinning');
+ if(status){status.textContent='Suche nach Aktualisierung …';status.style.display='block';}
+ if(!('serviceWorker' in navigator)){
+  if(status)status.textContent='Diese lokale Vorschau kann nicht online aktualisiert werden.';
+  if(button)button.classList.remove('spinning');
+  return;
+ }
+ var timeout=new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},5000);});
+ Promise.race([navigator.serviceWorker.getRegistration('./').then(function(reg){return reg||navigator.serviceWorker.register('./sw.js');}),timeout]).then(function(reg){
+  return reg.update();
+ }).then(function(){
+  if(status)status.textContent='Aktualisierung geprüft. App wird neu geladen …';
+  setTimeout(function(){location.reload();},300);
+ }).catch(function(){
+  if(status)status.textContent='Aktualisierung konnte nicht geprüft werden. Bitte Internetverbindung prüfen.';
+  if(button)button.classList.remove('spinning');
+  setTimeout(function(){if(status)status.style.display='none';},3500);
+ });
+}
 function ensurePdfJs(){if(!window.pdfjsLib)throw new Error('PDF-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen.');window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';return window.pdfjsLib;}
 async function readPdfLines(file){var pdfjs=await ensurePdfJs(),buf=await file.arrayBuffer(),pdf=await pdfjs.getDocument({data:buf}).promise,lines=[];for(var p=1;p<=pdf.numPages;p++){var page=await pdf.getPage(p),tc=await page.getTextContent();lines=lines.concat(groupPdfText(tc.items));}return lines;}
 async function importTimeReports(){var files=$('timeReportFiles')&&$('timeReportFiles').files,status=$('timeReportStatus');if(!files||!files.length){alert('Bitte mindestens einen Zeitnachweis als PDF auswählen.');return;}status.textContent='Zeitnachweis wird ausgelesen …';$('timeReportBtn').disabled=true;var ok=0,errors=[];
@@ -373,12 +394,13 @@ function setDefaultMonth(){if($("pMonth")&&!$("pMonth").value){var d=new Date();
 function init(){
  ensureBase();reportStore=loadReports();setDefaultMonth();renderFixItems();
  if($('bCarryCash'))$('bCarryCash').value=cashBalance()>0?cashBalance().toFixed(2):'';
- if($('incomeBtn'))$('incomeBtn').onclick=addIncome;if($('expenseBtn'))$('expenseBtn').onclick=addExpense;if($('withdrawBtn'))$('withdrawBtn').onclick=withdraw;if($('salaryBtn'))$('salaryBtn').onclick=addSalary;if($('resetBtn'))$('resetBtn').onclick=resetApp;if($('timeReportBtn'))$('timeReportBtn').onclick=importTimeReports;if($('correctionBtn'))$('correctionBtn').onclick=correctGiro;if($('addFixBtn'))$('addFixBtn').onclick=addFixItem;if($('exportBtn'))$('exportBtn').onclick=exportData;if($('importBtn'))$('importBtn').onclick=importData;
+ if($('incomeBtn'))$('incomeBtn').onclick=addIncome;if($('expenseBtn'))$('expenseBtn').onclick=addExpense;if($('withdrawBtn'))$('withdrawBtn').onclick=withdraw;if($('salaryBtn'))$('salaryBtn').onclick=addSalary;if($('resetBtn'))$('resetBtn').onclick=resetApp;if($('timeReportBtn'))$('timeReportBtn').onclick=importTimeReports;if($('correctionBtn'))$('correctionBtn').onclick=correctGiro;if($('addFixBtn'))$('addFixBtn').onclick=addFixItem;if($('exportBtn'))$('exportBtn').onclick=exportData;if($('importBtn'))$('importBtn').onclick=importData;if($('updateBtn'))$('updateBtn').onclick=checkForUpdate;
  if($('openHistoryBtn'))$('openHistoryBtn').onclick=function(){openTab('verlauf');};
  document.querySelectorAll('input,select').forEach(function(el){if(el.classList.contains('fix-name')||el.classList.contains('fix-amount')||el.id==='importFile'||el.id==='timeReportFiles')return;el.addEventListener('input',function(){if(el.id==='bCarryCash')saveCash(num('bCarryCash'));refresh();});el.addEventListener('change',function(){if(el.id==='bCarryCash')saveCash(num('bCarryCash'));refresh();});});
  document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){openTab(b.dataset.tab);});});
  document.addEventListener('focusin',function(e){if(e.target.matches('input[type="number"]')&&Number(e.target.value)===0)e.target.value='';});
  openTab('uebersicht');refresh();setInterval(refresh,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)refresh();});
+ if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(function(){});navigator.serviceWorker.addEventListener('controllerchange',function(){if(!window.__appReloadedForUpdate){window.__appReloadedForUpdate=true;location.reload();}});}
 }
 
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
