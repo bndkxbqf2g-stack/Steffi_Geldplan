@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f7fb">
+<meta name="apple-mobile-web-app-title" content="Geldplan">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Mein Geldplan</title>
+<style>
+:root{
+ --bg:#f3f5f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+ --accent:#111827;--soft:#f8fafc;--green:#15803d;--orange:#b45309;--red:#b91c1c;--blue:#2563eb;
+ --shadow:0 10px 28px rgba(15,23,42,.06);--radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 85% -10%,#dbeafe 0,transparent 32%),linear-gradient(180deg,#f8fafc 0%,var(--bg) 300px);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:10;padding:12px 16px 11px;background:linear-gradient(120deg,#0f172a,#172554 68%,#1e3a8a);box-shadow:0 10px 24px rgba(15,23,42,.16)}
+.headline{display:flex;justify-content:space-between;gap:16px;align-items:center;max-width:860px;margin:auto}.brand{min-width:0}.eyebrow{color:#93c5fd;font-size:9px;font-weight:800;letter-spacing:1.5px;margin-bottom:2px}
+h1{margin:0;font-size:27px;letter-spacing:-.8px;color:#fff}.sub{margin-top:2px;color:#cbd5e1;font-size:12px;font-weight:500}
+.header-actions{display:flex;align-items:center;gap:8px}.privacy-badge{display:flex;align-items:center;gap:7px;white-space:nowrap;padding:8px 10px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.08);color:#e2e8f0;font-size:11px;font-weight:700}.status-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.14)}
+.update-button{border:1px solid rgba(255,255,255,.25);border-radius:12px;background:rgba(255,255,255,.12);color:#fff;width:34px;height:34px;font-size:18px;line-height:1;cursor:pointer;transition:transform .15s,background .15s}.update-button:hover{background:rgba(255,255,255,.2)}.update-button:active{transform:scale(.94)}.update-button.spinning{animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+nav{display:flex;gap:8px;overflow:auto;padding:10px 16px 9px;background:rgba(248,250,252,.88);backdrop-filter:blur(16px);position:sticky;top:84px;z-index:9;scrollbar-width:none}
+nav button{white-space:nowrap;border:1px solid #e2e8f0;background:rgba(255,255,255,.92);color:#334155;border-radius:999px;padding:9px 14px;font-weight:750;box-shadow:0 3px 10px rgba(15,23,42,.05);transition:transform .15s,background .15s,box-shadow .15s}nav button:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(15,23,42,.10)}
+nav button.active{background:linear-gradient(135deg,#1e3a8a,#0f172a);color:#fff;border-color:#1e3a8a;box-shadow:0 7px 16px rgba(30,58,138,.25)}
+main{max-width:860px;margin:auto;padding:10px 14px 48px}
+.view{animation:fade .18s ease}.hidden{display:none!important}@keyframes fade{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}
+section{background:var(--card);border:1px solid rgba(229,231,235,.9);border-radius:var(--radius);margin:13px 0;padding:17px;box-shadow:var(--shadow)}
+h2{font-size:18px;margin:0 0 13px;letter-spacing:-.2px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;font-weight:650}
+input,select{width:100%;padding:12px 13px;border:1px solid #d6dae1;border-radius:14px;font-size:17px;background:#fff;color:var(--text);outline:none;transition:.15s}
+input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39,.05)}
+.row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:11px 0;align-items:center}.row:last-child{border-bottom:0}.v{font-weight:750;text-align:right;white-space:nowrap}
+.big{font-size:29px}.good{color:var(--green)}.warn{color:var(--orange)}.red{color:var(--red)}
+.badge{display:inline-block;padding:6px 9px;background:#eef2ff;border-radius:999px;font-size:11px;font-weight:700;margin:2px 4px 2px 0}.badge.neutral{background:#f1f5f9;color:#475569}.badge.green{background:#ecfdf3;color:#166534}.badge.red{background:#fef2f2;color:#991b1b}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}.primary{width:100%;border:0;background:#111827;color:#fff;padding:14px;border-radius:14px;font-size:16px;font-weight:750;box-shadow:0 8px 18px rgba(17,24,39,.10)}
+.secondary{background:#f1f5f9;color:#111827;box-shadow:none}.danger{background:#b91c1c}.saving-card{margin-top:10px;padding:12px 13px;border:1px solid var(--line);border-radius:16px;background:#f8fafc}.saving-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.saving-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.saving-action{border:1px solid #d6dae1;background:#fff;color:#334155;border-radius:10px;padding:7px 9px;font-size:12px;font-weight:750;cursor:pointer}.saving-action.danger-lite{border-color:#fecaca;color:#b91c1c;background:#fff7f7}.saving-rates{margin-top:8px;border-top:1px solid var(--line)}.saving-rate{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;font-size:12px;color:var(--muted)}.danger{background:#b91c1c}.income-button{background:#15803d}.expense-button{background:#b91c1c}
+.hero{background:linear-gradient(145deg,#111827 0%,#243047 100%);color:#fff;border:0;box-shadow:0 18px 36px rgba(15,23,42,.18);overflow:hidden}.hero .wide{padding:16px}.hero .wide .big{font-size:38px;letter-spacing:-1px;margin:5px 0}
+.hero .hero-muted{color:rgba(255,255,255,.68)} .hero .big{color:#fff}.hero .subcard{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);border-radius:17px;padding:12px}
+.hero-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px}.metric-title{font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:650}.metric{font-size:22px;font-weight:800;letter-spacing:-.3px}.metric.small{font-size:17px}
+.progress{height:10px;background:#e9edf3;border-radius:999px;overflow:hidden}.progress>span{display:block;height:100%;background:#111827;border-radius:inherit;width:0;transition:width .25s ease}
+.chart{display:flex;gap:10px;align-items:flex-end;height:160px;padding:10px 4px 0}.bar-wrap{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;min-width:0}.bar{width:100%;background:linear-gradient(180deg,#111827,#64748b);border-radius:12px 12px 5px 5px;min-height:4px}.bar-label{font-size:10px;text-align:center;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-value{font-size:10px;text-align:center;font-weight:750}
+.fixkosten-section{border-top:4px solid #16a34a;padding-top:15px}.fixkosten-intro{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:16px;padding:12px 13px;color:#166534}.fixkosten-intro .note{margin-top:0;color:#4d7c5c}.fix-list{margin-top:14px}.fix-item{display:grid;grid-template-columns:1fr 120px 42px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.fix-item:last-child{border-bottom:0}.fix-item input{min-width:0}.fix-item button{border:1px solid #fecaca;background:#fff7f7;color:#b91c1c;border-radius:12px;font-size:22px;height:48px;cursor:pointer;transition:background .15s,transform .15s}.fix-item button:hover{background:#fee2e2}.fix-item button:active{transform:scale(.95)}.fix-total{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:16px;padding:14px 15px;background:#f8fafc;border:1px solid var(--line);border-radius:16px}.fix-total .label{font-size:12px;color:var(--muted);font-weight:700}.fix-total .value{font-size:24px;font-weight:850;color:#166534;white-space:nowrap}
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.kpi{background:var(--soft);border:1px solid var(--line);border-radius:17px;padding:13px}.kpi .label{font-size:11px;color:var(--muted)}.kpi .value{font-size:20px;font-weight:800;margin-top:3px}
+.forecast-card{background:var(--soft);border:1px solid var(--line);border-radius:17px;padding:13px;margin:8px 0}.forecast-head{display:flex;justify-content:space-between;gap:10px}.forecast-amount{font-size:22px;font-weight:850}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px}.mini .t{font-size:10px;color:var(--muted)}.mini .n{font-weight:800;margin-top:2px}
+.forecast-section{border-top:4px solid #0ea5e9}.forecast-section .kpi{background:#f0f9ff;border-color:#bae6fd}.forecast-section .good{color:#047857}
+.forecast-group{font-size:12px;font-weight:800;color:#0f766e;text-transform:uppercase;letter-spacing:.5px;margin:18px 0 4px}.forecast-group:first-of-type{margin-top:8px}
+.empty{padding:22px 10px;text-align:center;color:var(--muted)}
+@media(max-width:650px){header{padding:11px 14px 10px}.headline{align-items:center}.privacy-badge{padding:8px}.privacy-badge .privacy-text{display:none}.grid{grid-template-columns:1fr}.hero-grid{grid-template-columns:1fr 1fr}.hero-grid .wide{grid-column:1/-1}.kpi-grid{grid-template-columns:1fr 1fr}.mini-grid{grid-template-columns:1fr 1fr}.fix-item{grid-template-columns:1fr 105px 42px}}
+@media(max-width:430px){.hero-grid{grid-template-columns:1fr}.hero-grid .wide{grid-column:auto}.big{font-size:26px}.metric{font-size:21px}}
+
+/* v0.28.0 premium surface + dark mode */
+:root{color-scheme:light;--glass:rgba(255,255,255,.72);--glass-line:rgba(255,255,255,.75);--nav-bg:rgba(247,249,252,.82);--header-a:#0b1635;--header-b:#183a7a;--focus:rgba(37,99,235,.14)}
+html[data-theme="dark"]{color-scheme:dark;--bg:#090f1b;--card:#111a2a;--text:#f3f6fb;--muted:#9aa7ba;--line:#243149;--accent:#f8fafc;--soft:#0e1727;--green:#4ade80;--orange:#fbbf24;--red:#fb7185;--blue:#60a5fa;--shadow:0 14px 34px rgba(0,0,0,.28);--glass:rgba(17,26,42,.76);--glass-line:rgba(148,163,184,.14);--nav-bg:rgba(9,15,27,.82);--header-a:#07101f;--header-b:#142d63;--focus:rgba(96,165,250,.17)}
+body{background:radial-gradient(circle at 82% -8%,rgba(59,130,246,.16) 0,transparent 30%),linear-gradient(180deg,color-mix(in srgb,var(--bg) 70%,#fff 30%) 0%,var(--bg) 320px);transition:background .22s ease,color .22s ease}
+html[data-theme="dark"] body{background:radial-gradient(circle at 82% -8%,rgba(59,130,246,.16) 0,transparent 30%),linear-gradient(180deg,#0d1627 0%,var(--bg) 360px)}
+header{background:linear-gradient(125deg,var(--header-a),var(--header-b));padding-top:max(12px,env(safe-area-inset-top));box-shadow:0 12px 30px rgba(15,23,42,.18)}
+header,.update-button,.privacy-badge,nav,section,input,select,.saving-card,.saving-action,.kpi,.forecast-card,.mini,.fix-total,.fix-item button{transition:background .22s ease,border-color .22s ease,color .22s ease,box-shadow .22s ease}
+.headline{min-height:64px}.eyebrow{font-size:10px;letter-spacing:2.1px}.sub{font-size:13px}.header-actions{gap:7px}.update-button{width:42px;height:42px;border-radius:15px;font-size:21px;background:rgba(255,255,255,.11);backdrop-filter:blur(12px)}.theme-button{font-size:20px}
+nav{top:87px;background:var(--nav-bg);border-bottom:1px solid var(--glass-line);padding-top:11px;padding-bottom:11px;-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px)}
+nav button{background:var(--glass);border-color:var(--glass-line);color:var(--text);padding:10px 15px;box-shadow:0 4px 14px rgba(15,23,42,.05)}
+nav button.active{background:linear-gradient(135deg,#244aa5,#10214d);border-color:rgba(96,165,250,.34);box-shadow:0 8px 22px rgba(30,64,175,.24)}
+main{padding-top:14px}section{background:var(--glass);border-color:var(--glass-line);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--shadow)}
+.hero{background:linear-gradient(145deg,#0b1324 0%,#1c2a44 62%,#263c69 100%);box-shadow:0 22px 48px rgba(15,23,42,.24);border:1px solid rgba(255,255,255,.08)}
+.hero .subcard{background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.12)}
+input,select{background:var(--card);border-color:var(--line);color:var(--text)}input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--focus)}
+.primary{background:linear-gradient(135deg,#172554,#0f172a);box-shadow:0 9px 22px rgba(15,23,42,.14)}.secondary{background:var(--soft);color:var(--text);border:1px solid var(--line)}.income-button{background:linear-gradient(135deg,#15803d,#166534)}.expense-button,.danger{background:linear-gradient(135deg,#be123c,#991b1b)}
+.saving-card,.kpi,.forecast-card,.fix-total{background:var(--soft);border-color:var(--line)}.saving-action,.mini{background:var(--card);border-color:var(--line);color:var(--text)}
+.badge{background:color-mix(in srgb,var(--blue) 12%,var(--card));color:var(--text)}.badge.neutral{background:var(--soft);color:var(--muted)}
+.progress{background:color-mix(in srgb,var(--line) 78%,transparent)}.progress>span{background:linear-gradient(90deg,#2563eb,#60a5fa)}.bar{background:linear-gradient(180deg,#2563eb,#64748b)}
+.fixkosten-intro{background:color-mix(in srgb,var(--green) 10%,var(--card));border-color:color-mix(in srgb,var(--green) 25%,var(--line));color:var(--green)}.fixkosten-intro .note{color:var(--muted)}.forecast-section .kpi{background:color-mix(in srgb,var(--blue) 9%,var(--card));border-color:color-mix(in srgb,var(--blue) 24%,var(--line))}
+@media(max-width:650px){nav{top:85px}.privacy-badge{display:none}.headline{gap:8px}.header-actions{flex-shrink:0}h1{font-size:26px}.sub{font-size:12px}section{border-radius:24px;padding:18px}.hero{border-radius:28px}}
+
+
+/* v1.0.0 UX polish */
+button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.app-notice{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,18px);z-index:50;max-width:min(92vw,560px);padding:11px 14px;border-radius:14px;background:rgba(15,23,42,.94);color:#fff;box-shadow:0 16px 40px rgba(15,23,42,.28);font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}.app-notice.show{opacity:1;transform:translate(-50%,0)}.app-notice.error{background:rgba(153,27,27,.96)}.app-notice.success{background:rgba(22,101,52,.96)}
+.empty{border:1px dashed var(--line);border-radius:14px;background:var(--soft);margin-top:8px}.note[role="status"]{min-height:18px}
+@media(max-width:650px){main{padding-bottom:calc(72px + env(safe-area-inset-bottom))}nav{padding-left:12px;padding-right:12px}.primary{min-height:48px}.saving-action{min-height:38px}.update-button{min-width:38px;min-height:38px}}
+
+/* v1.0.0 mobile salary + simplified savings */
+.saving-history-title{font-size:14px;margin:18px 0 8px;color:var(--muted)}
+.saving-history-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.saving-history-row:last-child{border-bottom:0}.saving-history-info{min-width:0;display:flex;flex-direction:column;gap:3px}.saving-history-info span{font-size:11px;color:var(--muted)}.saving-history-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.saving-history-actions strong{white-space:nowrap}
+#prognose .row>span:first-child{min-width:0}#prognose .row .v{max-width:62%;white-space:normal;overflow-wrap:anywhere}
+.comparison-row{display:grid;grid-template-columns:minmax(110px,.8fr) minmax(0,1.7fr);gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.comparison-row:last-child{border-bottom:0}.comparison-label{font-weight:650}.comparison-values{display:grid;gap:4px;text-align:right;min-width:0}.comparison-values span{font-size:11px;color:var(--muted);overflow-wrap:anywhere}.comparison-values strong{font-size:12px;overflow-wrap:anywhere}
+.wage-row .v{max-width:none!important}.wage-unit{white-space:nowrap}.forecast-chart-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0}.forecast-chart-track{height:9px;background:var(--soft);border:1px solid var(--line);border-radius:99px;overflow:hidden}.forecast-chart-fill{height:100%;background:linear-gradient(90deg,#2563eb,#60a5fa);border-radius:99px}.forecast-chart-value{font-weight:800;font-size:12px;white-space:nowrap}
+@media(max-width:650px){nav{-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}nav button{scroll-snap-align:start;flex:0 0 auto}#prognose .row{align-items:flex-start}#prognose .row .v{max-width:58%;font-size:14px}.comparison-row{grid-template-columns:1fr}.comparison-values{text-align:left}.forecast-head{align-items:flex-start}.forecast-amount{font-size:19px}.saving-history-row{align-items:flex-start}.saving-history-actions{max-width:46%}}
+@media(max-width:430px){#prognose .row{display:grid;grid-template-columns:1fr;gap:5px}#prognose .row .v{max-width:none;text-align:left}.forecast-chart-row{grid-template-columns:58px minmax(0,1fr);}.forecast-chart-value{grid-column:2;text-align:right;margin-top:-3px}.saving-history-row{display:grid;grid-template-columns:1fr}.saving-history-actions{max-width:none;justify-content:space-between}}
+</style>
+</head>
+<body>
+<header><div class="headline"><div class="brand"><div class="eyebrow">MEIN FINANZPLAN</div><h1>Mein Geldplan</h1><div class="sub">Privat auf diesem Gerät · <span id="appVersion">v1.0.0</span></div></div><div class="header-actions"><button class="update-button theme-button" id="themeBtn" type="button" title="Darstellung: System" aria-label="Darstellung: System">◐</button><button class="update-button" id="updateBtn" type="button" title="Auf neue Version prüfen" aria-label="Auf neue Version prüfen">↻</button><div class="privacy-badge" title="Deine Daten bleiben lokal im Browser"><span class="status-dot"></span><span class="privacy-text">Lokal &amp; privat</span></div></div></div><div class="note" id="updateStatus" style="display:none;text-align:right;color:#dbeafe;max-width:860px;margin:4px auto 0"></div></header>
+<div id="appNotice" class="app-notice" role="status" aria-live="polite" aria-atomic="true"></div>
+<nav>
+  <button class="tab active" data-tab="uebersicht">Übersicht</button>
+  <button class="tab" data-tab="budget">Budget</button>
+  <button class="tab" data-tab="verlauf">Verlauf</button>
+  <button class="tab" data-tab="prognose">Gehaltsprognose</button>
+  <button class="tab" data-tab="fixkosten">Fixkosten</button>
+  <button class="tab" data-tab="einstellungen">Mehr</button>
+</nav>
+
+<main>
+<!-- ÜBERSICHT -->
+<div id="uebersicht" class="view">
+<section class="hero">
+  <div class="hero-grid">
+    <div class="subcard wide"><div class="hero-muted" id="ovAvailableLabel">Verfügbar bis zum nächsten Lohn</div><div class="big" id="ovAvailable">–</div><div class="hero-muted" id="ovNextPay">–</div><div class="hero-muted">Dein Tagessatz wird unten angezeigt.</div></div>
+    <div class="subcard"><div class="hero-muted">Girokonto</div><div class="metric" id="ovGiro">–</div></div>
+    <div class="subcard"><div class="hero-muted">Bargeld</div><div class="metric" id="ovCash">–</div></div>
+  </div>
+</section>
+<section>
+  <h2>Dein aktueller Plan</h2>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Tage bis Lohn</div><div class="value" id="ovPayDays">–</div></div>
+    <div class="kpi"><div class="label">Tagessatz</div><div class="value good" id="ovDay">–</div></div>
+    <div class="kpi"><div class="label">Wochensatz</div><div class="value good" id="ovWeek">–</div></div>
+    <div class="kpi"><div class="label">Nächste Abhebung</div><div class="value" id="ovNextWithdraw">–</div></div>
+  </div>
+  
+</section>
+<section>
+  <h2>Diese Lohnperiode</h2>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Fixkosten</div><div class="value" id="ovFix">–</div></div>
+    <div class="kpi"><div class="label">Zusätzliche Ausgaben</div><div class="value red" id="ovCycleExpenses">–</div></div>
+    <div class="kpi"><div class="label">Bargeldbestand</div><div class="value" id="ovCashKpi">–</div></div>
+    <div class="kpi"><div class="label">Lohnzyklen</div><div class="value" id="ovSalaryCount">–</div></div>
+  </div>
+</section>
+<section>
+  <h2>Letzte Bewegungen</h2>
+  <div id="ovRecent"></div>
+  <button class="primary secondary" id="openHistoryBtn" style="margin-top:10px">Gesamten Verlauf öffnen</button>
+</section>
+</div>
+
+<!-- BUDGET -->
+<div id="budget" class="view hidden">
+<section>
+<h2>Mein aktuelles Budget</h2>
+<div class="row"><span>Girokonto</span><span class="v" id="mainGiro">–</span></div>
+<div class="grid" style="margin-top:8px"><div><label>Vorhandenes Bargeld (€)</label><input id="bCarryCash" type="number" step=".01" min="0" placeholder="z. B. 20"></div></div>
+<div class="row"><span>Bargeld</span><span class="v" id="mainCash">–</span></div>
+<div class="row"><span><b>Insgesamt verfügbar</b></span><span class="v big good" id="mainAvailable">–</span></div>
+<div class="row"><span>Nächster Lohn</span><span class="v" id="mainNextPay">–</span></div>
+<div class="row"><span>Tage bis Lohn</span><span class="v" id="mainDays">–</span></div>
+<div class="row"><span><b>Tagesbudget</b></span><span class="v big good" id="mainDay">–</span></div>
+<div class="row"><span><b>Wochenbudget</b></span><span class="v big good" id="mainWeek">–</span></div>
+<div class="note" id="budgetNote">Das Tagesbudget wird am Beginn des aktuellen Budgetabschnitts aus dem freien Giroguthaben und allen Finanzierungstagen bis zum nächsten Lohn berechnet. Das Wochenbudget gilt nur bis Samstag bzw. bis zum Tag vor dem nächsten Lohn.</div>
+</section>
+
+<section>
+<h2>Girokonto buchen</h2>
+<div class="grid">
+<div><label>Zahlungseingang (€)</label><input id="giroIncome" type="number" step=".01" placeholder="z. B. 100"></div>
+<div><label>Ausgabe (€)</label><input id="giroExpense" type="number" step=".01" placeholder="z. B. 45,20"></div>
+<div><label>Beschreibung</label><input id="giroText" type="text" placeholder="z. B. Einkauf, Erstattung"></div>
+</div>
+<button class="primary income-button" style="margin-top:12px" id="incomeBtn">Zahlungseingang buchen</button>
+<button class="primary expense-button" style="margin-top:8px" id="expenseBtn">Ausgabe buchen</button>
+<div class="row"><span><b>Aktueller Kontostand</b></span><span class="v big good" id="giroCurrent">–</span></div>
+<div class="grid" style="margin-top:12px"><div><label>Kontostand korrigieren auf (€)</label><input id="giroCorrection" type="number" step=".01" placeholder="z. B. 153,30"></div></div>
+<button class="primary secondary" style="margin-top:8px" id="correctionBtn">Kontostand korrigieren</button>
+</section>
+
+<section><h2>Zusätzliche Ausgaben – laufender Lohnzyklus</h2><div id="cycleExpenseList"></div><div class="note">Mit dem nächsten Lohn beginnt automatisch eine neue Liste; historische Buchungen bleiben erhalten.</div></section>
+
+<section>
+<h2>Sonntag: Was abheben?</h2>
+<div class="kpi-grid">
+<div class="kpi"><div class="label">Girokonto</div><div class="value" id="sGiro">–</div></div>
+<div class="kpi"><div class="label">Bargeld</div><div class="value" id="sCash">–</div></div>
+<div class="kpi"><div class="label">Verfügbar</div><div class="value" id="sTotal">–</div></div>
+<div class="kpi"><div class="label">Max. zusätzliche Abhebung</div><div class="value" id="sSuggested">–</div></div>
+</div>
+<div style="margin-top:12px"><label>Tatsächlich abheben (€)</label><input id="sWithdrawAmount" type="number" step="1" inputmode="decimal" placeholder="z. B. 110"></div>
+<button class="primary" style="margin-top:12px" id="withdrawBtn">Abheben & buchen</button>
+<div class="row"><span>Girokonto nach Abhebung</span><span class="v" id="sAfter">–</span></div>
+<div class="row"><span>Nächste Abhebung</span><span class="v" id="nextWithdrawalDate">–</span></div>
+<div class="row"><span>Tage bis nächste Abhebung</span><span class="v" id="withdrawalDays">–</span></div>
+<div class="note" id="withdrawalHint">Du entscheidest selbst, wie viel du abhebst.</div>
+</section>
+
+<section>
+<h2>Sparen</h2>
+<div class="row"><span>Aktuell reserviert</span><span class="v good" id="mainSaved">–</span></div>
+<div class="grid" style="margin-top:12px">
+<div><label>Wofür sparst du?</label><input id="sSavingPurpose" type="text" placeholder="z. B. Urlaub, Auto" autocomplete="off"></div>
+<div><label>Betrag (€)</label><input id="sSavingAmount" type="number" min="0" step=".01" inputmode="decimal" placeholder="z. B. 50"></div>
+</div>
+<button class="primary" style="margin-top:12px" id="savingRateBtn">Sparen</button>
+<h3 class="saving-history-title">Sparverlauf</h3>
+<div id="savingsList"></div>
+<div class="note">Gesparte Beträge bleiben physisch auf dem Girokonto, sind aber für dein Budget reserviert. Aktive Einträge kannst du im Verlauf wieder freigeben.</div>
+</section>
+
+<section><h2>Lohn buchen</h2><div class="grid"><div><label>Nettolohn (€)</label><input id="salaryAmount" type="number" step=".01" placeholder="z. B. 2.900"></div><div><label>Beschreibung</label><input id="salaryText" type="text" placeholder="z. B. Lohn September"></div></div><button class="primary" style="margin-top:12px" id="salaryBtn">Lohn buchen & Fixkosten abziehen</button><div class="note">Nur der tatsächlich ausgezahlte Nettolohn verändert dein Budget. Die Prognose greift niemals automatisch ein.</div></section>
+</div>
+
+<!-- VERLAUF -->
+<div id="verlauf" class="view hidden">
+<section><h2>Statistik</h2><div class="kpi-grid"><div class="kpi"><div class="label">Einnahmen gesamt</div><div class="value good" id="statIncome">–</div></div><div class="kpi"><div class="label">Ausgaben gesamt</div><div class="value red" id="statExpenses">–</div></div><div class="kpi"><div class="label">Bargeld abgehoben</div><div class="value" id="statWithdrawals">–</div></div><div class="kpi"><div class="label">Aktuell reserviert</div><div class="value" id="statSaved">–</div></div></div><div class="note">Abhebungen sind Transfers Giro → Bargeld und werden deshalb nicht als Ausgabe gezählt. Kontokorrekturen fließen nicht in Einnahmen oder Ausgaben ein.</div></section>
+<section><h2>Sparentwicklung</h2><div id="savingStats"></div></section>
+<section><h2>Kontoverlauf</h2><div class="note">Alle Buchungen werden chronologisch angezeigt. Abhebungen werden separat ausgewiesen, weil sie nur Geld vom Giro ins Bargeld verschieben.</div><div id="fullTxList"></div></section>
+<section><h2>Monatsvergleich</h2><div id="monthlyCompare"></div><div class="note">Einnahmen und Ausgaben werden nach Buchungsdatum zusammengefasst. Abhebungen und reine Kontokorrekturen werden nicht als Verbrauch gezählt.</div></section>
+<section><h2>Ausgabenverlauf</h2><div id="monthlyChart" class="chart"></div><div class="note">Die Balken zeigen ausschließlich echte Giro-Ausgaben pro Monat. Bargeldabhebungen und Sparreservierungen werden separat ausgewiesen.</div></section>
+</div>
+
+<!-- FIXKOSTEN -->
+<div id="fixkosten" class="view hidden">
+<section class="fixkosten-section"><h2>Meine Fixkosten</h2><div class="fixkosten-intro"><div class="note">Hier verwaltest du deine festen monatlichen Ausgaben. Die Summe wird beim „Lohn buchen“ automatisch einmal je Lohnzyklus vom Girokonto abgezogen.</div></div><div id="fixItems" class="fix-list"></div><button class="primary secondary" style="margin-top:14px" id="addFixBtn">+ Fixkosten hinzufügen</button><div class="fix-total"><span class="label">Gesamte monatliche Fixkosten</span><span class="value" id="fixTotal">–</span></div></section>
+</div>
+
+<!-- PROGNOSE -->
+<div id="prognose" class="view hidden">
+<section><h2>Gehaltsprognose</h2><div class="note">Zeitnachweise werden mit zwei Monaten Verzögerung eingeordnet. Die Prognose bleibt rein informativ und verändert dein Budget nicht. Es wird keine Pfändung oder Privatinsolvenz berücksichtigt.</div><div style="margin-top:12px"><label>Zeitnachweis (PDF)</label><input id="timeReportFiles" type="file" accept="application/pdf" multiple></div><button class="primary" style="margin-top:12px" id="timeReportBtn">Zeitnachweis(e) auswerten</button><div class="note" id="timeReportStatus">Lade einen oder mehrere Zeitnachweise hoch.</div><div id="timeReportPreview" class="hidden"></div></section>
+<section><h2>Tatsächliche Lohnabrechnung vergleichen</h2><div class="note">Lade eine spätere Bezügemitteilung hoch. Die erkannten Werte werden nur mit der Prognose verglichen und verändern keine Berechnung automatisch.</div><div style="margin-top:12px"><label>Bezügemitteilung (PDF)</label><input id="payslipFiles" type="file" accept="application/pdf" multiple></div><button class="primary secondary" style="margin-top:12px" id="payslipBtn">Bezügemitteilung vergleichen</button><div class="note" id="payslipStatus">Noch keine echte Lohnabrechnung verglichen.</div><div id="payslipComparison"></div></section>
+<section><h2>Einspringprämie</h2><div class="note">Für den ausgewählten Zeitnachweis: 150 € je Einspringdienst plus Einspringstunden × persönliches Stundenentgelt aus hinterlegter KR-Gruppe/Stufe. Nacht-, Wochenend- und Schichtzuschläge kommen weiterhin aus dem Zeitnachweis und werden nicht doppelt berechnet.</div><div class="grid" style="margin-top:12px"><div><label>Anzahl Einspringdienste</label><input id="springInDuties" type="number" min="0" step="1" value="0"></div><div><label>Einspringstunden gesamt</label><input id="springInHours" type="number" min="0" step=".01" value="0"></div></div><div class="row" style="margin-top:10px"><span>Persönliches Stundenentgelt</span><span class="v" id="springInHourlyRate">–</span></div><button class="primary secondary" style="margin-top:12px" id="springInBtn">Einspringen übernehmen</button><div class="note" id="springInStatus">Noch keine Einspringprämie angesetzt.</div><div class="note">Steuer-/SV-Behandlung wird bis zur ersten echten Abrechnung mit Einspringprämie vorläufig als regulärer steuerpflichtiger Zusatzlohn gerechnet und deshalb mit „Bitte prüfen“ markiert.</div></section><section><h2>Prognosen nach Auszahlungsmonat</h2><div id="forecastTableWrap"><div class="empty">Noch kein Zeitnachweis eingelesen.</div></div></section>
+<section class="forecast-section"><h2>Prognose des ausgewählten Zeitnachweises</h2><div class="kpi-grid"><div class="kpi"><div class="label">Abrechnungsmonat</div><div class="value" id="rMonth">–</div></div><div class="kpi"><div class="label">Auszahlungsmonat</div><div class="value" id="rPayoutMonth">–</div></div><div class="kpi"><div class="label">Gesetzliches Netto</div><div class="value" id="pNettoBasis">–</div></div><div class="kpi"><div class="label">Auszahlung</div><div class="value good" id="pPayout">–</div></div></div><div class="forecast-group">Feste Bestandteile</div><div class="row"><span>Grundentgelt</span><span class="v" id="pBasePay">–</span></div><div class="row"><span>Pflegezulage</span><span class="v" id="pCareAllowance">–</span></div><div class="row"><span>Universitätszulage</span><span class="v" id="pUniversityAllowance">–</span></div><div class="forecast-group">Zeitnachweis und Zuschläge</div><div class="row"><span>Zuschläge aus PDF</span><span class="v" id="pSurcharges">–</span></div><div class="row"><span><b>Gesamtbrutto</b></span><span class="v" id="pBrutto">–</span></div><div class="forecast-group">Netto und Auszahlung</div><div class="row"><span>Gesetzliches Netto</span><span class="v" id="pLegalNet">–</span></div><div class="row"><span><b>Auszahlung</b></span><span class="v good" id="pPayoutDetail">–</span></div><div class="row"><span>Steuerpflichtige Zusatzbestandteile (brutto)</span><span class="v" id="pVariableNet">–</span></div><div class="row"><span>Einspringprämie inkl. Stundenentgelt</span><span class="v" id="pSpringIn">–</span></div><div class="row"><span>davon Samstag (steuerpflichtig)</span><span class="v" id="pSaturday">–</span></div><div class="row"><span>Steuerfreie Nacht-/Sonntagszuschläge</span><span class="v good" id="pTaxFree">–</span></div><div class="row"><span>Steuerfreie Nacht-/Sonntagszuschläge (Summe)</span><span class="v good" id="pProtected">–</span></div><div class="row"><span>Lohn-/Kirchensteuer + Soli</span><span class="v red" id="pTax">–</span></div><div class="row"><span>Sozialversicherung</span><span class="v red" id="pSocial">–</span></div><div class="row"><span>VBL Arbeitnehmeranteil</span><span class="v red" id="pVbl">–</span></div><div class="note" id="pShiftSummary">–</div><div class="note">Berechnung: PDF-Zuschläge summieren, feste Entgeltbestandteile addieren und gesetzliche Abzüge berechnen. Nacht- und Sonntagszuschläge werden getrennt als steuerfreie Zuschläge behandelt; Samstags- sowie Schichtzulagen nicht. Lohnsteuer und Solidaritätszuschlag werden nach dem BMF-Programmablaufplan 2026 berechnet; Sozialabgaben nach den hinterlegten 2026er Beitragssätzen. VBL/ZV werden anhand der Referenzabrechnung kalibriert. Unbekannte Codes werden nicht interpretiert. Auszahlung: zwei Monate nach Abrechnungsmonat.</div></section>
+<section><h2>Prognosegrafik</h2><div id="forecastChart" class="chart"></div></section>
+<section><h2>Erkannte Zeitlohnarten</h2><div id="reportDetails"></div><div class="note">Die Zeitlohnarten werden direkt aus dem PDF übernommen. 5211 bedeutet Wechselschichtzulage nach § 43 TV-L, 5212 bedeutet Schichtzulage nach § 43 TV-L. Beide Codes schließen sich aus. Unbekannte Codes werden nicht stillschweigend interpretiert.</div></section>
+<section><h2>Tarif-/Sozialversicherungsgrundlagen</h2>
+<div class="row"><span>TV-L Pflege</span><span class="v">KR 8 · Tarifstufe 4 · +2 Vorweggewährung → Zahlstufe 6</span></div>
+<div class="row"><span>Beschäftigungsumfang</span><span class="v">60 %</span></div>
+<div class="row"><span>Grundentgelt · 60 %</span><span class="v">2.681,08 €</span></div>
+<div class="row"><span>Pflegezulage · 60 %</span><span class="v">54,00 €</span></div>
+<div class="row"><span>Universitätszulage · 60 %</span><span class="v">98,11 €</span></div>
+<div class="row"><span>Festes Brutto</span><span class="v">2.833,19 €</span></div>
+<div class="row"><span>Zeitzuschläge · Stufe 3</span><span class="v">Nacht 4,58 €/h · Sa 0,64 €/h · So 5,73 €/h</span></div>
+<div class="row"><span>5211 Wechselschichtzulage · 60 %</span><span class="v">150,00 € monatlich</span></div>
+<div class="row"><span>5212 Schichtzulage · 60 %</span><span class="v">60,00 € monatlich</span></div>
+<div class="row"><span>Steuer</span><span class="v">Klasse I · keine Kirchensteuer · 0 Kinderfreibetrag</span></div>
+<div class="row"><span>Sozialversicherung</span><span class="v">AOK Bayern · Zusatzbeitrag 2,69 % · kinderlos</span></div>
+</section>
+</div>
+
+<!-- MEHR -->
+<div id="einstellungen" class="view hidden">
+<section><h2>Daten sichern</h2><p class="note">Sichere alle lokalen Daten inklusive Kontobewegungen, Bargeld, Fixkosten und eingelesener Zeitnachweise als Datei.</p><button class="primary" id="exportBtn">Daten sichern</button><div style="margin-top:12px"><label>Gespeicherte Daten wiederherstellen</label><input id="importFile" type="file" accept="application/json,.json"></div><button class="primary secondary" style="margin-top:8px" id="importBtn">Daten wiederherstellen</button><div class="note" id="backupStatus">Die Sicherung bleibt auf deinem Gerät bzw. dort, wo du die Datei speicherst.</div></section>
+<section><h2>Testmodus</h2><p class="note">Damit andere die App mit eigenen Werten testen können, lassen sich alle gespeicherten Eingaben und Buchungen hier zurücksetzen.</p><button class="primary danger" id="resetBtn" style="margin-top:12px">Alle Eingaben & Buchungen löschen</button></section>
+</div>
+
+<p class="note" style="text-align:center;margin:22px 8px 0">Alle Berechnungen laufen lokal im Browser. Die App speichert keine Kontodaten online.</p>
+</main>
+<script type="module" src="app.js?v=1.0.0"></script>
+
+</body></html>
