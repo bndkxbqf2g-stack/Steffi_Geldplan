@@ -1,10 +1,10 @@
 # Module 01–30
-Budget, Cycle, Salary, UI, Insolvenz.
+Budget, Cycle, Salary, UI, lokale Recovery.
 
 - `lib/payslip.js`: Parser und Prognose-vs.-Ist-Vergleich für Bezügemitteilungen.
 
 ### `lib/salary-ui.js`
-Verantwortlich für UI-Rendering und Benutzeraktionen rund um Gehaltsprognose, Zeitnachweis und Bezügemitteilungsvergleich. Berechnungen bleiben in `salary.js`, PDF-Parsing in `pdf.js`/`payslip.js`.
+Verantwortlich für den Gehaltsprognose-Fluss Zeitnachweis → erkannte Zeitlohnarten → Brutto/Netto → Auszahlungsmonat. Ältere gespeicherte Forecast-Modelle werden aus ihren gespeicherten Zeitnachweispositionen einmalig mit den aktuellen Regeln neu aufgebaut, bevor Übersicht und Payroll-Check rendern. `salary-payslip-ui.js` ergänzt den Upload echter Bezügemitteilungen und stößt Soll-/Ist-, Rückrechnungs-, offenen Nettoabgleich sowie die kontrollierte Payroll-Lernhistorie an. Berechnungen bleiben in `salary.js` / `salary-net-effects.js`, PDF-Parsing in `pdf.js` / `payslip.js`.
 
 ### `lib/budget-ui.js`
 Budget-, Bargeld- und Buchungs-UI; Fachlogik bleibt in Budget/Cycle/Storage.
@@ -17,7 +17,7 @@ Kleine gemeinsame DOM-/Format-/Navigation-Helfer.
 
 
 ### `lib/fixed-costs.js` / `lib/fixed-costs-ui.js`
-Kleine, getrennte Fixkostenlogik und Verwaltung. Die Lohnbuchung liest ausschließlich die gespeicherte Summe.
+Kleine, getrennte Fixkostenlogik und Verwaltung. Die Lohnbuchung liest ausschließlich die gespeicherte Summe. Die UI verwendet kompakte Karten, eine dreiteilige Zusammenfassung und einklappbare einmalige Anpassungen für den nächsten Lohnzyklus.
 
 ### `lib/history-ui.js`
 Übersicht, Kontoverlauf, Monatsvergleich und Abhebungsanzeige. Keine eigene Fachberechnung.
@@ -44,5 +44,11 @@ Reine Statistikfunktionen für Monatswerte, Transaktionssummen und Sparentwicklu
 
 - `lib/theme-ui.js` – Theme-Modus (System/Hell/Dunkel), Meta-Theme-Color und Header-Schalter.
 
-- `lib/storage.js`: Schema-3-Migration, defensive Normalisierung und Datumsvalidierung.
-- `lib/maintenance-ui.js`: Backup v3, Validierung und rückrollbarer Restore.
+- `lib/storage.js`: Schema-7-Migration, defensive Normalisierung und Datumsvalidierung; speichert Budget, Prognosen, Bezügemitteilungen und Payroll-Lernhistorie lokal.
+- `lib/maintenance-ui.js`: Backup v7 inklusive Payroll-Lernhistorie, Validierung und rückrollbarer Restore.
+- `lib/payroll-learning.js`: kontrollierter Soll-/Ist-Lernabgleich. Komponenten aus aktueller Abrechnung und passenden späteren Rückrechnungen werden zusammengeführt; Beobachtungen erhöhen die Vertrauensstufe. Tarif-, Steuer-, SV- und VBL-Grundlagen werden nicht automatisch überschrieben; eine Pfändungsberechnung ist nicht Bestandteil dieser Variante.
+- `lib/payroll-learning-calibration.js`: leitet aus sauberen, brutto-stimmigen Soll-/Ist-Monaten eine konservative Netto-Auszahlungskalibrierung ab. Erst ab zwei stabilen Beobachtungen wird sie auf zukünftige Prognosen angewandt; Monate mit Rückrechnung, Brutto- oder Komponentenfehlern werden ausgeschlossen.
+
+
+### `lib/payroll-control.js` / `lib/payroll-control-ui.js`
+Periodenbezogene Gehaltskontrolle. Verknüpft gespeicherte Zeitnachweis-Prognosen mit tatsächlichen Bezügemitteilungen und späteren Rückrechnungsperioden. Offene Ansprüche bleiben dem ursprünglichen Abrechnungsmonat zugeordnet. Keine Budgetwirkung.

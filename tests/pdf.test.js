@@ -101,6 +101,41 @@ test("5162 aus echtem UKW-Zeitnachweis ist bekannte §21-Folgeposition", () => {
   assert.equal(item.status, "ok");
 });
 
+test("echter Juli-Zeitnachweis: Spätdienst-Nachtanteile und zwei Nachtdienste ergeben 21,40 Nachtstunden", () => {
+  const text = [
+    "Z E I T N A C H W E I S 80030991 Mitarbeiter Jul 26",
+    "02.07.2026 21:00 21:42 3A10 5010: Nachtarbeit 0,70",
+    "03.07.2026 21:00 21:42 3A10 5010: Nachtarbeit 0,70",
+    "06.07.2026 21:00 21:42 3A10 5010: Nachtarbeit 0,70",
+    "07.07.2026 21:00 21:42 3A10 5010: Nachtarbeit 0,70",
+    "13.07.2026 21:00 21:42 3A10 5010: Nachtarbeit 0,70",
+    "18.07.2026 13:00 14:12 3A14 5014: Sa 13-20 Uhr 0,64 E 1,20",
+    "19.07.2026 06:00 10:00 3A24 5024: Sonntagsarbeit 25% 4,00",
+    "19.07.2026 10:30 14:12 3A24 5024: Sonntagsarbeit 25% 3,70",
+    "20.07.2026 21:15 24:00 3A10 5010: Nachtarbeit 2,75",
+    "20.07.2026 24:00 25:15 3A11 5011: Nacht Beginn v.0:00 1,25",
+    "20.07.2026 25:45 28:00 3A10 5010: Nachtarbeit 2,25",
+    "20.07.2026 28:00 30:00 3A10 5010: Nachtarbeit 2,00",
+    "21.07.2026 21:15 24:00 3A10 5010: Nachtarbeit 2,75",
+    "21.07.2026 24:00 25:15 3A11 5011: Nacht Beginn v.0:00 1,25",
+    "21.07.2026 25:45 28:00 3A10 5010: Nachtarbeit 2,25",
+    "21.07.2026 28:00 30:00 3A10 5010: Nachtarbeit 2,00",
+    "28.07.2026 21:00 21:42 3A10 5010: Nachtarbeit 0,70",
+    "29.07.2026 21:00 21:42 3A10 5010: Nachtarbeit 0,70",
+    "31.07.2026 3C12 5212: SchiZ§43 1,00"
+  ].join("\n");
+  const r=parseTimeReportText(text);
+  const sum=code=>r.items.filter(i=>i.code===code).reduce((a,i)=>a+(Number(i.hours)||0),0);
+  assert.equal(sum("5010"),18.9);
+  assert.equal(sum("5011"),2.5);
+  assert.equal(Math.round((sum("5010")+sum("5011"))*100)/100,21.4);
+  assert.equal(sum("5014"),1.2);
+  assert.equal(sum("5024"),7.7);
+  assert.equal(r.schicht,true);
+  assert.equal(r.wechsel,false);
+  assert.equal(r.payoutMonth,"2026-09");
+});
+
 test("echter August-Zeitnachweis: Summen und Wechselschicht werden korrekt erkannt", () => {
   const text = [
     "Z E I T N A C H W E I S 80030991 Mitarbeiter Aug 26",

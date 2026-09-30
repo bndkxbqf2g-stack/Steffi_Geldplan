@@ -11,7 +11,7 @@ import {
   bavariaPublicHolidays
 } from "../lib/cycle.js";
 
-const iso = d => d.toISOString().slice(0, 10);
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 
 test("30.09.2026 startet einen Zyklus bis 30.10.2026", () => {
   assert.equal(iso(lastWorkday(2026, 8)), "2026-09-30");
@@ -124,4 +124,17 @@ test("normale Werktage bleiben Arbeitstage", async () => {
   const { isWorkday } = await import("../lib/cycle.js");
   assert.equal(isWorkday("2026-01-07"), true);
   assert.equal(isWorkday("2026-06-05"), true);
+});
+
+test("Budget-Zyklus behandelt ISO-Datumsstrings unabhängig von der Laufzeitzeitzone als Kalendertage", async () => {
+  const { budgetForDate } = await import("../lib/cycle.js");
+  const result = budgetForDate({
+    giro: 2100,
+    today: "2026-10-04",
+    payday: "2026-09-30",
+    nextPayday: "2026-10-30"
+  });
+  assert.equal(iso(result.segmentStart), "2026-10-04");
+  assert.equal(result.remainingDays, 26);
+  assert.equal(result.segmentDays, 7);
 });

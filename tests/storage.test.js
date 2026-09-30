@@ -126,3 +126,48 @@ test('Migration repariert alte Spar-IDs und defekte Speicherwerte', async()=>{
   assert.equal(store.getItem(storageKeys.budgetAnchor),null);
   assert.equal(store.getItem(storageKeys.schemaVersion),String(DATA_SCHEMA_VERSION));
 });
+
+
+test('vorgemerkter Lohn wird getrennt vom Giro gespeichert', async()=>{
+  const {getPendingSalary,savePendingSalary,clearPendingSalary}=await import('../lib/storage.js');
+  const storage=memoryStorage();
+  const pending={id:'p1',amount:2700.70,text:'Lohn September',payoutDate:'2026-09-30',createdAt:'2026-09-15T10:00:00.000Z',status:'pending'};
+  assert.equal(savePendingSalary(pending,storage),true);
+  assert.deepEqual(getPendingSalary(storage),pending);
+  assert.equal(storage.getItem(storageKeys.transactions),null);
+  clearPendingSalary(storage);
+  assert.equal(getPendingSalary(storage),null);
+});
+
+
+test('Erklärungspräferenz ist standardmäßig aktiv und bleibt gespeichert', async()=>{
+  const {getShowExplanations,saveShowExplanations}=await import('../lib/storage.js');
+  const storage=memoryStorage();
+  assert.equal(getShowExplanations(storage),true);
+  assert.equal(saveShowExplanations(false,storage),true);
+  assert.equal(getShowExplanations(storage),false);
+  assert.equal(saveShowExplanations(true,storage),true);
+  assert.equal(getShowExplanations(storage),true);
+});
+
+
+test('Fixkosten-Ausnahmen werden getrennt gespeichert', async()=>{
+  const {getFixedCostOverrides,saveFixedCostOverrides}=await import('../lib/storage.js');
+  const storage=memoryStorage();
+  const value=[{id:'2026-09-30:miete',fixedCostId:'miete',payoutDate:'2026-09-30',amount:500}];
+  assert.equal(saveFixedCostOverrides(value,storage),true);
+  assert.deepEqual(getFixedCostOverrides(storage),value);
+  assert.equal(storage.getItem(storageKeys.fixedCosts),null);
+});
+
+
+test('Payroll-Lernhistorie wird getrennt gespeichert und bei Komplettreset gelöscht', async()=>{
+  const {getPayrollLearning,savePayrollLearning,clearAllStorage}=await import('../lib/storage.js');
+  const storage=memoryStorage();
+  const history=[{id:'2026-09:2026-07',payoutMonth:'2026-09',rows:[{key:'shift',confirmed:true}]}];
+  assert.equal(savePayrollLearning(history,storage),true);
+  assert.deepEqual(getPayrollLearning(storage),history);
+  assert.notEqual(storage.getItem(storageKeys.payrollLearning),null);
+  clearAllStorage(storage);
+  assert.deepEqual(getPayrollLearning(storage),[]);
+});

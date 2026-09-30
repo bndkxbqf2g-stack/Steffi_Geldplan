@@ -14,7 +14,10 @@ export const SALARY_2026 = Object.freeze({
     hourlyBase: 22.92,
     night: 4.58,
     saturday: 0.64,
-    sunday: 5.73
+    sunday: 5.73,
+    holidayWithoutTimeOff: 30.94,
+    holidayWithTimeOff: 8.02,
+    dec24And31: 8.02
   }),
   shift: Object.freeze({
     fullTimeWechsel: 250,
@@ -24,7 +27,7 @@ export const SALARY_2026 = Object.freeze({
   }),
   payroll: Object.freeze({ garnishmentEnabled: false, payoutDelayMonths: 2 }),
   work: Object.freeze({ weeklyHours: 38.5, monthFactor: 4.348 }),
-  springIn: Object.freeze({ basePremium: 150, taxMode: 'taxable-unverified' }),
+  springIn: Object.freeze({ basePremium: 150, taxMode: 'taxable-unverified', vblMode: 'unverified' }),
   profile: Object.freeze({ taxClass: 1, childAllowance: 0, churchTaxRate: 0, kvAdditionalRate: 2.69, childless: true, careChildDeductions: 0, saxony: false, healthInsurance: 'AOK Bayern' }),
   social: Object.freeze({
     healthEmployee: 0.08645, careEmployee: 0.024, pensionEmployee: 0.093, unemploymentEmployee: 0.013,

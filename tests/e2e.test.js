@@ -65,21 +65,20 @@ test('E2E: kompletter Budgetmonat mit Fixkosten, Bargeld, Sparen und neuem Lohn'
   assert.equal(oct.saved,50);
 });
 
-test('E2E: Zeitnachweis -> Prognose -> Bezügemitteilung ohne Pfändung',()=>{
+test('E2E: Zeitnachweis -> Prognose -> echte Abrechnung trennt Nachverrechnung sauber',()=>{
   const report=parseTimeReportText(`Z E I T N A C H W E I S 80030991 Test Apr 26\nZeitlohnarten (täglich)\nDatum von bis Zeitlohnart Anzahl\n13.04.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\n14.04.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\n15.04.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\n30.04.2026 3C12 5212: SchiZ§43 1,00`);
   assert.equal(report.month.year,2026);
   assert.equal(report.month.month,4);
   assert.equal(report.payoutMonth,'2026-06');
-  near(report.items.filter(i=>i.code==='5010').reduce((sum,i)=>sum+(i.hours||0),0),1.35);
+  near(report.items.filter(i=>i.code==='5010').reduce((s,i)=>s+(i.hours||0),0),1.35);
 
   const forecast=calculateSalaryForecastCore({items:[],needsReview:false},{wageTax:250,churchTax:0,solidarity:0,churchBase:0});
   near(forecast.totalGross,2833.19);
-  assert.equal(forecast.garnishment,0);
-  near(forecast.payout,forecast.legalNet-forecast.vbl);
-
   const actual=parsePayslipText(`Aktuelle Abrechnungsperiode\nAbrechnungsmonat : 06/2026\nBezüge: KR8 / 6\nTabellenentgelt LSGZ 2.681,08\nPflegezulage (AT Uni WÜ) LSGZ 54,00\nUniversitätszulage Pflege LSGZ 98,11\nGesamtbrutto ${forecast.totalGross.toFixed(2).replace('.',',')}\nGesetzliches Netto ${forecast.legalNet.toFixed(2).replace('.',',')}\nZV-Uml. Regelentg. AN ${forecast.vbl.toFixed(2).replace('.',',')}-\nÜberweisung ${forecast.payout.toFixed(2).replace('.',',')} EUR`);
+  assert.equal(actual.month,'2026-06');
+  assert.equal(actual.hasPriorAdjustment,false);
   const comparison=comparePayslip(forecast,actual);
   assert.equal(comparison.status,'ok');
-  assert.equal(comparison.rows.some(r=>r.key==='garnishment'),false);
+  assert.equal(comparison.rows.find(r=>r.key==='garnishment').actual,null);
   near(comparison.maxAbsDiff,0);
 });

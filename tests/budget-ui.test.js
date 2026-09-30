@@ -38,7 +38,7 @@ test('laufender Altbestand nutzt festen Budgetanker bis zum kommenden Lohn',()=>
   assert.equal(result.daysToPayday,8);
   assert.equal(result.remainingDays,3);
   assert.equal(result.segmentDays,3);
-  assert.equal(result.segmentStart.toISOString().slice(0,10),'2026-09-27');
+  assert.equal(`${result.segmentStart.getFullYear()}-${String(result.segmentStart.getMonth()+1).padStart(2,'0')}-${String(result.segmentStart.getDate()).padStart(2,'0')}`,'2026-09-27');
   assert.equal(Number(result.dailyBudget.toFixed(2)),23.77);
   assert.equal(Number(result.weeklyBudget.toFixed(2)),71.31);
 });
