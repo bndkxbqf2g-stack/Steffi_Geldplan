@@ -127,6 +127,16 @@ test('Migration repariert alte Spar-IDs und defekte Speicherwerte', async()=>{
   assert.equal(store.getItem(storageKeys.schemaVersion),String(DATA_SCHEMA_VERSION));
 });
 
+test('Migration ersetzt vorhandene Steffi-Fixkosten nicht', async()=>{
+  const {migrateStorage,getFixedCosts}=await import('../lib/storage.js');
+  const fixed=[{id:'miete',name:'Miete',amount:812.34},{id:'strom',name:'Strom',amount:67.89}];
+  const original=JSON.stringify(fixed);
+  const store=memoryStorage({[storageKeys.fixedCosts]:original,[storageKeys.schemaVersion]:'3'});
+  migrateStorage(store);
+  assert.equal(store.getItem(storageKeys.fixedCosts),original);
+  assert.deepEqual(getFixedCosts(store),fixed);
+});
+
 
 test('vorgemerkter Lohn wird getrennt vom Giro gespeichert', async()=>{
   const {getPendingSalary,savePendingSalary,clearPendingSalary}=await import('../lib/storage.js');
