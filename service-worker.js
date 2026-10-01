@@ -1,4 +1,4 @@
-var CACHE_NAME='mein-geldplan-steffi-v0.99.53';
+var CACHE_NAME='mein-geldplan-steffi-v0.99.54';
 var APP_SHELL=[
   './','./index.html','./design-refresh.css?v=7','./app.js?v=0.99.54','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png',
   './config/version.js','./config/salary-2026.js','./lib/cloud-backup-ui.js','./lib/cloud-backup.js','./lib/cloud-auth.js','./config/supabase.js',
