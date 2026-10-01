@@ -252,12 +252,35 @@ button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:non
 <div class="row"><span>App-Version</span><span class="v" id="appVersion">v0.99.52</span></div>
 </section>
 <section><h2>Daten sichern</h2><p class="note">Sichere alle lokalen Daten inklusive Kontobewegungen, Bargeld, Fixkosten, Gehaltsprognosen, Bezügemitteilungen und Payroll-Lernhistorie als Datei.</p><div class="note payroll-alert"><b>Wichtig bei iPhone/PWA:</b> Vor dem Löschen oder Neuerstellen der Home-Bildschirm-App immer zuerst eine Sicherung erstellen. Die Daten liegen lokal in dieser Browser-/App-Instanz und können beim Entfernen verloren gehen.</div><button class="primary" id="exportBtn">Daten sichern</button><div style="margin-top:12px"><label>Gespeicherte Daten wiederherstellen</label><input id="importFile" type="file" accept="application/json,.json"></div><button class="primary secondary" style="margin-top:8px" id="importBtn">Daten wiederherstellen</button><div class="note" id="backupStatus">Die Sicherung bleibt auf deinem Gerät bzw. dort, wo du die Datei speicherst.</div></section>
+<section><h2>Private Cloud-Sicherung</h2>
+<p class="note">Deine lokalen Finanzdaten können zusätzlich geschützt in der Cloud gesichert werden. Ohne Anmeldung bleiben sie ausschließlich auf diesem Gerät.</p>
+<div id="cloudSignedOut">
+  <label>E-Mail für Cloud-Anmeldung</label>
+  <input id="cloudEmail" type="email" autocomplete="email" placeholder="name@beispiel.de">
+  <button class="primary secondary" style="margin-top:8px" id="cloudSendCode">Anmeldecode senden</button>
+  <div id="cloudOtpWrap" class="hidden" style="margin-top:12px">
+    <label>6-stelliger Code</label>
+    <input id="cloudOtp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="123456">
+    <button class="primary" style="margin-top:8px" id="cloudVerifyCode">Anmelden & sichern</button>
+  </div>
+</div>
+<div id="cloudSignedIn" class="hidden">
+  <div class="row"><span>Konto</span><span class="v" id="cloudAccount">–</span></div>
+  <div class="row"><span>Letzte Cloud-Sicherung</span><span class="v" id="cloudLatest">–</span></div>
+  <div class="grid" style="margin-top:12px">
+    <button class="primary" id="cloudSaveNow">Jetzt sichern</button>
+    <button class="primary secondary" id="cloudRestore">Cloud-Sicherung wiederherstellen</button>
+  </div>
+  <button class="primary secondary" style="margin-top:8px" id="cloudSignOut">Cloud abmelden</button>
+</div>
+<div class="note" id="cloudStatus">Cloud-Sicherung wird geprüft …</div>
+</section>
 <section><h2>Testmodus</h2><p class="note">Damit andere die App mit eigenen Werten testen können, lassen sich alle gespeicherten Eingaben und Buchungen hier zurücksetzen.</p><button class="primary danger" id="resetBtn" style="margin-top:12px">Alle Eingaben & Buchungen löschen</button></section>
 </div>
 
-<p class="note" style="text-align:center;margin:22px 8px 0">Alle Berechnungen und Daten bleiben lokal auf diesem Gerät.</p>
+<p class="note" style="text-align:center;margin:22px 8px 0">Lokale Daten bleiben auf diesem Gerät erhalten; nach Anmeldung werden sie zusätzlich automatisch in der privaten Cloud gesichert.</p>
 </main>
-<script type="module" src="app.js?v=0.99.52"></script>
+<script type="module" src="app.js?v=0.99.53"></script>
 <script>document.querySelectorAll('[data-quick-tab]').forEach(button=>button.addEventListener('click',()=>{document.querySelector(`nav [data-tab="${button.dataset.quickTab}"]`)?.click();requestAnimationFrame(()=>{if(button.dataset.quickTarget){document.getElementById(button.dataset.quickTarget)?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(button.dataset.quickFocus){const field=document.getElementById(button.dataset.quickFocus);field?.scrollIntoView({behavior:'smooth',block:'center'});field?.focus({preventScroll:true});}})}));</script>
 
 </body></html>
