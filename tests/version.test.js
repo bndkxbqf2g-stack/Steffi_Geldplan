@@ -11,8 +11,8 @@ test('sichtbare App-Version und Service-Worker-Version stimmen überein',()=>{
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
   const sw=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');
   assert.match(APP_VERSION,/^\d+\.\d+\.\d+$/);
-  assert.match(html,new RegExp(`id="appVersion">v${APP_VERSION.replaceAll('.','\\\\.')}`));
-  assert.match(html,new RegExp(`app\\\\.js\\\\?v=${APP_VERSION.replaceAll('.','\\\\.')}`));
-  assert.match(sw,new RegExp(`mein-geldplan-steffi-v${APP_VERSION.replaceAll('.','\\\\.')}`));
-  assert.match(sw,new RegExp(`app\\\\.js\\\\?v=${APP_VERSION.replaceAll('.','\\\\.')}`));
+  assert.ok(html.includes(`id="appVersion">v${APP_VERSION}`));
+  assert.ok(html.includes(`app.js?v=${APP_VERSION}`));
+  assert.ok(sw.includes(`mein-geldplan-steffi-v${APP_VERSION}`));
+  assert.ok(sw.includes(`app.js?v=${APP_VERSION}`));
 });
