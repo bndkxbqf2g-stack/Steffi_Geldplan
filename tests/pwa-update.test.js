@@ -16,12 +16,13 @@ test('Service Worker unterstützt sofortige Aktivierung und Offline-Fallback',()
 test('iPhone-Home-Screen-Icon ist verlinkt und offline im App-Shell enthalten',()=>{const html=fs.readFileSync(path.join(root,'index.html'),'utf8');const sw=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');assert.match(html,/apple-touch-icon\.png/);assert.match(sw,/apple-touch-icon\.png/);});
 
 
-test('Recovery-Module sind Teil des Offline-App-Shells und Cloud bleibt deaktiviert',()=>{
+test('Recovery- und Cloud-Module sind Teil des Offline-App-Shells',()=>{
   const sw=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');
-  for(const file of ['lib/recovery-store.js','lib/recovery-bootstrap.js','lib/preferences-ui.js']){
+  for(const file of ['lib/recovery-store.js','lib/recovery-bootstrap.js','lib/preferences-ui.js','lib/cloud-auth.js','lib/cloud-backup.js','lib/cloud-backup-ui.js','config/supabase.js']){
     assert.match(sw,new RegExp(file.replaceAll('.','\\.')));
   }
-  assert.doesNotMatch(sw,/cloud|supabase/i);
+  assert.match(sw,/cloud-backup/);
+  assert.match(sw,/supabase/);
 });
 
 test('PWA sichert den aktuellen Stand beim Verlassen sofort in Recovery',()=>{
