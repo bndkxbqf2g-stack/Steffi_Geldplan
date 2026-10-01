@@ -75,5 +75,7 @@ test('letzte tatsächliche Lohnbuchung wird als Zyklusstart ermittelt',()=>{
   ];
   assert.equal(getLatestSalaryTransaction(list,'2026-10-29').date,'2026-09-30');
   assert.equal(getLatestSalaryTransaction(list,'2026-10-30').date,'2026-10-30');
+  assert.equal(getLatestSalaryTransaction([{type:'income',date:'2026-09-30',amount:2000,text:'Lohn September'}],'2026-10-01').date,'2026-09-30');
+  assert.equal(getLatestSalaryTransaction([{type:'income',date:'2026-09-30',amount:2000,text:'Erstattung'}],'2026-10-01'),null);
   assert.equal(getLatestSalaryTransaction([], '2026-10-30'),null);
 });
