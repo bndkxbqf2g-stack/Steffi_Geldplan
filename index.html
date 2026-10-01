@@ -249,7 +249,7 @@ button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:non
 <section><h2>Darstellung</h2>
 <div class="setting-row"><div><strong>Erklärungen anzeigen</strong><div class="setting-help">Blendet die erklärenden Hinweise unter den Kacheln ein oder aus.</div></div><label class="switch" aria-label="Erklärungen anzeigen"><input id="explanationsToggle" type="checkbox"><span class="switch-slider"></span></label></div>
 <div class="setting-row"><div><strong>Darstellung</strong><div class="setting-help">System, Hell oder Dunkel.</div></div><button class="update-button theme-button settings-theme-button" id="themeBtn" type="button" title="Darstellung: System" aria-label="Darstellung: System">◐</button></div>
-<div class="row"><span>App-Version</span><span class="v" id="appVersion">v0.99.55</span></div>
+<div class="row"><span>App-Version</span><span class="v" id="appVersion">v0.99.56</span></div>
 </section>
 <section><h2>Daten sichern</h2><p class="note">Sichere alle lokalen Daten inklusive Kontobewegungen, Bargeld, Fixkosten, Gehaltsprognosen, Bezügemitteilungen und Payroll-Lernhistorie als Datei.</p><div class="note payroll-alert"><b>Wichtig bei iPhone/PWA:</b> Vor dem Löschen oder Neuerstellen der Home-Bildschirm-App immer zuerst eine Sicherung erstellen. Die Daten liegen lokal in dieser Browser-/App-Instanz und können beim Entfernen verloren gehen.</div><button class="primary" id="exportBtn">Daten sichern</button><div style="margin-top:12px"><label>Gespeicherte Daten wiederherstellen</label><input id="importFile" type="file" accept="application/json,.json"></div><button class="primary secondary" style="margin-top:8px" id="importBtn">Daten wiederherstellen</button><div class="note" id="backupStatus">Die Sicherung bleibt auf deinem Gerät bzw. dort, wo du die Datei speicherst.</div></section>
 <section><h2>Private Cloud-Sicherung</h2>
@@ -280,7 +280,7 @@ button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:non
 
 <p class="note" style="text-align:center;margin:22px 8px 0">Lokale Daten bleiben auf diesem Gerät erhalten; nach Anmeldung werden sie zusätzlich automatisch in der privaten Cloud gesichert.</p>
 </main>
-<script type="module" src="app.js?v=0.99.55"></script>
+<script type="module" src="app.js?v=0.99.56"></script>
 <script>document.querySelectorAll('[data-quick-tab]').forEach(button=>button.addEventListener('click',()=>{document.querySelector(`nav [data-tab="${button.dataset.quickTab}"]`)?.click();requestAnimationFrame(()=>{if(button.dataset.quickTarget){document.getElementById(button.dataset.quickTarget)?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(button.dataset.quickFocus){const field=document.getElementById(button.dataset.quickFocus);field?.scrollIntoView({behavior:'smooth',block:'center'});field?.focus({preventScroll:true});}})}));</script>
 
 </body></html>
