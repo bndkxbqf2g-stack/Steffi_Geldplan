@@ -93,7 +93,7 @@ button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:non
 @media(max-width:650px){nav{-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}nav button{scroll-snap-align:start;flex:0 0 auto}#prognose .row{align-items:flex-start}#prognose .row .v{max-width:58%;font-size:14px}.comparison-row{grid-template-columns:1fr}.comparison-values{text-align:left}.forecast-head{align-items:flex-start}.forecast-amount{font-size:19px}.saving-history-row{align-items:flex-start}.saving-history-actions{max-width:46%}}
 @media(max-width:430px){#prognose .row{display:grid;grid-template-columns:1fr;gap:5px}#prognose .row .v{max-width:none;text-align:left}.forecast-chart-row{grid-template-columns:58px minmax(0,1fr);}.forecast-chart-value{grid-column:2;text-align:right;margin-top:-3px}.saving-history-row{display:grid;grid-template-columns:1fr}.saving-history-actions{max-width:none;justify-content:space-between}}
 </style>
-<link rel="stylesheet" href="design-refresh.css?v=7">
+<link rel="stylesheet" href="design-refresh.css?v=8">
 </head>
 <body>
 <div class="page-refresh" aria-label="Seitenaktionen">
@@ -224,8 +224,24 @@ button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:non
 
 <!-- FIXKOSTEN -->
 <div id="fixkosten" class="view hidden">
-<div class="page-intro"><div class="intro-kicker">STEFIS GELDPLAN <span class="intro-dot">✦</span></div><h2>Alles fest im Blick.</h2><p>Deine regelmäßigen Ausgaben an einem Ort.</p></div>
-<section class="fixkosten-section"><h2>Meine Fixkosten</h2><div class="fixkosten-intro"><div class="note">Hier verwaltest du deine eigenen festen monatlichen Ausgaben. Die Summe wird beim „Lohn buchen“ automatisch einmal je Lohnzyklus vom Girokonto abgezogen.</div></div><div id="fixItems" class="fix-list"></div><div class="note">Pausierte Positionen bleiben gespeichert, werden aber bis zum Fortsetzen nicht mehr vom Lohn abgezogen.</div><button class="primary secondary" style="margin-top:14px" id="addFixBtn">+ Fixkosten hinzufügen</button><div class="fix-total"><span class="label">Gesamte monatliche Fixkosten</span><span class="value" id="fixTotal">–</span></div></section>
+  <div class="page-intro">
+    <div class="intro-kicker">STEFIS GELDPLAN <span class="intro-dot">✦</span></div>
+    <h2>Alles fest im Blick.</h2>
+    <p>Deine regelmäßigen Ausgaben an einem Ort.</p>
+  </div>
+  <section class="fixkosten-section">
+    <div class="fix-section-head">
+      <div>
+        <div class="intro-kicker">MONATLICHE AUSGABEN</div>
+        <h2>Meine Fixkosten</h2>
+        <p class="fix-section-copy">Aktive Positionen werden beim Lohnbuchen einmal pro Lohnzyklus abgezogen. Pausierte bleiben gespeichert und lassen sich jederzeit fortsetzen.</p>
+      </div>
+      <button class="primary fix-add-button" id="addFixBtn" type="button">+ Position hinzufügen</button>
+    </div>
+    <div class="fix-next-summary" id="fixSummary" aria-live="polite"></div>
+    <div id="fixItems" class="fix-list"></div>
+    <button class="primary secondary fix-add-mobile" id="addFixMobileBtn" type="button">+ Position hinzufügen</button>
+  </section>
 </div>
 
 <!-- PROGNOSE -->
@@ -249,7 +265,7 @@ button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:non
 <section><h2>Darstellung</h2>
 <div class="setting-row"><div><strong>Erklärungen anzeigen</strong><div class="setting-help">Blendet die erklärenden Hinweise unter den Kacheln ein oder aus.</div></div><label class="switch" aria-label="Erklärungen anzeigen"><input id="explanationsToggle" type="checkbox"><span class="switch-slider"></span></label></div>
 <div class="setting-row"><div><strong>Darstellung</strong><div class="setting-help">System, Hell oder Dunkel.</div></div><button class="update-button theme-button settings-theme-button" id="themeBtn" type="button" title="Darstellung: System" aria-label="Darstellung: System">◐</button></div>
-<div class="row"><span>App-Version</span><span class="v" id="appVersion">v0.99.56</span></div>
+<div class="row"><span>App-Version</span><span class="v" id="appVersion">v0.99.57</span></div>
 </section>
 <section><h2>Daten sichern</h2><p class="note">Sichere alle lokalen Daten inklusive Kontobewegungen, Bargeld, Fixkosten, Gehaltsprognosen, Bezügemitteilungen und Payroll-Lernhistorie als Datei.</p><div class="note payroll-alert"><b>Wichtig bei iPhone/PWA:</b> Vor dem Löschen oder Neuerstellen der Home-Bildschirm-App immer zuerst eine Sicherung erstellen. Die Daten liegen lokal in dieser Browser-/App-Instanz und können beim Entfernen verloren gehen.</div><button class="primary" id="exportBtn">Daten sichern</button><div style="margin-top:12px"><label>Gespeicherte Daten wiederherstellen</label><input id="importFile" type="file" accept="application/json,.json"></div><button class="primary secondary" style="margin-top:8px" id="importBtn">Daten wiederherstellen</button><div class="note" id="backupStatus">Die Sicherung bleibt auf deinem Gerät bzw. dort, wo du die Datei speicherst.</div></section>
 <section><h2>Private Cloud-Sicherung</h2>
@@ -280,7 +296,7 @@ button{font:inherit}button:disabled{opacity:.55;cursor:not-allowed;transform:non
 
 <p class="note" style="text-align:center;margin:22px 8px 0">Lokale Daten bleiben auf diesem Gerät erhalten; nach Anmeldung werden sie zusätzlich automatisch in der privaten Cloud gesichert.</p>
 </main>
-<script type="module" src="app.js?v=0.99.56"></script>
+<script type="module" src="app.js?v=0.99.57"></script>
 <script>document.querySelectorAll('[data-quick-tab]').forEach(button=>button.addEventListener('click',()=>{document.querySelector(`nav [data-tab="${button.dataset.quickTab}"]`)?.click();requestAnimationFrame(()=>{if(button.dataset.quickTarget){document.getElementById(button.dataset.quickTarget)?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(button.dataset.quickFocus){const field=document.getElementById(button.dataset.quickFocus);field?.scrollIntoView({behavior:'smooth',block:'center'});field?.focus({preventScroll:true});}})}));</script>
 
 </body></html>
