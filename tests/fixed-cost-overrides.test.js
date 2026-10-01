@@ -57,3 +57,9 @@ test('eine Reduzierung kann den normalen Betrag nie erhöhen',()=>{
   const overrides=setFixedCostOverride([],{fixedCostId:'miete',payoutDate:'2026-09-30',amount:900,baseAmount:750});
   assert.deepEqual(overrides,[]);
 });
+
+
+test('pausierte Fixkosten werden auch beim nächsten Lohn nicht abgezogen',()=>{
+  const paused=[{id:'miete',name:'Miete',amount:750},{id:'ticket',name:'Ticket',amount:63,paused:true}];
+  assert.equal(totalFixedCostsForPayout(paused,[],'2026-10-30'),750);
+});
