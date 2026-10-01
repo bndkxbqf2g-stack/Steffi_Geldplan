@@ -56,13 +56,14 @@ test('kompletter Zyklus 30.09.–30.10.2026 bleibt rechnerisch konsistent',()=>{
   near(state.budget.weeklyBudget,(2100/26)*7);
   assert.equal(isWithdrawalDay('2026-10-04',state.budget.payday,state.budget.nextPayday),true);
 
-  // Freiwillig weniger als das Maximum abheben.
+  // Auch eine freiwillig kleinere Abhebung ist möglich; der Richtwert bleibt unverbindlich.
   const maxFirst=maxAdditionalWithdrawal(state.budget.weeklyBudget,cash);
-  assert.ok(maxFirst>450);
-  transactions=tx(transactions,-450,'2026-10-04','withdrawal','Bargeldabhebung');
-  cash+=450;
+  assert.ok(maxFirst>300);
+  transactions=tx(transactions,-300,'2026-10-04','withdrawal','Bargeldabhebung');
+  cash+=300;
   const afterWithdrawal=stateAt({transactions,savings,today:'2026-10-04'});
-  near(afterWithdrawal.budget.weeklyBudget,state.budget.weeklyBudget); // reine Umbuchung
+  near(afterWithdrawal.budget.dailyBudget,state.budget.dailyBudget-300/26);
+  near(afterWithdrawal.budget.weeklyBudget,state.budget.weeklyBudget-(300/26)*7);
 
   // 50 € aus dem nicht ausgeschöpften Wochenbudget für Urlaub reservieren.
   const position=createSavingsPosition('Urlaub','urlaub');
@@ -77,22 +78,23 @@ test('kompletter Zyklus 30.09.–30.10.2026 bleibt rechnerisch konsistent',()=>{
   // Kartenausgabe in der Woche reduziert das Budget sofort.
   transactions=tx(transactions,-100,'2026-10-07','expense','Einkauf');
   const midWeek=stateAt({transactions,savings,today:'2026-10-07'});
-  near(midWeek.budget.dailyBudget,2000/26);
-  near(midWeek.budget.weeklyBudget,(2000/26)*7);
+  near(midWeek.budget.dailyBudget,1700/26);
+  near(midWeek.budget.weeklyBudget,(1700/26)*7);
 
   // Am Folgesonntag wird die Sparreservierung aus dem Girobudget herausgerechnet.
   cash=30;
   state=stateAt({transactions,savings,today:'2026-10-11'});
   assert.equal(state.budget.remainingDays,19);
   assert.equal(state.budget.segmentDays,7);
-  near(state.budget.dailyBudget,1500/19);
-  near(state.budget.weeklyBudget,(1500/19)*7);
+  near(state.budget.dailyBudget,1650/19);
+  near(state.budget.weeklyBudget,(1650/19)*7);
   near(maxAdditionalWithdrawal(state.budget.weeklyBudget,cash),state.budget.weeklyBudget-30);
 
   transactions=tx(transactions,-500,'2026-10-11','withdrawal','Bargeldabhebung');
   cash+=500;
   const secondAfterWithdrawal=stateAt({transactions,savings,today:'2026-10-11'});
-  near(secondAfterWithdrawal.budget.weeklyBudget,state.budget.weeklyBudget);
+  near(secondAfterWithdrawal.budget.dailyBudget,state.budget.dailyBudget-500/19);
+  near(secondAfterWithdrawal.budget.weeklyBudget,state.budget.weeklyBudget-(500/19)*7);
 
   // Letzter Sonntag: exakt fünf Tage bis zum neuen Lohn.
   cash=10;
@@ -112,7 +114,7 @@ test('kompletter Zyklus 30.09.–30.10.2026 bleibt rechnerisch konsistent',()=>{
   assert.equal(isWithdrawalDay('2026-10-30',state.budget.payday,state.budget.nextPayday),false);
 });
 
-test('Wochenabhebung ist nur am Sonntag eines aktiven Abschnitts erlaubt',()=>{
+test('Budgetabschnitte beginnen sonntags; Abhebungen sind davon unabhängig',()=>{
   assert.equal(isWithdrawalDay('2026-10-03','2026-09-30','2026-10-30'),false);
   assert.equal(isWithdrawalDay('2026-10-04','2026-09-30','2026-10-30'),true);
   assert.equal(isWithdrawalDay('2026-10-05','2026-09-30','2026-10-30'),false);

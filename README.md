@@ -6,6 +6,7 @@ Lokale Budget-, Lohn- und Prognose-App für Steffi. Alle eingegebenen Daten werd
 
 - Der nächste Lohn wird am letzten Banktag des Monats berechnet. Die Kalenderlogik berücksichtigt bundesweite Feiertage sowie die in Bayern landesweit geltenden Feiertage Heilige Drei Könige, Fronleichnam und Allerheiligen.
 - Beim Buchen eines Lohns beginnt ein neuer Lohnzyklus. Die verwalteten Fixkosten werden innerhalb desselben Zyklus nur einmal automatisch abgezogen.
+- Bargeld kann jederzeit abgehoben werden. Die Abhebung bleibt ein Giro-zu-Bargeld-Transfer und wird nicht als Verbrauch gezählt; da das Budget aus dem Giro berechnet wird, aktualisiert sich Tages- und Wochensatz nach der Abhebung sofort.
 - Die App berechnet keine Pfändung. Die Auszahlung basiert auf dem gesetzlichen Netto abzüglich VBL.
 - Die Fixkosten gehören zu Steffis eigener Variante und werden beim Versionsabgleich nicht durch Standardwerte ersetzt.
 - Die bestehenden lokalen Daten und die `freundinGeldplan...`-Speicherschlüssel bleiben erhalten; es findet keine Übernahme in die Daten der Haupt-App statt.
