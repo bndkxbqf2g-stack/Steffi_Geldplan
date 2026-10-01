@@ -2,15 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {calculateCurrentCycleBudget} from '../lib/budget-ui.js';
 
-test('Budget-UI hält Abhebung im laufenden Abschnitt neutral',()=>{
+test('Budget-UI berechnet Tages- und Wochensatz nach Abhebung neu',()=>{
   const result=calculateCurrentCycleBudget({
     giro:1520,
     transactions:[{type:'salary',amount:2100,date:'2026-09-30'},{type:'withdrawal',amount:-300,date:'2026-10-04'}],
     savings:{positions:[],allocations:[]},
     today:new Date('2026-10-04T12:00:00')
   });
-  assert.equal(result.dailyBudget,70);
-  assert.equal(result.weeklyBudget,490);
+  assert.equal(result.dailyBudget,1520/26);
+  assert.equal(result.weeklyBudget,(1520/26)*7);
 });
 
 test('Reservierte Sparrate wirkt erst ab effectiveFrom auf das Girobudget',()=>{
