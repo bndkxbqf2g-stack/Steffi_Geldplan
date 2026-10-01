@@ -30,7 +30,7 @@ test('volatile Exportzeit ändert den Cloud-Deduplizierungs-Hash nicht',async()=
 test('Cloud-Redirect verwendet die produktive GitHub-Pages-URL statt localhost',()=>{
   assert.equal(
     cloudRedirectUrl({origin:'https://bndkxbqf2g-stack.github.io',pathname:'/Steffi_Geldplan/'}),
-    'https://bndkxbqf2g-stack.github.io/mein-geldplan/'
+    'https://bndkxbqf2g-stack.github.io/Steffi_Geldplan/'
   );
 });
 
