@@ -173,7 +173,7 @@ test("angehängte UKW-Zeitnachweise März, April und Mai werden zuverlässig erk
         "30.03.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
         "31.03.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
         "31.03.2026 3C12 5212: SchiZ§43 1,00",
-      month: {year:2026, month:3}, payoutMonth:"2026-05", count:9, night:.2700000000000001
+      month: {year:2026, month:3}, payoutMonth:"2026-05", count:9, night:2.7
     },
     {
       text: "Z E I T N A C H W E I S 80030991 Mitarbeiter Apr 26\\n" +
