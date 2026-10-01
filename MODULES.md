@@ -26,7 +26,7 @@ Kleine, getrennte Fixkostenlogik und Verwaltung. Die Lohnbuchung liest ausschlie
 Backup/Restore, Service-Worker-Registrierung und Updateprüfung.
 ## Step 16
 - `tests/simulation.test.js`: kompletter Monatszyklus als Integrations-/Simulationstest
-- `lib/cycle.js`: `isWithdrawalDay()` für Sonntagsregel
+- `lib/cycle.js`: `isWithdrawalDay()` kennzeichnet reguläre Wochenabschnitte; Bargeldabhebungen sind nicht auf Sonntage beschränkt.
 
 
 ### Versionierung
