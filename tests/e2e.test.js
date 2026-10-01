@@ -12,7 +12,7 @@ import {parsePayslipText,comparePayslip} from '../lib/payslip.js';
 const near=(a,b,t=.01)=>assert.ok(Math.abs(a-b)<=t,`${a} != ${b}`);
 const tx=(list,amount,date,type,text,meta={})=>appendTransaction(list,createTransaction({id:`${date}-${type}-${list.length}`,amount,date,type,text,meta}));
 
-test('E2E: kompletter Budgetmonat mit Fixkosten, Bargeld, Sparen und neuem Lohn',()=>{
+test('E2E: kompletter Budgetmonat mit jederzeitiger Bargeldabhebung',()=>{
   let transactions=[{id:'base',type:'base',amount:0,date:'2026-09-30',text:'Start'}];
   let savings={positions:[],allocations:[]};
   let cash=80;
@@ -28,11 +28,13 @@ test('E2E: kompletter Budgetmonat mit Fixkosten, Bargeld, Sparen und neuem Lohn'
   assert.equal(isWithdrawalDay('2026-10-04',budget.payday,budget.nextPayday),true);
   assert.ok(maxAdditionalWithdrawal(budget.weeklyBudget,cash)>0);
 
-  transactions=tx(transactions,-450,'2026-10-04','withdrawal','Bargeldabhebung');
+  assert.equal(isWithdrawalDay('2026-10-01',budget.payday,budget.nextPayday),false);
+  transactions=tx(transactions,-450,'2026-10-01','withdrawal','Bargeldabhebung');
   cash+=450;
   giro=getCurrentGiro(transactions,0);
   const afterWithdrawal=calculateCurrentCycleBudget({giro,transactions,savings,today:'2026-10-04'});
-  near(afterWithdrawal.weeklyBudget,budget.weeklyBudget);
+  near(afterWithdrawal.dailyBudget,budget.dailyBudget-450/26);
+  near(afterWithdrawal.weeklyBudget,budget.weeklyBudget-(450/26)*7);
 
   const pos=createSavingsPosition('Urlaub','urlaub');
   savings=addSavingsPosition(savings,pos);
