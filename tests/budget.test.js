@@ -81,3 +81,18 @@ test('letzte tatsächliche Lohnbuchung wird als Zyklusstart ermittelt',()=>{
   assert.equal(getLatestSalaryTransaction([{type:'income',date:'2026-09-30',amount:2000,text:'Erstattung'},{type:'income',date:'2026-10-01',amount:50,text:'Rückzahlung'}],'2026-10-01'),null);
   assert.equal(getLatestSalaryTransaction([], '2026-10-30'),null);
 });
+
+import {calculateCurrentCycleBudget} from "../lib/budget-ui.js";
+
+test("Zahlungseingang für den Lohn startet den laufenden Monatszyklus", () => {
+  const result = calculateCurrentCycleBudget({
+    giro: 2100,
+    savings: [],
+    today: "2026-10-01",
+    transactions: [{ type: "base", amount: 0 }, { type: "income", amount: 2100, date: "2026-10-01", text: "Zahlungseingang" }]
+  });
+  assert.equal(result.payday.toISOString().slice(0, 10), "2026-09-30");
+  assert.equal(result.nextPayday.toISOString().slice(0, 10), "2026-10-30");
+  assert.equal(result.daysToPayday, 29);
+  assert.equal(result.segmentDays, 4);
+});
