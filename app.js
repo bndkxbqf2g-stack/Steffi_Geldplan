@@ -11,7 +11,6 @@ import {initTheme} from './lib/theme-ui.js';
 import {initPreferences} from './lib/preferences-ui.js';
 let budgetUi,savingsUi,fixedCostsUi,historyUi;
 const refresh=()=>{budgetUi.render();savingsUi.render();fixedCostsUi.render();historyUi.render();scheduleCurrentRecoverySnapshot();document.dispatchEvent(new Event('geldplan:data-changed'));};
-
 async function resetApp(){
   if(!confirm('Wirklich alle gespeicherten Eingaben und Buchungen löschen?'))return;
   await clearRecoveryForReset();
