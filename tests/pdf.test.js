@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { detectReportMonth, parseTimeReportText, parseWageLine, payoutMonth, splitLines, textItemsToLines } from "../lib/pdf.js";
+import { detectReportMonth, parseTimeReportText, parseWageLine, payoutMonth, readPdfText, splitLines, textItemsToLines } from "../lib/pdf.js";
 
 test("Text wird in saubere Zeilen geteilt", () => {
   assert.deepEqual(splitLines("A\n\n B\r\nC "), ["A", "B", "C"]);
@@ -206,5 +206,47 @@ test("angehängte UKW-Zeitnachweise März, April und Mai werden zuverlässig erk
     assert.equal(report.needsReview, false);
     assert.equal(report.items.filter(item => item.code === "5010").reduce((sum,item) => sum + item.hours, 0), expected.night);
     assert.equal(report.items.some(item => item.code === "5212"), true);
+  }
+});
+
+
+test("Safari-Dateien ohne File.arrayBuffer werden per FileReader eingelesen", async () => {
+  const previousReader = globalThis.FileReader;
+  const previousPdfjs = globalThis.pdfjsLib;
+  const hadReader = Object.prototype.hasOwnProperty.call(globalThis, "FileReader");
+  const hadPdfjs = Object.prototype.hasOwnProperty.call(globalThis, "pdfjsLib");
+  const bytes = new Uint8Array([1, 2, 3]).buffer;
+
+  globalThis.FileReader = class {
+    readAsArrayBuffer(file) {
+      this.result = file.payload;
+      this.onload();
+    }
+  };
+  globalThis.pdfjsLib = {
+    GlobalWorkerOptions: {},
+    getDocument({ data }) {
+      assert.deepEqual([...data], [1, 2, 3]);
+      return {
+        promise: Promise.resolve({
+          numPages: 1,
+          getPage: async () => ({
+            getTextContent: async () => ({ items: [{ str: "5010 Nachtarbeit 1,00 Std." }] })
+          })
+        })
+      };
+    }
+  };
+
+  try {
+    const result = await readPdfText({ payload: bytes });
+    assert.equal(result.text, "5010 Nachtarbeit 1,00 Std.");
+    assert.equal(result.pages, 1);
+    assert.equal(result.needsOcr, false);
+  } finally {
+    if (hadReader) globalThis.FileReader = previousReader;
+    else delete globalThis.FileReader;
+    if (hadPdfjs) globalThis.pdfjsLib = previousPdfjs;
+    else delete globalThis.pdfjsLib;
   }
 });
