@@ -1,6 +1,6 @@
-var CACHE_NAME='mein-geldplan-steffi-v0.99.54';
+var CACHE_NAME='mein-geldplan-steffi-v0.99.55';
 var APP_SHELL=[
-  './','./index.html','./design-refresh.css?v=7','./app.js?v=0.99.54','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png',
+  './','./index.html','./design-refresh.css?v=7','./app.js?v=0.99.55','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png',
   './config/version.js','./config/salary-2026.js','./lib/cloud-backup-ui.js','./lib/cloud-backup.js','./lib/cloud-auth.js','./config/supabase.js',
   './lib/ui.js','./lib/storage.js','./lib/theme-ui.js','./lib/cycle.js','./lib/budget.js','./lib/budget-ui.js',
   './lib/savings.js','./lib/savings-ui.js','./lib/fixed-costs.js','./lib/fixed-cost-overrides.js','./lib/fixed-costs-ui.js','./lib/history-ui.js','./lib/statistics.js',
