@@ -158,3 +158,53 @@ test("echter August-Zeitnachweis: Summen und Wechselschicht werden korrekt erkan
   assert.equal(r.wechsel, true);
   assert.equal(r.schicht, false);
 });
+
+
+test("angehängte UKW-Zeitnachweise März, April und Mai werden zuverlässig erkannt", () => {
+  const reports = [
+    {
+      text: "Z E I T N A C H W E I S 80030991 Mitarbeiter Mrz 26\\n" +
+        "09.03.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "10.03.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "11.03.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "23.03.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "24.03.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "25.03.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "30.03.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
+        "31.03.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
+        "31.03.2026 3C12 5212: SchiZ§43 1,00",
+      month: {year:2026, month:3}, payoutMonth:"2026-05", count:9, night:.2700000000000001
+    },
+    {
+      text: "Z E I T N A C H W E I S 80030991 Mitarbeiter Apr 26\\n" +
+        "01.04.2026 3B62 5162:Durchsch.§21TVL-Folg 1,00\\n" +
+        "02.04.2026 3B62 5162:Durchsch.§21TVL-Folg 1,00\\n" +
+        "13.04.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "14.04.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "15.04.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "30.04.2026 3C12 5212: SchiZ§43 1,00",
+      month: {year:2026, month:4}, payoutMonth:"2026-06", count:6, night:1.35
+    },
+    {
+      text: "Z E I T N A C H W E I S 80030991 Mitarbeiter Mai 26\\n" +
+        "11.05.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "12.05.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "13.05.2026 21:00 21:27 3A10 5010: Nachtarbeit 0,45\\n" +
+        "26.05.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
+        "27.05.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
+        "28.05.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
+        "29.05.2026 3B61 5161: Durchschnitt §21 TV 1,00\\n" +
+        "31.05.2026 3C12 5212: SchiZ§43 1,00",
+      month: {year:2026, month:5}, payoutMonth:"2026-07", count:8, night:1.35
+    }
+  ];
+  for (const expected of reports) {
+    const report = parseTimeReportText(expected.text);
+    assert.deepEqual(report.month, expected.month);
+    assert.equal(report.payoutMonth, expected.payoutMonth);
+    assert.equal(report.items.length, expected.count);
+    assert.equal(report.needsReview, false);
+    assert.equal(report.items.filter(item => item.code === "5010").reduce((sum,item) => sum + item.hours, 0), expected.night);
+    assert.equal(report.items.some(item => item.code === "5212"), true);
+  }
+});
