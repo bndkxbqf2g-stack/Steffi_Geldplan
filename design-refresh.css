@@ -407,3 +407,7 @@ html[data-theme="dark"] .fix-item .fix-delete{background:#442f2d;color:#e7aaa5;b
  .fix-item-icon{width:30px;height:36px}
  .fix-item .fix-pause-button{min-width:78px}
 }
+
+/* Keep the fixed-cost heading readable beside its desktop action. */
+.fix-section-head>div:first-child{flex:1 1 auto;min-width:0}
+.fix-section-head .fix-add-button{width:auto;flex:0 0 auto;align-self:flex-start}
