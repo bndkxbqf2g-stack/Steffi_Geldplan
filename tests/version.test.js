@@ -10,7 +10,7 @@ const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'..');
 test('sichtbare App-Version und Service-Worker-Version stimmen überein',()=>{
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
   const sw=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');
-  assert.equal(APP_VERSION,'0.99.54');
+  assert.equal(APP_VERSION,'0.99.55');
   assert.match(html,new RegExp(`id="appVersion">v${APP_VERSION.replaceAll('.','\\.')}`));
   assert.match(html,new RegExp(`app\\.js\\?v=${APP_VERSION.replaceAll('.','\\.')}`));
   assert.match(sw,new RegExp(`mein-geldplan-steffi-v${APP_VERSION.replaceAll('.','\\.')}`));
