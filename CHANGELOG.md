@@ -1,3 +1,9 @@
+# v0.99.60
+
+- Bargeld kann an jedem Wochentag abgehoben werden; die Abhebung wird als Transfer Giro → Bargeld gebucht.
+- Tages- und Wochensatz werden nach der Abhebung aus dem verbleibenden Giro neu berechnet.
+- Regressionen prüfen Abhebungen an einem Werktag und die unmittelbare Änderung beider Budgetwerte.
+
 # v0.99.59
 
 - Zeitnachweisimport auf iOS/Safari nutzt FileReader, wenn File.arrayBuffer fehlt, fehlschlägt oder keine Bytes liefert.
