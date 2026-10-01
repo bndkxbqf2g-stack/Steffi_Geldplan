@@ -11,3 +11,13 @@ test('Fixkosten bleiben editierbar',()=>{
   list=updateFixedCost(list,'x',{amount:12}); assert.equal(list.find(x=>x.id==='x').amount,12);
   list=removeFixedCost(list,'x'); assert.equal(list.some(x=>x.id==='x'),false);
 });
+
+
+test('Einzelne Fixkosten können dauerhaft pausiert und fortgesetzt werden',()=>{
+  let list=addFixedCost([], {id:'pause-me',name:'Pause me',amount:25});
+  list=updateFixedCost(list,'pause-me',{paused:true});
+  assert.equal(list.find(x=>x.id==='pause-me').paused,true);
+  assert.equal(totalFixedCosts(list),0);
+  list=updateFixedCost(list,'pause-me',{paused:false});
+  assert.equal(totalFixedCosts(list),25);
+});
