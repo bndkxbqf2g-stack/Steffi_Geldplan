@@ -1,3 +1,11 @@
+# v0.99.59
+
+- Zeitnachweisimport auf iOS/Safari nutzt FileReader, wenn File.arrayBuffer fehlt, fehlschlägt oder keine Bytes liefert.
+- PDF-Seitenumbrüche bleiben echte Zeilenumbrüche; Importfehler nennen jetzt die betroffene Verarbeitungsstufe.
+- Regressionstests prüfen Safari-Fallback, fehlerhaftes arrayBuffer, Seitenumbrüche sowie anonymisierte März-/April-/Mai-Zeitnachweise.
+- Gemeinsame Fehlerdiagnose für alle App-Funktionen in DEBUGGING.md dokumentiert.
+- Steffis Gehaltsgrundlagen, Fixkosten, Pfändungsausschluss und gespeicherte lokale Daten bleiben unverändert.
+
 # Steffis Variante – Übernahme der aktuellen Hauptversion
 
 - Aktuelle Budget-, Prognose-, Bezügemitteilungs-, Recovery- und Payroll-Kontrolllogik übernommen.

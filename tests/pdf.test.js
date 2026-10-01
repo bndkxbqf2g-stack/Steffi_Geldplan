@@ -250,3 +250,52 @@ test("Safari-Dateien ohne File.arrayBuffer werden per FileReader eingelesen", as
     else delete globalThis.pdfjsLib;
   }
 });
+
+test("Safari-Zeitnachweise nutzen FileReader als Fallback und behalten PDF-Seitenumbrüche", async () => {
+  const previousReader = globalThis.FileReader;
+  const previousPdfjs = globalThis.pdfjsLib;
+  const hadReader = Object.prototype.hasOwnProperty.call(globalThis, "FileReader");
+  const hadPdfjs = Object.prototype.hasOwnProperty.call(globalThis, "pdfjsLib");
+  const bytes = new Uint8Array([1, 2, 3]).buffer;
+
+  globalThis.FileReader = class {
+    readAsArrayBuffer(file) {
+      this.result = file.payload;
+      this.onload();
+    }
+  };
+  globalThis.pdfjsLib = {
+    GlobalWorkerOptions: {},
+    getDocument({ data }) {
+      assert.deepEqual([...data], [1, 2, 3]);
+      return {
+        promise: Promise.resolve({
+          numPages: 2,
+          getPage: async pageNo => ({
+            getTextContent: async () => ({
+              items: [{ str: pageNo === 1 ? "Zeitnachweis April 2026" : "5010 Nachtarbeit 1,00 Std." }]
+            })
+          })
+        })
+      };
+    }
+  };
+
+  try {
+    const withoutArrayBuffer = await readPdfText({ payload: bytes });
+    const rejectedArrayBuffer = await readPdfText({
+      payload: bytes,
+      arrayBuffer: async () => { throw new Error("Null is not an object"); }
+    });
+    for (const result of [withoutArrayBuffer, rejectedArrayBuffer]) {
+      assert.equal(result.text, "Zeitnachweis April 2026\n5010 Nachtarbeit 1,00 Std.");
+      assert.equal(result.pages, 2);
+      assert.equal(result.needsOcr, false);
+    }
+  } finally {
+    if (hadReader) globalThis.FileReader = previousReader;
+    else delete globalThis.FileReader;
+    if (hadPdfjs) globalThis.pdfjsLib = previousPdfjs;
+    else delete globalThis.pdfjsLib;
+  }
+});
