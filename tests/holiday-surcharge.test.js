@@ -32,7 +32,7 @@ test('explizite Feiertagsarbeit mit Freizeitausgleich wird mit 8,02 Euro je Stun
 });
 
 test('unklar bezeichnete unbekannte Feiertags-Lohnart wird weiterhin nicht geraten',()=>{
-  const line='15.07.2026 06:00 13:42 3A34 5034: Feiertagsarbeit 7,70';
+  const line='15.07.2026 06:00 13:42 3A39 5039: Feiertagsarbeit 7,70';
   assert.equal(parseWageLine(line),null);
   const report=parseTimeReportText('Z E I T N A C H W E I S 80030991 Mitarbeiter Jul 26\n'+line);
   assert.equal(report.unknownCodes.length,1);
