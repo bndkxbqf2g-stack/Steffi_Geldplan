@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f5f5f7">
-<title>Mein Geldplan · v34</title>
+<title>Mein Geldplan · v37</title>
 <style>
 :root{
  --bg:#f3f5f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
@@ -109,7 +109,7 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 <div class="row"><span>Bis zum nächsten Kassensturz</span><span class="v" id="mainDays">–</span></div>
 <div class="row"><span><b>Tagesbudget</b></span><span class="v big good" id="mainDay">–</span></div>
 <div class="row"><span><b>Wochenbudget</b></span><span class="v big good" id="mainWeek">–</span></div>
-<div class="note" id="budgetNote">Das Tagesbudget berechnet sich aus dem aktuellen Giroguthaben geteilt durch die verbleibenden Tage bis zum nächsten Kassensturz. Das Wochenbudget entspricht dem Tagesbudget mal 7 bzw. dem verbleibenden Zyklus, falls der letzte Abschnitt kürzer als 7 Tage ist.</div>
+<div class="note" id="budgetNote">Liegt die nächste Sonntagsabhebung vor dem Lohntag, berechnen sich Tagessatz und Wochensatz aus den Tagen zwischen Abhebung und Lohntag. Andernfalls gelten die Resttage ab heute bis zum Lohntag; der Wochensatz bleibt auf maximal 7 Tage begrenzt.</div>
 </section>
 
 <section>
@@ -141,7 +141,7 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 <div class="row"><span>Girokonto nach Abhebung</span><span class="v" id="sAfter">–</span></div>
 <div class="row"><span>Nächster Kassensturz</span><span class="v" id="nextWithdrawalDate">–</span></div>
 <div class="row"><span>Tage bis zum nächsten Kassensturz</span><span class="v" id="withdrawalDays">–</span></div>
-<div class="note" id="withdrawalHint">Der 7-Tage-Betrag ist nur eine Orientierung. Du entscheidest selbst, wie viel Bargeld du für die nächsten Tage abhebst und wie viel du später wieder auffüllst.</div>
+<div class="note" id="withdrawalHint">Liegt die nächste Sonntagsabhebung vor dem Lohntag, wird mit dem Abhebungsfenster bis zum Lohntag gerechnet. Sonst gelten die Resttage ab heute bis zum Lohntag; der Wochensatz bleibt auf maximal 7 Tage begrenzt.</div>
 </section>
 
 <section><h2>Lohn buchen</h2><div class="grid"><div><label>Nettolohn (€)</label><input id="salaryAmount" type="number" step=".01" placeholder="z. B. 2.900"></div><div><label>Beschreibung</label><input id="salaryText" type="text" placeholder="z. B. Lohn September"></div></div><button class="primary" style="margin-top:12px" id="salaryBtn">Lohn buchen & Fixkosten abziehen</button><div class="note">Nur der tatsächlich ausgezahlte Nettolohn verändert dein Budget. Die Prognose greift niemals automatisch ein.</div></section>
@@ -191,6 +191,6 @@ input:focus,select:focus{border-color:#9ca3af;box-shadow:0 0 0 4px rgba(17,24,39
 <p class="note" style="text-align:center;margin:22px 8px 0">Alle Berechnungen laufen lokal im Browser. Die App speichert keine Kontodaten online.</p>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="app.js?v=36"></script>
+<script src="app.js?v=37"></script>
 
 </body></html>

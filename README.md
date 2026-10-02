@@ -1,4 +1,4 @@
-# Mein Geldplan v36 – personalisiert
+# Mein Geldplan v37 – personalisiert
 
 Persönlicher Geldplan für die Uniklinik Würzburg mit Budget, Gehaltsprognose, PDF-Zeitnachweisen, Abrechnungsvergleich und lokaler Datensicherung.
 
@@ -9,3 +9,5 @@ Die Freundin arbeitet 60 %. Das Prognose-Brutto ab Oktober 2026 wird deshalb aus
 Einspringen: je erkanntem eingesprungenen Dienst 150 € Prämie plus Stundenentgelt; Stundenentgelt bis 09/2026 nach KR 8 Stufe 5, ab 10/2026 nach KR 8 Stufe 6.
 
 Die Gehaltswerte sind Prognosen aus dokumentierten Abrechnungen und Zeitnachweisen. Pfändungs- und Privatinsolvenzberechnungen sind nicht Bestandteil der App.
+
+Die Budgetberechnung verwendet ausschließlich das Giroguthaben. Liegt die nächste Sonntagsabhebung vor dem Lohntag, wird der Tagessatz aus den Tagen zwischen diesem Sonntag und dem Lohntag berechnet; andernfalls aus den Resttagen ab heute. Das Wochenbudget entspricht dem Tagessatz für höchstens sieben Tage und wird nach jeder Abhebung sowie in jeder folgenden Woche neu berechnet.

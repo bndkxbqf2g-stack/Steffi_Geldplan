@@ -55,11 +55,13 @@ function currentCycleDaysLeft(){
  return Math.max(1,daysUntilNextWithdrawal());
 }
 function weeklyGiroBudget(){
- var giro=currentGiro();
- var daysLeft=remainingPayDays();
- var cycleDays=Math.min(7,daysLeft);
- var daily=daysLeft>0?giro/daysLeft:0;
- return {day:daily,week:daysLeft>0?daily*cycleDays:0,cycleDays:cycleDays};
+ var giro=currentGiro(),payDate=currentCyclePayDate(),nextW=nextWithdrawalDate(),payDays=remainingPayDays();
+ var windowDays=nextW?daysBetweenDates(nextW,payDate):0;
+ var useWithdrawalWindow=windowDays>0;
+ var baseDays=useWithdrawalWindow?Math.max(1,windowDays):payDays;
+ var cycleDays=Math.min(7,baseDays);
+ var daily=baseDays>0?giro/baseDays:0;
+ return {day:daily,week:baseDays>0?daily*cycleDays:0,cycleDays:cycleDays,baseDays:baseDays,payDays:payDays,useWithdrawalWindow:useWithdrawalWindow};
 }
 function daysToFollowingSundayFrom(d){
  var dow=d.getDay(),delta=(7-dow)%7;
@@ -119,7 +121,9 @@ function updateBudget(){
  if($('mainDays'))$('mainDays').textContent=daysW;
  if($('mainDay'))$('mainDay').textContent=eur(cycleBudget.day);
  if($('mainWeek'))$('mainWeek').textContent=eur(cycleBudget.week);
- if($('budgetNote'))$('budgetNote').textContent='Der Tagessatz berechnet sich aus dem aktuellen Girokontostand geteilt durch die verbleibenden Tage bis zum nächsten Lohn. Der Wochensatz ist der Tagessatz mal 7; am Sonntag wird er mit dem dann aktuellen Giroguthaben neu berechnet. Zusatzausgaben und Bargeldabhebungen verringern das Girokonto, sobald sie erfasst werden.';
+ if($('budgetNote'))$('budgetNote').textContent=cycleBudget.useWithdrawalWindow
+  ?'Die nächste Sonntagsabhebung liegt vor dem Lohntag. Deshalb berechnen wir Tagessatz und Wochensatz aus den '+cycleBudget.baseDays+' Tagen zwischen nächster Abhebung und Lohntag (Wochensatz max. 7 Tage). Zusatzausgaben und Bargeldabhebungen verringern das Girokonto sofort.'
+  :'Die nächste Sonntagsabhebung liegt nicht vor dem Lohntag. Deshalb berechnen wir Tagessatz und Wochensatz mit den Resttagen ab heute bis zum Lohntag (Wochensatz max. 7 Tage). Zusatzausgaben und Bargeldabhebungen verringern das Girokonto sofort.';
  renderFixItems();
 }
 function savingsEntries(){
@@ -206,7 +210,9 @@ function sunday(){
  if($('sAfter'))$('sAfter').textContent=eur(konto-num('sWithdrawAmount'));
  if($('nextWithdrawalDate'))$('nextWithdrawalDate').textContent=next?fmt(next):'–';
  if($('withdrawalDays'))$('withdrawalDays').textContent=daysUntilNextWithdrawal();
- if($('withdrawalHint'))$('withdrawalHint').textContent='Der 7-Tage-Betrag wird aus dem aktuellen Giroguthaben und den verbleibenden Tagen bis zum nächsten Lohn berechnet. Am Sonntag kannst du den Betrag neu abheben. Bargeldverbrauch beeinflusst das Girokonto nicht; Abhebungen und Sparbuchungen schon.';
+ if($('withdrawalHint'))$('withdrawalHint').textContent=cycleBudget.useWithdrawalWindow
+  ?'Die nächste Sonntagsabhebung liegt vor dem Lohntag. Deshalb basiert der Betrag auf dem Abhebungsfenster von '+cycleBudget.baseDays+' Tagen bis zum Lohn (Wochensatz max. 7 Tage). Bargeldverbrauch beeinflusst das Girokonto nicht; Abhebungen und Sparbuchungen schon.'
+  :'Die nächste Sonntagsabhebung liegt nicht vor dem Lohntag. Deshalb basiert der Betrag auf den Resttagen bis zum Lohn ab heute (Wochensatz max. 7 Tage). Bargeldverbrauch beeinflusst das Girokonto nicht; Abhebungen und Sparbuchungen schon.';
 }
 // Historisch aus den hochgeladenen Bezügemitteilungen kalibriert.
 // Wir verwenden das tatsächlich ausgewiesene Regel-Netto als Basis und

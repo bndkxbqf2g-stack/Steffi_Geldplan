@@ -13,6 +13,18 @@ assert.equal(Number(calculateCycleBudget(2500, 30).day.toFixed(2)), 83.33, '2.50
 assert.equal(Number(calculateCycleBudget(2500, 30).week.toFixed(2)), 583.33, 'Der erste Wochensatz beträgt 583,33 Euro.');
 assert.equal(Number(calculateCycleBudget(1886.67, 23).day.toFixed(2)), 82.03, '1.886,67 Euro auf 23 Tage ergeben 82,03 Euro Tagessatz.');
 assert.equal(Number(calculateCycleBudget(1886.67, 23).week.toFixed(2)), 574.2, 'Der neu berechnete Wochensatz beträgt 574,20 Euro.');
+assert.equal(Number(calculateCycleBudget(71.31, 9, 6).day.toFixed(2)), 23.77, 'Vor der nächsten Abhebung wird auf das Fenster Abhebung → Lohn gerechnet.');
+assert.equal(Number(calculateCycleBudget(71.31, 9, 6).week.toFixed(2)), 71.31, 'Bei 3 Basistagen entspricht der Wochensatz dem gesamten Giroguthaben.');
+assert.equal(calculateCycleBudget(71.31, 9, 6).baseDays, 3, 'Die Basis sind 3 Tage zwischen Abhebung und Lohn.');
+assert.equal(calculateCycleBudget(71.31, 9, 6).usesWithdrawalWindow, true, 'Bei Abhebung vor dem Lohn wird das Abhebungsfenster verwendet.');
+assert.equal(calculateCycleBudget(1610, 23, 4).baseDays, 19, 'Bei 23 Resttagen und 4 Tagen bis zur Abhebung wird auf 19 Basistage gerechnet.');
+assert.equal(Number(calculateCycleBudget(1610, 23, 4).day.toFixed(2)), 84.74, 'Der Tagessatz wird nach dem Abhebungsfenster neu berechnet.');
+assert.equal(Number(calculateCycleBudget(1610, 23, 4).week.toFixed(2)), 593.16, 'Der Wochensatz bleibt auf maximal 7 Tage begrenzt.');
+assert.equal(calculateCycleBudget(210, 5, 7).baseDays, 5, 'Liegt die Abhebung nicht vor dem Lohn, gelten die Resttage ab heute.');
+assert.equal(calculateCycleBudget(210, 5, 7).usesWithdrawalWindow, false, 'Ohne Abhebung vor dem Lohn gilt kein Abhebungsfenster.');
+assert.equal(calculateCycleBudget(210, 9, 9).baseDays, 9, 'Bei gleichem Abhebungs- und Lohntag gilt der Resttage-Fallback.');
+assert.equal(Number(calculateCycleBudget(1200, 19, 7).day.toFixed(2)), 100, 'Eine weitere Abhebung in der Folgewoche berechnet dasselbe Fensterprinzip erneut.');
+assert.equal(calculateCycleBudget(1200, 19, 7).week, 700, 'Das Folgewoche-Wochenbudget entspricht Tagessatz × 7.');
 assert.equal(computeCashRefillTarget(50, 120), 70, 'Bargeld wird bis zum Ziel ergänzt.');
 assert.equal(computeCashRefillTarget(200, 120), 0, 'Wenn zu viel Bargeld da ist, bleibt das Ziel unverändert.');
 console.log('budget-logic tests passed');
