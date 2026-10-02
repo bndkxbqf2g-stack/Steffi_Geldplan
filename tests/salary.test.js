@@ -44,6 +44,11 @@ test('Einspring-Stundenentgelt wird aus persönlicher KR-Stufe abgeleitet',()=>{
   assert.equal(springInHourlyRate(),26.69);
 });
 
+test('Null-Einspringdaten brechen die Gehaltsberechnung nicht',()=>{
+  assert.deepEqual(springInPay(null),{duties:0,hours:0,hourlyRate:26.69,premium:0,hourly:0,total:0});
+  assert.equal(reportComponents({items:[],springIn:null}).pay.springIn,0);
+});
+
 test('Einspringprämie besteht aus 150 Euro je Dienst plus Stundenentgelt',()=>{
   assert.deepEqual(springInPay({duties:1,hours:7.7}),{duties:1,hours:7.7,hourlyRate:26.69,premium:150,hourly:205.51,total:355.51});
 });
