@@ -2,7 +2,7 @@
 
 - UKW-Lohnarten 5026, 5030 und 5034 werden erkannt.
 - 5026 wird als Sonntag/Nacht steuerfrei ausgewertet.
-- 5034 wird nach § 3b EStG als Samstagszuschlag steuerpflichtig behandelt.
+- 5034 wird nach dem belegten UKW-Abrechnungsmuster (Juni/Juli 2026) als steuerfrei behandelt; die Abweichung zur allgemeinen §3b-Standardbewertung bleibt als arbeitgeber-/Lohnartenbesonderheit dokumentiert.
 - 5030 bleibt ohne eindeutigen Freizeitausgleich als prüfpflichtige Feiertagsposition offen.
 - Grundlage: § 3b EStG und Lohnsteuer-Hinweise 2026.
 
