@@ -299,3 +299,12 @@ test("Safari-Zeitnachweise nutzen FileReader als Fallback und behalten PDF-Seite
     else delete globalThis.pdfjsLib;
   }
 });
+
+
+test('Neue UKW-Codes 5026, 5030 und 5034 werden erkannt',()=>{
+  const text=['11.07.2026 20:00 21:00 5Q34 5034: Sa 20-21 Uhr 0,64 E 1,00','12.07.2026 21:00 21:42 3A26 5026: Sonntag und Nacht 0,70','15.08.2026 06:00 10:00 3A30 5030: Feiertagszuschlag 4,00'].join('\n');
+  const report=parseTimeReportText('Z E I T N A C H W E I S Mitarbeiter Jul 26\n'+text);
+  assert.equal(report.unknownCodes.length,0);
+  assert.deepEqual(report.items.map(item=>item.type),['saturdayEvening','sundayNight','holiday']);
+  assert.equal(report.needsReview,true);
+});

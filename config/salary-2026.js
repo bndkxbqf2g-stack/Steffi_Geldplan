@@ -28,6 +28,7 @@ export const SALARY_2026 = Object.freeze({
   payroll: Object.freeze({ garnishmentEnabled: false, payoutDelayMonths: 2 }),
   work: Object.freeze({ weeklyHours: 38.5, monthFactor: 4.348 }),
   springIn: Object.freeze({ basePremium: 150, taxMode: 'taxable-unverified', vblMode: 'unverified' }),
+  taxRules: Object.freeze({ source: '§ 3b EStG / Lohnsteuer-Hinweise 2026; employer observation from June/July 2026 payslips', saturday: 'taxable', saturdayEvening: 'taxFreeEmployerObserved', sunday: 'taxFree', sundayNight: 'taxFree', holiday: 'reviewUntilTimeOffKnown' }),
   profile: Object.freeze({ taxClass: 1, childAllowance: 0, churchTaxRate: 0, kvAdditionalRate: 2.69, childless: true, careChildDeductions: 0, saxony: false, healthInsurance: 'AOK Bayern' }),
   social: Object.freeze({
     healthEmployee: 0.08645, careEmployee: 0.024, pensionEmployee: 0.093, unemploymentEmployee: 0.013,
@@ -39,6 +40,9 @@ export const SALARY_2026 = Object.freeze({
     5011: "nightBeforeMidnight",
     5014: "saturday",
     5024: "sunday",
+    5026: "sundayNight",
+    5030: "holiday",
+    5034: "saturdayEvening",
     5161: "average21",
     5162: "average21Followup",
     5211: "wechsel",
