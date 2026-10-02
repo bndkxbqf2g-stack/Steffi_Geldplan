@@ -29,7 +29,7 @@ test('Gehaltsmodul kann den Kernstart nicht mehr blockieren',()=>{
   const source=fs.readFileSync(path.join(root,'app.js'),'utf8');
   assert.doesNotMatch(source,/^import\s+\{initSalaryUi\}\s+from/m);
   const firstRefresh=source.indexOf('refresh();');
-  const salaryImport=source.indexOf("import('./lib/salary-ui.js')");
+  const salaryImport=source.indexOf("import('./lib/salary-ui.js?v=");
   assert.ok(firstRefresh>=0);
   assert.ok(salaryImport>firstRefresh);
   assert.match(source,/\.catch\(error=>\{console\.error\('\[salary-init\]'/);

@@ -60,3 +60,20 @@ test('Einspringen wird einmalig als steuerpflichtiger Zusatzlohn ergänzt',()=>{
   assert.equal(c.taxFreePay,9.16);
   assert.equal(c.needsReview,true);
 });
+
+import {calculateNetEffects} from '../lib/salary-net-effects.js';
+
+test('Zeitnachweis-Nettoeffekt übergibt keine Null-Einspringdaten an Teilberechnungen',async()=>{
+  const tax={wageTax:0,solidarity:0,churchTax:0};
+  const report={items:[{code:'5010',hours:1},{code:'5212',hours:0}],unknownCodes:[],needsReview:false};
+  const baseline=calculateSalaryForecastCore({items:[]},tax);
+  const full=calculateSalaryForecastCore(report,tax);
+  const seen=[];
+  const effects=await calculateNetEffects(report,baseline,full,entry=>{
+    seen.push(entry.springIn);
+    return calculateSalaryForecastCore(entry,tax);
+  });
+  assert.equal(seen.length,3);
+  assert.ok(seen.every(entry=>entry?.duties===0&&entry?.hours===0));
+  assert.equal(effects.totalNet,Number((full.payout-baseline.payout).toFixed(2)));
+});
