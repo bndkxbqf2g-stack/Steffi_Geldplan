@@ -20,6 +20,9 @@ test("KR8-Zeitzuschläge bleiben trotz Teilzeit ungekürzt", () => {
   assert.equal(SALARY_2026.surcharges.night, 4.58);
   assert.equal(SALARY_2026.surcharges.saturday, 0.64);
   assert.equal(SALARY_2026.surcharges.sunday, 5.73);
+  assert.equal(SALARY_2026.wageTypes[5026],'sundayNight');
+  assert.equal(SALARY_2026.wageTypes[5030],'holiday');
+  assert.equal(SALARY_2026.wageTypes[5034],'saturdayEvening');
 });
 
 test("monatliche Schichtzulagen sind mit 60 Prozent hinterlegt", () => {

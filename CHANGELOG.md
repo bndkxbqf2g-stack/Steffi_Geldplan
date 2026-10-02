@@ -1,3 +1,11 @@
+## v0.99.63 — Steffi-Lohnarten 5034/5026/5030
+
+- UKW-Lohnarten 5026, 5030 und 5034 werden erkannt.
+- 5026 wird als Sonntag/Nacht steuerfrei ausgewertet.
+- 5034 wird nach § 3b EStG als Samstagszuschlag steuerpflichtig behandelt.
+- 5030 bleibt ohne eindeutigen Freizeitausgleich als prüfpflichtige Feiertagsposition offen.
+- Grundlage: § 3b EStG und Lohnsteuer-Hinweise 2026.
+
 # v0.99.59
 
 - Zeitnachweisimport auf iOS/Safari nutzt FileReader, wenn File.arrayBuffer fehlt, fehlschlägt oder keine Bytes liefert.
