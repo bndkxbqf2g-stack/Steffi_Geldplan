@@ -15,7 +15,7 @@ test('Zeitlohnarten werden getrennt berechnet',()=>{
   assert.equal(c.protectedPay,26.35);assert.equal(c.taxableExtra,150);assert.equal(c.shift,'wechsel');
 });
 test('VBL und SV-Hinzubetrag bleiben tariflich kalibriert',()=>{
-  assert.equal(Math.round(2888.08*SALARY_2026.social.vblEmployeeRate*100)/100,52.27);
+  assert.equal(Math.round(2833.19*SALARY_2026.social.vblEmployeeRate*100)/100,51.28);
 });
 
 test("Wechselschicht wird durch Code 5211 auch ohne Stundenwert berücksichtigt", () => {
@@ -34,7 +34,7 @@ import {calculateSalaryForecastCore} from '../lib/salary.js';
 
 test('reiner Festbezug reproduziert die echte 2026-Kernabrechnung',()=>{
   const f=calculateSalaryForecastCore({items:[]},{wageTax:662.58,solidarity:0,churchTax:32.99,churchBase:0});
-  assert.equal(f.totalGross,2888.08);
+  assert.equal(f.totalGross,2833.19);
   assert.equal(f.garnishment,0);
   assert.equal(f.payout,Number((f.legalNet-f.vbl).toFixed(2)));
 });
