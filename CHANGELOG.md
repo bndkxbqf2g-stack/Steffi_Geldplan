@@ -1,3 +1,12 @@
+## v0.99.64 — getrennte Payroll-Zeitachsen und nachvollziehbare Kontrollkarten
+
+- Leistungsmonat, geplante Standardauszahlung und ausdrücklich belegter tatsächlicher Zahlungsmonat werden getrennt geführt.
+- Einmalige Übermittlungs-/Abrechnungsverzögerungen bleiben als begründete Ausnahme am passenden Forecast gespeichert; es gibt keine globale M+2-Ausnahme.
+- Payroll-Kontrollkarten weisen erwartete, berücksichtigte und offene variable Bezüge, steuerfreie/steuerpflichtige Bestandteile, Nettoeffekt und korrigierten tatsächlichen Zahlungseingang aus.
+- Rückrechnungen werden dem ursprünglichen Leistungsmonat zugeordnet und innerhalb derselben Bezügemitteilung dedupliziert.
+- Prognosen mit gleichem Auszahlungsmonat bleiben anhand ihres Leistungsmonats getrennt. Mehrdeutige Ist-Belege werden als „UNSICHER/PRÜFEN“ behandelt und nicht doppelt gelernt.
+- Die bestehende Steffi-Lohnbasis, Fixkosten, Budgetlogik, Local-Storage-Schlüssel und der Ausschluss einer Pfändungs-/P-Konto-Berechnung bleiben unverändert.
+
 ## v0.99.63 — Steffi-Lohnarten 5034/5026/5030
 
 - UKW-Lohnarten 5026, 5030 und 5034 werden erkannt.

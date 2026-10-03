@@ -16,6 +16,22 @@ test('gespeicherte Prognose kann nach PWA-Neustart wieder als Zeitnachweis aktiv
   assert.equal(report.items[0].code,'5010');
 });
 
+test('gespeicherte Prognose behält geplanten Monat und einmalige Zahlungsausnahme getrennt',()=>{
+  const report=restoreReportFromForecast({
+    payoutMonth:'2026-10',
+    plannedPayoutMonth:'2026-09',
+    standardPayoutMonth:'2026-09',
+    reportMonth:'2026-07',
+    paymentMonthOverride:{id:'delay',originMonth:'2026-07',plannedPaymentMonth:'2026-09',actualPaymentMonth:'2026-10',reason:'Beleg'},
+    reportItems:[{code:'5010',type:'night',hours:1,amount:null}],
+    needsReview:false
+  });
+  assert.equal(report.payoutMonth,'2026-10');
+  assert.equal(report.plannedPayoutMonth,'2026-09');
+  assert.equal(report.standardPayoutMonth,'2026-09');
+  assert.equal(report.paymentMonthOverride.reason,'Beleg');
+});
+
 test('alte gespeicherte September-Prognose wird einmalig mit aktuellen Regeln neu aufgebaut',async()=>{
   const stale={
     forecastModel:2,
