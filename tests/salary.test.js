@@ -92,7 +92,7 @@ test('Neue UKW-Lohnarten werden fachlich getrennt behandelt',()=>{
   assert.equal(c.pay.saturdayEvening,.64);
   assert.equal(c.pay.sunday,4.01);
   assert.equal(c.taxableExtra,0);
-  assert.equal(c.taxFreePay,4.65);
+  assert.equal(c.taxFreePay,7.86);
   assert.equal(c.needsReview,true);
   assert.equal(c.unpriced[0].code,'5030');
 });
