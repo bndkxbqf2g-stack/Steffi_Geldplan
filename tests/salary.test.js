@@ -79,12 +79,20 @@ test('Zeitnachweis-Nettoeffekt übergibt keine Null-Einspringdaten an Teilberech
 });
 
 
+test('5026 zählt zugleich als Nacht- und Sonntagszeit',()=>{
+  const c=reportComponents({items:[{code:'5026',type:'sundayNight',hours:.7}]});
+  assert.equal(c.hours.night,.7);
+  assert.equal(c.hours.sunday,.7);
+  assert.equal(c.pay.night,3.21);
+  assert.equal(c.pay.sunday,4.01);
+});
+
 test('Neue UKW-Lohnarten werden fachlich getrennt behandelt',()=>{
   const c=reportComponents({items:[{code:'5034',type:'saturdayEvening',hours:1},{code:'5026',type:'sundayNight',hours:.7},{code:'5030',type:'holiday',hours:4}]});
   assert.equal(c.pay.saturdayEvening,.64);
   assert.equal(c.pay.sunday,4.01);
   assert.equal(c.taxableExtra,0);
-  assert.equal(c.taxFreePay,4.65);
+  assert.equal(c.taxFreePay,7.86);
   assert.equal(c.needsReview,true);
   assert.equal(c.unpriced[0].code,'5030');
 });

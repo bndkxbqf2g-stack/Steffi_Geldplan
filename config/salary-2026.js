@@ -8,7 +8,9 @@ export const SALARY_2026 = Object.freeze({
     basePay: 2681.08,
     careAllowance: 54.00,
     universityAllowance: 98.11,
-    gross: 2833.19
+    practiceInstructorAllowance: 54.89,
+    practiceInstructorAllowanceEffectiveFrom: "2026-10",
+    gross: 2888.08
   }),
   surcharges: Object.freeze({
     hourlyBase: 22.92,
@@ -51,5 +53,5 @@ export const SALARY_2026 = Object.freeze({
 });
 
 export function fixedGross(config = SALARY_2026) {
-  return Number((config.fixed.basePay + config.fixed.careAllowance + config.fixed.universityAllowance).toFixed(2));
+  return Number((config.fixed.basePay + config.fixed.careAllowance + config.fixed.universityAllowance + (config.fixed.practiceInstructorAllowance || 0)).toFixed(2));
 }

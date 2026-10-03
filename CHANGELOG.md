@@ -1,4 +1,11 @@
-## v0.99.63 — Steffi-Lohnarten 5034/5026/5030
+## v0.99.64 — Steffi-Gehaltslogik korrigiert
+
+- Praxisanleiterzulage 54,89 € ab 10/2026 in festen Bezügen und Prognoseanzeige ergänzt.
+- Code 5026 wird zusätzlich zu Sonntag auch als Nachtzeit (21:00–06:00) ausgewertet.
+- Abgekürzte Lohnarten in Bezügemitteilungen werden erkannt.
+- Regressionstests für diese Beleglogik ergänzt.
+
+## v0.99.64 — Steffi-Lohnarten 5034/5026/5030
 
 - UKW-Lohnarten 5026, 5030 und 5034 werden erkannt.
 - 5026 wird als Sonntag/Nacht steuerfrei ausgewertet.

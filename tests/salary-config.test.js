@@ -12,7 +12,9 @@ test("KR8 Zahlstufe 6 und 60 Prozent sind korrekt hinterlegt", () => {
   assert.equal(SALARY_2026.fixed.basePay, 2681.08);
   assert.equal(SALARY_2026.fixed.careAllowance, 54);
   assert.equal(SALARY_2026.fixed.universityAllowance, 98.11);
-  assert.equal(fixedGross(), 2833.19);
+  assert.equal(SALARY_2026.fixed.practiceInstructorAllowance, 54.89);
+  assert.equal(SALARY_2026.fixed.practiceInstructorAllowanceEffectiveFrom, '2026-10');
+  assert.equal(fixedGross(), 2888.08);
 });
 
 test("KR8-Zeitzuschläge bleiben trotz Teilzeit ungekürzt", () => {
