@@ -15,7 +15,7 @@ test('Zeitlohnarten werden getrennt berechnet',()=>{
   assert.equal(c.protectedPay,26.35);assert.equal(c.taxableExtra,150);assert.equal(c.shift,'wechsel');
 });
 test('VBL und SV-Hinzubetrag bleiben tariflich kalibriert',()=>{
-  assert.equal(Math.round(2833.19*SALARY_2026.social.vblEmployeeRate*100)/100,51.28);
+  assert.equal(Math.round(2888.08*SALARY_2026.social.vblEmployeeRate*100)/100,52.27);
 });
 
 test("Wechselschicht wird durch Code 5211 auch ohne Stundenwert berücksichtigt", () => {
@@ -34,7 +34,7 @@ import {calculateSalaryForecastCore} from '../lib/salary.js';
 
 test('reiner Festbezug reproduziert die echte 2026-Kernabrechnung',()=>{
   const f=calculateSalaryForecastCore({items:[]},{wageTax:662.58,solidarity:0,churchTax:32.99,churchBase:0});
-  assert.equal(f.totalGross,2833.19);
+  assert.equal(f.totalGross,2888.08);
   assert.equal(f.garnishment,0);
   assert.equal(f.payout,Number((f.legalNet-f.vbl).toFixed(2)));
 });
@@ -78,6 +78,14 @@ test('Zeitnachweis-Nettoeffekt übergibt keine Null-Einspringdaten an Teilberech
   assert.equal(effects.totalNet,Number((full.payout-baseline.payout).toFixed(2)));
 });
 
+
+test('5026 zählt zugleich als Nacht- und Sonntagszeit',()=>{
+  const c=reportComponents({items:[{code:'5026',type:'sundayNight',hours:.7}]});
+  assert.equal(c.hours.night,.7);
+  assert.equal(c.hours.sunday,.7);
+  assert.equal(c.pay.night,3.21);
+  assert.equal(c.pay.sunday,4.01);
+});
 
 test('Neue UKW-Lohnarten werden fachlich getrennt behandelt',()=>{
   const c=reportComponents({items:[{code:'5034',type:'saturdayEvening',hours:1},{code:'5026',type:'sundayNight',hours:.7},{code:'5030',type:'holiday',hours:4}]});
