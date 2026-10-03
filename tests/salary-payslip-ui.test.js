@@ -46,6 +46,12 @@ test('Bezügemitteilung ohne passende Prognose verändert die Lernhistorie nicht
   assert.deepEqual(buildUpdatedPayrollLearning([],[payslip()],history),history);
 });
 
+test('ein Ist-Beleg wird bei gleichem Auszahlungsmonat nicht an mehrere Leistungsmonate gelernt',()=>{
+  const first=forecast();
+  const second={...first,reportMonth:'2026-08'};
+  assert.deepEqual(buildUpdatedPayrollLearning([first,second],[payslip()],[]),[]);
+});
+
 
 test('Workflow übernimmt spätere Rückrechnung in den passenden Lernsnapshot',()=>{
   const f=forecast();

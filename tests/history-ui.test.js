@@ -57,6 +57,24 @@ test('Übersicht ersetzt September-Prognose durch tatsächliche Auszahlung sobal
   assert.equal(slots[0].rawPayout,2831.13);
 });
 
+test('Übersicht hält zwei Prognosen desselben Auszahlungsmonats nach Leistungsmonat getrennt',()=>{
+  const slots=expectedSalarySlots({
+    today:new Date(2026,8,25,12,0,0),
+    transactions:[],
+    forecasts:[
+      {payoutMonth:'2026-09',reportMonth:'2026-07',payout:2831.13,needsReview:false},
+      {payoutMonth:'2026-09',reportMonth:'2026-08',payout:2808.94,needsReview:false}
+    ],
+    payslips:[{month:'2026-09',payout:2657.94}],
+    learning:[]
+  });
+  const samePayout=slots.filter(slot=>slot.payoutMonth==='2026-09');
+  assert.equal(samePayout.length,2);
+  assert.deepEqual(samePayout.map(slot=>slot.reportMonth),['2026-07','2026-08']);
+  assert.equal(samePayout.every(slot=>slot.status==='review'&&slot.needsReview),true);
+  assert.equal(samePayout.every(slot=>slot.payout===null),true);
+});
+
 test('Übersicht nutzt für zukünftige Monate eine stabile Lernkalibrierung',()=>{
   const learning=[
     {

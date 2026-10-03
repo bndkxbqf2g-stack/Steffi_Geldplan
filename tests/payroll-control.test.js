@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildPayrollControl,buildPayrollControlHistory,buildPayrollCarryovers,payrollCarryoverRegularSollLabel,payrollCardDisplay,payrollProjectedPayout,payrollDisplayedNetDifference,retroForForecast,visiblePayrollControls} from '../lib/payroll-control.js';
+import {buildPayrollControl,buildPayrollControlHistory,buildPayrollCarryovers,payrollCarryoverRegularSollLabel,payrollCardDisplay,payrollProjectedPayout,payrollDisplayedNetDifference,retroForForecast,visiblePayrollControls,payrollControlSummary} from '../lib/payroll-control.js';
 
 const forecast={
   payoutMonth:'2026-09',
@@ -290,4 +290,64 @@ test('Netto-Differenz fällt ohne sichere Nachberechnung auf die reine Auszahlun
     payrollDisplayedNetDifference({status:'open',payoutDifference:-189.56},null),
     -189.56
   );
+});
+
+test('Kontrollkarte trennt Leistungsmonat, geplante und ausdrücklich belegte tatsächliche Auszahlung',()=>{
+  const controlledForecast={
+    ...forecast,
+    reportMonth:'2026-07',
+    plannedPayoutMonth:'2026-09',
+    standardPayoutMonth:'2026-09',
+    payoutMonth:'2026-10',
+    paymentMonthOverride:{id:'delay',originMonth:'2026-07',plannedPaymentMonth:'2026-09',actualPaymentMonth:'2026-10',oneTime:true,reason:'Beleg'}
+  };
+  const actual={...september,month:'2026-10',actualPayoutMonth:'2026-10',actualPayoutMonthStatus:'bestätigt'};
+  const control=buildPayrollControl({forecast:controlledForecast,actual,payslips:[actual]});
+  const summary=payrollControlSummary(control,{totalNet:42.50,correctedPayout:2743.20});
+  assert.equal(control.reportMonth,'2026-07');
+  assert.equal(control.plannedPayoutMonth,'2026-09');
+  assert.equal(control.payoutMonth,'2026-10');
+  assert.equal(control.actualPayoutMonth,'2026-10');
+  assert.equal(summary.correctedActualPayout,2743.20);
+  assert.equal(summary.netEffectStatus,'berechnet');
+});
+
+test('variable Kontrollsummen trennen steuerfreie, steuerpflichtige und offene Beträge',()=>{
+  const f={
+    ...forecast,
+    totalGross:4592.43,
+    payout:2700.70,
+    components:{...forecast.components,night:10,saturday:5,saturdayEvening:3,sunday:0,holiday:0,shift:100,springIn:0}
+  };
+  const actual={
+    ...september,
+    totalGross:4592.43,
+    components:{night:7,saturday:5,saturdayEvening:0,sunday:0,holiday:0,shift:100,springIn:0,hasVariableDetail:true}
+  };
+  const summary=payrollControlSummary(buildPayrollControl({forecast:f,actual,payslips:[actual]}));
+  assert.equal(summary.expectedVariable,118);
+  assert.equal(summary.accountedVariable,112);
+  assert.equal(summary.openVariable,6);
+  assert.deepEqual(summary.taxFree,{expected:13,accounted:7,open:6,known:true});
+  assert.deepEqual(summary.taxable,{expected:105,accounted:105,open:0,known:true});
+});
+
+test('zwei Prognosen mit gleichem Auszahlungsmonat teilen denselben Ist-Beleg nicht',()=>{
+  const second={...forecast,reportMonth:'2026-08',payoutMonth:'2026-09',plannedPayoutMonth:'2026-09',standardPayoutMonth:'2026-09'};
+  const list=buildPayrollControlHistory({forecasts:[forecast,second],payslips:[september]});
+  assert.equal(list.length,2);
+  assert.deepEqual(list.map(item=>item.reportMonth).sort(),['2026-07','2026-08']);
+  assert.equal(list.every(item=>item.actualMatchStatus==='ambiguous'),true);
+  assert.equal(list.every(item=>item.actualPayout===null),true);
+  assert.equal(list.every(item=>item.reviewRows.some(row=>row.code==='actual-payslip-match')),true);
+  assert.notEqual(list[0].forecastKey,list[1].forecastKey);
+});
+
+test('identische Rückrechnungen aus demselben Ist-Beleg werden nur einmal gezählt',()=>{
+  const retro={month:'2026-07',totalGross:242.90,legalNet:155.20,components:{night:98.01,shift:100}};
+  const payslips=[
+    {...september,retroPeriods:[retro]},
+    {...september,retroPeriods:[{...retro}]}
+  ];
+  assert.equal(retroForForecast(payslips,forecast).length,1);
 });

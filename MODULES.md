@@ -1,7 +1,10 @@
 # Module 01–30
 Budget, Cycle, Salary, UI, lokale Recovery.
 
-- `lib/payslip.js`: Parser und Prognose-vs.-Ist-Vergleich für Bezügemitteilungen.
+- `lib/payslip.js`: Parser und Prognose-vs.-Ist-Vergleich für Bezügemitteilungen; ein tatsächlicher Zahlungsmonat wird nur bei ausdrücklicher Dokumentangabe übernommen.
+
+### `lib/payroll-payment-overrides.js` / `lib/payroll-month.js`
+Perioden-Hilfen für Leistungsmonat, geplante Standardauszahlung, effektive Prognoseauszahlung und prognosebezogene Identität. Einmalige, begründete Zahlungsausnahmen sind leer voreingestellt und werden nur als Zusatzfeld der passenden Prognose gespeichert; bestehende Local-Storage-Schlüssel und die M+2-Grundregel bleiben unverändert.
 
 ### `lib/salary-ui.js`
 Verantwortlich für den Gehaltsprognose-Fluss Zeitnachweis → erkannte Zeitlohnarten → Brutto/Netto → Auszahlungsmonat. Ältere gespeicherte Forecast-Modelle werden aus ihren gespeicherten Zeitnachweispositionen einmalig mit den aktuellen Regeln neu aufgebaut, bevor Übersicht und Payroll-Check rendern. `salary-payslip-ui.js` ergänzt den Upload echter Bezügemitteilungen und stößt Soll-/Ist-, Rückrechnungs-, offenen Nettoabgleich sowie die kontrollierte Payroll-Lernhistorie an. Berechnungen bleiben in `salary.js` / `salary-net-effects.js`, PDF-Parsing in `pdf.js` / `payslip.js`.
@@ -51,4 +54,4 @@ Reine Statistikfunktionen für Monatswerte, Transaktionssummen und Sparentwicklu
 
 
 ### `lib/payroll-control.js` / `lib/payroll-control-ui.js`
-Periodenbezogene Gehaltskontrolle. Verknüpft gespeicherte Zeitnachweis-Prognosen mit tatsächlichen Bezügemitteilungen und späteren Rückrechnungsperioden. Offene Ansprüche bleiben dem ursprünglichen Abrechnungsmonat zugeordnet. Keine Budgetwirkung.
+Periodenbezogene Gehaltskontrolle. Verknüpft gespeicherte Zeitnachweis-Prognosen mit tatsächlichen Bezügemitteilungen und späteren Rückrechnungsperioden. Kontrollkarten zeigen erwartete, berücksichtigte und offene variable Bezüge, steuerfreie/steuerpflichtige Anteile, Nettoeffekt und korrigierten Zahlungseingang. Offene Ansprüche bleiben dem ursprünglichen Leistungsmonat zugeordnet; mehrdeutige Ist-Zuordnungen werden nicht automatisch gelernt. Keine Budgetwirkung.

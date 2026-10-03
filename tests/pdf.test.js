@@ -19,6 +19,9 @@ test("PDF.js Textbausteine werden anhand ihrer Position wieder zu Zeilen zusamme
 test("Abrechnungsmonat wird erkannt und +2 Monate zugeordnet", () => {
   assert.deepEqual(detectReportMonth("Abrechnungsmonat: 07/2026"), { year: 2026, month: 7 });
   assert.equal(payoutMonth(2026, 7), "2026-09");
+  const report=parseTimeReportText("Abrechnungsmonat: 07/2026");
+  assert.equal(report.plannedPayoutMonth,"2026-09");
+  assert.equal(report.standardPayoutMonth,"2026-09");
 });
 
 test("Monat kann aus eindeutigem Datumsbereich eines Zeitnachweises erkannt werden", () => {

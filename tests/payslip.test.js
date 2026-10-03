@@ -27,12 +27,21 @@ Gesamtbrutto 60,00`;
 test('liest reale Juli-Abrechnung ohne Rückrechnung zu vermischen', () => {
   const p = parsePayslipText(JULY);
   assert.equal(p.month, '2026-07');
+  assert.equal(p.actualPayoutMonth, null);
+  assert.equal(p.actualPayoutMonthStatus, 'UNSICHER/PRÜFEN');
   assert.equal(p.totalGross, 4480.43);
   assert.equal(p.legalNet, 2827.98);
   assert.equal(p.garnishment, 112.94);
   assert.equal(p.payout, 2700.70);
   assert.equal(p.vbl, 81.10);
   assert.equal(p.needsReview, false);
+});
+
+test('übernimmt einen ausdrücklich ausgewiesenen tatsächlichen Zahlungsmonat ohne ihn zu raten',()=>{
+  const p=parsePayslipText(`Abrechnungsmonat : 09/2026\nAuszahlungsmonat: 10/2026\nGesamtbrutto 1.000,00\nGesetzliches Netto 800,00\nÜberweisung 800,00`);
+  assert.equal(p.month,'2026-09');
+  assert.equal(p.actualPayoutMonth,'2026-10');
+  assert.equal(p.actualPayoutMonthStatus,'bestätigt');
 });
 
 test('erkennt fehlende Pflichtwerte als Bitte prüfen', () => {
