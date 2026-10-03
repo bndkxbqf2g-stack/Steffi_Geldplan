@@ -165,13 +165,13 @@ test('reale LfF-Schreibweise Wechselschichtzul. wird erkannt',()=>{
 
 
 test('abgekürzte Bezügelohnarten werden erkannt',()=>{
-  const c=parsePayslipComponents('Nachtarb. Beginn vor 0 Uhr 2,50 4,58 11,45\\nWechselsch.mtl. §43TV-L LSGZ 1,00 250,00 250,00');
+  const c=parsePayslipComponents('Nachtarb. Beginn vor 0 Uhr 2,50 4,58 11,45\nWechselsch.mtl. §43TV-L LSGZ 1,00 250,00 250,00');
   assert.equal(c.night,11.45);
   assert.equal(c.wechsel,250);
   assert.equal(c.shift,250);
 });
 
 test('Praxisanleiterzulage wird aus der Bezügemitteilung gelesen',()=>{
-  const p=parsePayslipText('Abrechnungsmonat : 10/2026\\nPraxisanleiterzulage 54,89\\nGesamtbrutto 2.888,08\\nGesetzliches Netto 1.900,00\\nÜberweisung 1.900,00');
+  const p=parsePayslipText('Abrechnungsmonat : 10/2026\nPraxisanleiterzulage 54,89\nGesamtbrutto 2.888,08\nGesetzliches Netto 1.900,00\nÜberweisung 1.900,00');
   assert.equal(p.practiceInstructorAllowance,54.89);
 });
