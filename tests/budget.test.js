@@ -155,8 +155,8 @@ test("Giro, Bargeld und Ausgaben bleiben getrennt",()=>{
   ];
   const result=calculateCurrentCycleBudget({giro:750,transactions,savings:[],today:"2026-10-05"});
   assert.equal(result.segmentStart.toISOString().slice(0,10),"2026-10-11");
-  assert.equal(result.dailyBudget,750/25);
-  assert.equal(result.weeklyBudget,(750/25)*7);
+  assert.equal(result.dailyBudget,750/19);
+  assert.equal(result.weeklyBudget,(750/19)*7);
   assert.equal(transactions.filter(item=>item.type==="withdrawal").length,1);
   assert.equal(transactions.filter(item=>item.type==="expense").length,1);
 });
