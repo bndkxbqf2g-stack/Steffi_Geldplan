@@ -1,3 +1,11 @@
+## Unreleased — Monatsbezogene Lohnkontrolle
+
+- Prognosen werden je Leistungsmonat gespeichert; regulärer Auszahlungsmonat und tatsächlicher Zahlungsmonat bleiben getrennt.
+- Mehrere Leistungsmonate werden je Zahlungsmonat in genau einer Kontrollkachel zusammengefasst.
+- Festes Monatsentgelt wird in einer Sammelkachel nur einmal angesetzt; Zuschläge und Rückrechnungen werden je Ursprungs-Leistungsmonat zugeordnet.
+- Erwartete, bereits berücksichtigte und offene Gesamt-, steuerfreie und steuerpflichtige Zuschläge sowie Nettoeffekte werden getrennt ausgewiesen.
+- Unsichere Einzelpositionen bleiben als „UNSICHER/PRÜFEN“ sichtbar und setzen eine ausstehende Abrechnung nicht fälschlich auf „Bitte prüfen“.
+
 ## v0.99.64 — Bargeldabhebung verschiebt Budgetabschnitt korrekt
 
 - Bargeldabhebungen sind jederzeit möglich und bleiben Giro→Bargeld-Transfers ohne Ausgabe.
