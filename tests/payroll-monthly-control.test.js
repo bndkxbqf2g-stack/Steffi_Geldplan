@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildPayrollMonthlyControls,normalizePayrollMonth,payrollForecastStorageKey} from '../lib/payroll-monthly-control.js';
+import {buildPayrollMonthlyControls,normalizePayrollMonth,payrollForecastStorageKey,payrollForecastActualPaymentMonth} from '../lib/payroll-monthly-control.js';
 
 const baseForecast={
   totalGross:1000,
@@ -96,4 +96,14 @@ test('identische Rückrechnung wird bei wiederholter Übermittlung nur einmal be
   assert.equal(october.retro.length,1);
   assert.equal(october.totalSurcharges.considered,100);
   assert.equal(october.totalSurcharges.open,0);
+});
+
+
+test('erkennt den tatsächlichen Zahlungsmonat nur aus einer konkreten Bezügemitteilung',()=>{
+  const forecast={reportMonth:'2026-07',payoutMonth:'2026-09'};
+  assert.equal(payrollForecastActualPaymentMonth(forecast,[]),null);
+  assert.equal(
+    payrollForecastActualPaymentMonth(forecast,[{month:'2026-10',retroPeriods:[{month:'2026-07',totalGross:100}]}]),
+    '2026-10'
+  );
 });
