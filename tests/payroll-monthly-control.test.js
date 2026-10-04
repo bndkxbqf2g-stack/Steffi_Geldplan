@@ -21,7 +21,7 @@ test('fasst mehrere Leistungsmonate im tatsächlichen Zahlungsmonat zusammen und
     {...baseForecast,reportMonth:'2026-08',payoutMonth:'2026-10',totalGross:1050,payout:625,components:{...baseForecast.components,shift:50,shiftType:'schicht'}}
   ];
   const payslips=[{
-    month:'2026-10',totalGross:1150,payout:675,needsReview:false,
+    month:'2026-10',totalGross:1050,payout:675,needsReview:false,
     components:{night:null,shift:50,hasVariableDetail:true},
     retroPeriods:[{month:'2026-07',totalGross:100,components:{night:100}}]
   }];
