@@ -151,7 +151,7 @@ test("Giro, Bargeld und Ausgaben bleiben getrennt",()=>{
   const transactions=[
     {type:"base",amount:1000,date:"2026-09-30"},
     {type:"salary",amount:1000,date:"2026-09-30"},
-    {type:"withdrawal"},amount:-200,date:"2026-10-04"},
+    {type:"withdrawal",amount:-200,date:"2026-10-04"},
     {type:"expense",amount:-50,date:"2026-10-05"}
   ];
   const result=calculateCurrentCycleBudget({giro:750,transactions,savings:[],today:"2026-10-05"});
