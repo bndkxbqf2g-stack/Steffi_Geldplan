@@ -88,8 +88,7 @@ test('identische Rückrechnung wird bei wiederholter Übermittlung nur einmal be
   const controls=buildPayrollMonthlyControls({
     forecasts:[forecast],
     payslips:[
-      {month:'2026-10',totalGross:1000,payout:600,components:{hasVariableDetail:false},retroPeriods:[duplicate]},
-      {month:'2026-11',totalGross:1000,payout:600,components:{hasVariableDetail:false},retroPeriods:[duplicate]}
+      {month:'2026-10',totalGross:1000,payout:600,components:{hasVariableDetail:false},retroPeriods:[duplicate,duplicate]}
     ],
     limit:3
   });
