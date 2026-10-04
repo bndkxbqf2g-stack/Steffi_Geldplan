@@ -62,8 +62,8 @@ test('kompletter Zyklus 30.09.–30.10.2026 bleibt rechnerisch konsistent',()=>{
   transactions=tx(transactions,-300,'2026-10-04','withdrawal','Bargeldabhebung');
   cash+=300;
   const afterWithdrawal=stateAt({transactions,savings,today:'2026-10-04'});
-  near(afterWithdrawal.budget.dailyBudget,1800/26);
-  near(afterWithdrawal.budget.weeklyBudget,(1800/26)*7);
+  near(afterWithdrawal.budget.dailyBudget,1800/19);
+  near(afterWithdrawal.budget.weeklyBudget,(1800/19)*7);
 
   // 50 € aus dem nicht ausgeschöpften Wochenbudget für Urlaub reservieren.
   const position=createSavingsPosition('Urlaub','urlaub');
@@ -93,8 +93,8 @@ test('kompletter Zyklus 30.09.–30.10.2026 bleibt rechnerisch konsistent',()=>{
   transactions=tx(transactions,-500,'2026-10-11','withdrawal','Bargeldabhebung');
   cash+=500;
   const secondAfterWithdrawal=stateAt({transactions,savings,today:'2026-10-11'});
-  near(secondAfterWithdrawal.budget.dailyBudget,1150/19);
-  near(secondAfterWithdrawal.budget.weeklyBudget,(1150/19)*7);
+  near(secondAfterWithdrawal.budget.dailyBudget,1150/12);
+  near(secondAfterWithdrawal.budget.weeklyBudget,(1150/12)*7);
 
   // Letzter Sonntag: exakt fünf Tage bis zum neuen Lohn.
   cash=10;

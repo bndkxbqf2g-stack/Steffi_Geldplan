@@ -1,4 +1,11 @@
-## v0.99.63 — Steffi-Lohnarten 5034/5026/5030
+## v0.99.64 — Bargeldabhebung verschiebt Budgetabschnitt korrekt
+
+- Bargeldabhebungen sind jederzeit möglich und bleiben Giro→Bargeld-Transfers ohne Ausgabe.
+- Der Budgetanker wird aus der letzten Abhebung bestimmt: Werktag → kommender Sonntag, Sonntag → darauffolgender Sonntag.
+- Budgetabschnitte bleiben vollständig Sonntag–Samstag; der tatsächliche Lohntag begrenzt den letzten Abschnitt.
+- Regressionstests für Werktags-/Sonntagsabhebungen, Folgewoche, Lohntag, Grenztage und Giro/Bargeld/​Ausgaben-Trennung ergänzt.
+
+## v0.99.64 — Steffi-Lohnarten 5034/5026/5030
 
 - UKW-Lohnarten 5026, 5030 und 5034 werden erkannt.
 - 5026 wird als Sonntag/Nacht steuerfrei ausgewertet.

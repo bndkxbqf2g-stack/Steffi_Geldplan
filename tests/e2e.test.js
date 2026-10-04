@@ -32,8 +32,8 @@ test('E2E: kompletter Budgetmonat mit Fixkosten, Bargeld, Sparen und neuem Lohn'
   cash+=450;
   giro=getCurrentGiro(transactions,0);
   const afterWithdrawal=calculateCurrentCycleBudget({giro,transactions,savings,today:'2026-10-04'});
-  near(afterWithdrawal.dailyBudget,1650/26);
-  near(afterWithdrawal.weeklyBudget,(1650/26)*7);
+  near(afterWithdrawal.dailyBudget,1650/19);
+  near(afterWithdrawal.weeklyBudget,(1650/19)*7);
 
   const pos=createSavingsPosition('Urlaub','urlaub');
   savings=addSavingsPosition(savings,pos);
@@ -43,6 +43,8 @@ test('E2E: kompletter Budgetmonat mit Fixkosten, Bargeld, Sparen und neuem Lohn'
   transactions=tx(transactions,-100,'2026-10-07','expense','Einkauf');
   giro=getCurrentGiro(transactions,0);
   budget=calculateCurrentCycleBudget({giro,transactions,savings,today:'2026-10-11'});
+  assert.equal(budget.segmentStart.toISOString().slice(0,10),'2026-10-11');
+  assert.equal(budget.segmentEnd.toISOString().slice(0,10),'2026-10-17');
   assert.equal(budget.segmentDays,7);
   near(budget.dailyBudget,1500/19);
 

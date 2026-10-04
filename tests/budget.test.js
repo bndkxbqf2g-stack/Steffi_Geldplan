@@ -82,7 +82,7 @@ test('letzte tatsächliche Lohnbuchung wird als Zyklusstart ermittelt',()=>{
   assert.equal(getLatestSalaryTransaction([], '2026-10-30'),null);
 });
 
-import {calculateCurrentCycleBudget} from "../lib/budget-ui.js";
+import {calculateCurrentCycleBudget,budgetDateAfterLatestWithdrawal} from "../lib/budget-ui.js";
 
 test("Zahlungseingang für den Lohn startet den laufenden Monatszyklus", () => {
   const result = calculateCurrentCycleBudget({
@@ -95,4 +95,91 @@ test("Zahlungseingang für den Lohn startet den laufenden Monatszyklus", () => {
   assert.equal(result.nextPayday.toISOString().slice(0, 10), "2026-10-30");
   assert.equal(result.daysToPayday, 29);
   assert.equal(result.segmentDays, 4);
+});
+
+
+test("Abhebung am Werktag vor Sonntag setzt den kommenden Sonntag als Abschnittsanker",()=>{
+  const transactions=[
+    {type:"base",amount:0,date:"2026-09-30"},
+    {type:"salary",amount:3000,date:"2026-09-30"},
+    {type:"withdrawal",amount:-300,date:"2026-10-02"}
+  ];
+  const result=calculateCurrentCycleBudget({giro:2700,transactions,savings:[],today:"2026-10-02"});
+  assert.equal(result.segmentStart.toISOString().slice(0,10),"2026-10-04");
+  assert.equal(result.segmentEnd.toISOString().slice(0,10),"2026-10-10");
+  assert.equal(result.segmentDays,7);
+});
+
+test("Abhebung am Sonntag setzt sofort den folgenden Sonntag bis Samstag",()=>{
+  const transactions=[
+    {type:"base",amount:0,date:"2026-09-30"},
+    {type:"salary",amount:3000,date:"2026-09-30"},
+    {type:"withdrawal",amount:-300,date:"2026-10-04"}
+  ];
+  const result=calculateCurrentCycleBudget({giro:2700,transactions,savings:[],today:"2026-10-04"});
+  assert.equal(result.segmentStart.toISOString().slice(0,10),"2026-10-11");
+  assert.equal(result.segmentEnd.toISOString().slice(0,10),"2026-10-17");
+  assert.equal(result.segmentDays,7);
+  assert.equal(result.remainingDays,19);
+  assert.equal(result.weeklyBudget,result.dailyBudget*7);
+});
+
+test("Mehrere Abhebungen in aufeinanderfolgenden Wochen verwenden die letzte Abhebung",()=>{
+  const transactions=[
+    {type:"base",amount:0,date:"2026-09-30"},
+    {type:"salary",amount:3000,date:"2026-09-30"},
+    {type:"withdrawal",amount:-300,date:"2026-10-04"},
+    {type:"withdrawal",amount:-200,date:"2026-10-11"}
+  ];
+  const result=calculateCurrentCycleBudget({giro:2500,transactions,savings:[],today:"2026-10-11"});
+  assert.equal(result.segmentStart.toISOString().slice(0,10),"2026-10-18");
+  assert.equal(result.segmentEnd.toISOString().slice(0,10),"2026-10-24");
+});
+
+test("Abhebung am Lohntag überspringt den ersten kurzen Abschnitt",()=>{
+  const transactions=[
+    {type:"base",amount:0,date:"2026-09-30"},
+    {type:"salary",amount:3000,date:"2026-09-30"},
+    {type:"withdrawal",amount:-300,date:"2026-09-30"}
+  ];
+  const result=calculateCurrentCycleBudget({giro:2700,transactions,savings:[],today:"2026-09-30"});
+  assert.equal(result.segmentStart.toISOString().slice(0,10),"2026-10-04");
+  assert.equal(result.segmentEnd.toISOString().slice(0,10),"2026-10-10");
+});
+
+test("Giro, Bargeld und Ausgaben bleiben getrennt",()=>{
+  const transactions=[
+    {type:"base",amount:1000,date:"2026-09-30"},
+    {type:"salary",amount:1000,date:"2026-09-30"},
+    {type:"withdrawal",amount:-200,date:"2026-10-04"},
+    {type:"expense",amount:-50,date:"2026-10-05"}
+  ];
+  const result=calculateCurrentCycleBudget({giro:750,transactions,savings:[],today:"2026-10-05"});
+  assert.equal(result.segmentStart.toISOString().slice(0,10),"2026-10-11");
+  assert.equal(result.dailyBudget,750/19);
+  assert.equal(result.weeklyBudget,(750/19)*7);
+  assert.equal(transactions.filter(item=>item.type==="withdrawal").length,1);
+  assert.equal(transactions.filter(item=>item.type==="expense").length,1);
+});
+
+test("Der spätere Lohntag begrenzt den Abschnitt vor dem Sonntag",()=>{
+  const transactions=[
+    {type:"base",amount:0,date:"2026-09-30"},
+    {type:"salary",amount:3000,date:"2026-09-30"},
+    {type:"withdrawal",amount:-300,date:"2026-10-25"}
+  ];
+  const result=calculateCurrentCycleBudget({giro:2700,transactions,savings:[],today:"2026-10-25"});
+  assert.equal(result.segmentStart.toISOString().slice(0,10),"2026-10-25");
+  assert.equal(result.segmentEnd.toISOString().slice(0,10),"2026-10-29");
+  assert.equal(result.segmentDays,5);
+});
+
+test("Der Anker bleibt nach einer Sonntagsabhebung bis zum nächsten Abschnitt stabil",()=>{
+  const transactions=[
+    {type:"base",amount:0,date:"2026-09-30"},
+    {type:"salary",amount:3000,date:"2026-09-30"},
+    {type:"withdrawal",amount:-300,date:"2026-10-04"}
+  ];
+  const anchor=budgetDateAfterLatestWithdrawal({transactions,today:"2026-10-07",payday:"2026-09-30",nextPayday:"2026-10-30"});
+  assert.equal(anchor.toISOString().slice(0,10),"2026-10-11");
 });
