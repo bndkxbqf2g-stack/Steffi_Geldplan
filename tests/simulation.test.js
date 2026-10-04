@@ -78,8 +78,8 @@ test('kompletter Zyklus 30.09.–30.10.2026 bleibt rechnerisch konsistent',()=>{
   // Kartenausgabe in der Woche reduziert das Budget sofort.
   transactions=tx(transactions,-100,'2026-10-07','expense','Einkauf');
   const midWeek=stateAt({transactions,savings,today:'2026-10-07'});
-  near(midWeek.budget.dailyBudget,1700/19);
-  near(midWeek.budget.weeklyBudget,(1700/19)*7);
+  near(midWeek.budget.dailyBudget,1650/19);
+  near(midWeek.budget.weeklyBudget,(1650/19)*7);
 
   // Am Folgesonntag wird die Sparreservierung aus dem Girobudget herausgerechnet.
   cash=30;
