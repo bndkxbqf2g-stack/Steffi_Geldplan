@@ -52,3 +52,6 @@ Reine Statistikfunktionen für Monatswerte, Transaktionssummen und Sparentwicklu
 
 ### `lib/payroll-control.js` / `lib/payroll-control-ui.js`
 Periodenbezogene Gehaltskontrolle. Verknüpft gespeicherte Zeitnachweis-Prognosen mit tatsächlichen Bezügemitteilungen und späteren Rückrechnungsperioden. Offene Ansprüche bleiben dem ursprünglichen Abrechnungsmonat zugeordnet. Keine Budgetwirkung.
+
+### `lib/payroll-monthly-control.js`
+Reine Aggregationslogik für eine Kontrollkachel je tatsächlichem bzw. erwarteten Zahlungsmonat. Trennungen von Leistungsmonat, regulärem Auszahlungsmonat und tatsächlichem Zahlungsmonat bleiben erhalten. Variable Bezüge werden nach steuerfrei/steuerpflichtig getrennt summiert; Rückrechnungen werden dedupliziert dem Ursprung zugeordnet. Unsichere Einzelpositionen werden nicht geschätzt und beeinflussen den Status „Abrechnung ausstehend“ nicht.
