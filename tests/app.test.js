@@ -43,5 +43,5 @@ test('Detailprognose wird vor der asynchronen Aktualisierung aus lokal gespeiche
   assert.ok(savedState>=0);
   assert.ok(immediateRender>savedState);
   assert.ok(backgroundRefresh>immediateRender);
-  assert.match(source,/\\.catch\\(error=>console\\.error\\('\\[salary-restore-refresh\\]'/);
+  assert.ok(source.includes(".catch(error=>console.error('[salary-restore-refresh]'"));
 });
