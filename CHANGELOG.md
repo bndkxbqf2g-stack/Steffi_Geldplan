@@ -1,3 +1,11 @@
+# v0.99.67
+
+- Jahressonderzahlung wird jährlich im November separat prognostiziert.
+- Bemessung nutzt die TV-L-Referenzmonate Juli bis September und Steffis bestehende Gehaltsgrundlagen.
+- Bezügemitteilungen erkennen die Sonderzahlung als eigenes Ist-Element; eine Ist-Zahlung wird nicht doppelt addiert.
+- November-Zeitnachweis und reguläre M+2-Auszahlung bleiben von der Sonderzahlung getrennt.
+- Keine Änderung an Budget, Fixkosten, lokalen Daten oder Pfändungslogik.
+
 ## Unreleased — Zuverlässige Wiederherstellung der Gehaltsprognose
 
 - Gespeicherte Detailprognosen werden beim Start sofort angezeigt, bevor ältere Datenmodelle im Hintergrund aktualisiert werden.
