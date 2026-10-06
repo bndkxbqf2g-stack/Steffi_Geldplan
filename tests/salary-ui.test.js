@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { salaryMonthLabel, comparisonLabel, restoreReportFromForecast, refreshStoredSalaryForecasts, salaryDisplayPayout } from '../lib/salary-ui.js';
+import { salaryMonthLabel, comparisonLabel, restoreReportFromForecast, refreshStoredSalaryForecasts, salaryDisplayPayout, selectSavedSalaryForecast } from '../lib/salary-ui.js';
 
 test('salary month label formatiert YYYY-MM als MM/YYYY',()=>assert.equal(salaryMonthLabel('2026-09'),'09/2026'));
 test('comparison label unterscheidet Treffer, Abweichung und Prüfung',()=>{
@@ -95,4 +95,23 @@ test('Gehaltsprognose kann stabile Lernhistorie auf zukünftige Auszahlung anwen
   },learning);
   assert.equal(result.applied,true);
   assert.equal(result.payout,2803.94);
+});
+
+test('Start ohne gespeicherte Prognose liefert einen leeren, gültigen Zustand',()=>{
+  assert.deepEqual(selectSavedSalaryForecast([]),{forecast:null,report:null});
+  assert.deepEqual(selectSavedSalaryForecast(null),{forecast:null,report:null});
+});
+
+test('gespeicherte Prognose wird nach PWA-Neustart sofort für die Detailansicht wiederhergestellt',()=>{
+  const persisted={
+    forecastModel:3,payoutMonth:'2026-10',reportMonth:'2026-08',
+    totalGross:3100,payout:2200,
+    reportItems:[{code:'5010',type:'night',hours:4.5,amount:null}],
+    unknownCodes:[],needsReview:false,springIn:{duties:0,hours:0}
+  };
+  const afterRestart=JSON.parse(JSON.stringify([persisted]));
+  const restored=selectSavedSalaryForecast(afterRestart);
+  assert.equal(restored.forecast.payout,2200);
+  assert.deepEqual(restored.report.month,{year:2026,month:8});
+  assert.equal(restored.report.items[0].hours,4.5);
 });

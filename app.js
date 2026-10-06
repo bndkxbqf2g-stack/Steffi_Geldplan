@@ -36,7 +36,7 @@ async function init(){
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')void saveCurrentRecoverySnapshot();});
   refresh();
   import('./lib/cloud-backup-ui.js').then(({initCloudBackupUi})=>initCloudBackupUi()).catch(error=>console.error('[cloud-backup-init]',error));
-  import('./lib/salary-ui.js?v=0.99.65')
+  import('./lib/salary-ui.js?v=0.99.67')
     .then(async({initSalaryUi})=>{await initSalaryUi({onForecastChange:refresh});refresh();})
     .catch(error=>{console.error('[salary-init]',error);notify('Gehaltsbereich konnte nicht geladen werden. Budget und Übersicht bleiben verfügbar.',{type:'error',timeout:6000});});
   setInterval(refresh,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});

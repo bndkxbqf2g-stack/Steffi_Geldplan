@@ -1,10 +1,10 @@
-var CACHE_NAME='mein-geldplan-steffi-v0.99.65';
+var CACHE_NAME='mein-geldplan-steffi-v0.99.67';
 var APP_SHELL=[
-  './','./index.html','./design-refresh.css?v=9','./app.js?v=0.99.65','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png',
+  './','./index.html','./design-refresh.css?v=9','./app.js?v=0.99.67','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png',
   './config/version.js','./config/salary-2026.js','./lib/cloud-backup-ui.js','./lib/cloud-backup.js','./lib/cloud-auth.js','./config/supabase.js',
   './lib/ui.js','./lib/storage.js','./lib/theme-ui.js','./lib/cycle.js','./lib/budget.js','./lib/budget-ui.js',
   './lib/savings.js','./lib/savings-ui.js','./lib/fixed-costs.js','./lib/fixed-cost-overrides.js','./lib/fixed-costs-ui.js','./lib/history-ui.js','./lib/statistics.js',
-  './lib/maintenance-ui.js','./lib/recovery-store.js','./lib/recovery-bootstrap.js','./lib/preferences-ui.js','./lib/pending-salary.js','./lib/payroll-control.js','./lib/payroll-control-ui.js','./lib/payroll-control-ui-v2.js','./lib/payroll-monthly-control.js','./lib/payroll-net-breakdown.js','./lib/payroll-net-ui.js','./lib/payroll-learning.js','./lib/payroll-learning-calibration.js','./lib/salary-payslip-ui.js','./lib/salary-payslip-ui.js?v=0.99.65','./lib/salary.js','./lib/salary-net-effects.js','./lib/salary-net-effects.js?v=0.99.65','./lib/salary-ui.js','./lib/salary-ui.js?v=0.99.65','./lib/salary.js?v=0.99.65','./lib/pdf.js','./lib/payslip.js'
+  './lib/maintenance-ui.js','./lib/recovery-store.js','./lib/recovery-bootstrap.js','./lib/preferences-ui.js','./lib/pending-salary.js','./lib/payroll-control.js','./lib/payroll-control-ui.js','./lib/payroll-control-ui-v2.js','./lib/payroll-monthly-control.js','./lib/payroll-net-breakdown.js','./lib/payroll-net-ui.js','./lib/payroll-learning.js','./lib/payroll-learning-calibration.js','./lib/salary-payslip-ui.js','./lib/salary-payslip-ui.js?v=0.99.67','./lib/salary.js','./lib/salary-net-effects.js','./lib/salary-net-effects.js?v=0.99.67','./lib/salary-ui.js','./lib/salary-ui.js?v=0.99.67','./lib/salary.js?v=0.99.67','./lib/pdf.js','./lib/payslip.js','./lib/annual-special-payment.js'
 ];
 
 self.addEventListener('install',function(event){

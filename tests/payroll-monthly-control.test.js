@@ -107,3 +107,8 @@ test('erkennt den tatsächlichen Zahlungsmonat nur aus einer konkreten Bezügemi
     '2026-10'
   );
 });
+
+test('Kontrollkarten initialisieren ohne Prognosen oder Bezügemitteilungen fehlerfrei',()=>{
+  assert.deepEqual(buildPayrollMonthlyControls(),[]);
+  assert.deepEqual(buildPayrollMonthlyControls({forecasts:[],payslips:[],limit:3}),[]);
+});

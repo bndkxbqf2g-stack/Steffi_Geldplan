@@ -34,3 +34,14 @@ test('Gehaltsmodul kann den Kernstart nicht mehr blockieren',()=>{
   assert.ok(salaryImport>firstRefresh);
   assert.match(source,/\.catch\(error=>\{console\.error\('\[salary-init\]'/);
 });
+
+test('Detailprognose wird vor der asynchronen Aktualisierung aus lokal gespeicherten Werten gerendert',()=>{
+  const source=fs.readFileSync(path.join(root,'lib/salary-ui.js'),'utf8');
+  const savedState=source.indexOf('selectSavedSalaryForecast(getSalaryForecasts())');
+  const immediateRender=source.indexOf('renderStoredForecast(activeForecast)',savedState);
+  const backgroundRefresh=source.indexOf('void refreshStoredSalaryForecasts()',savedState);
+  assert.ok(savedState>=0);
+  assert.ok(immediateRender>savedState);
+  assert.ok(backgroundRefresh>immediateRender);
+  assert.ok(source.includes(".catch(error=>console.error('[salary-restore-refresh]'"));
+});
