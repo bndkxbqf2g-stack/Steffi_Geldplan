@@ -104,7 +104,15 @@ test('5706 liefert Dienstanzahl, aber Zeitkontostunden werden nicht automatisch 
   assert.equal(result.pay.shift,60);
   assert.equal(result.taxableExtra,510);
   assert.equal(result.needsReview,true);
-  assert.deepEqual(result.unpriced.map(i=>i.code),['5016','5372','5388','5706']);
+  assert.deepEqual(result.unpriced.map(i=>i.code),['5016','5372','5388']);
+  assert.equal(result.springInVblUnverified,true);
+});
+
+test('Bestätigter Prämiensatz von 150 Euro führt nicht allein zu einer offenen Prämiensatzprüfung',()=>{
+  const result=reportComponents({items:[{code:'5706',hours:3}],springIn:{duties:3,hours:0}});
+  assert.equal(result.springIn.premium,450);
+  assert.equal(result.unpriced.some(item=>item.code==='5706'),false);
+  assert.equal(result.needsReview,true); // VBL-Pflicht bleibt offen, unabhängig vom bestätigten Prämiensatz.
 });
 
 test('Einspringdienst 5706 und manuelle Dienstzahl werden nicht doppelt addiert',()=>{
