@@ -66,7 +66,7 @@ test('alte gespeicherte September-Prognose wird einmalig mit aktuellen Regeln ne
 
 test('aktuelle Prognose wird nicht bei jedem App-Start erneut gespeichert',async()=>{
   let persisted=false;
-  const current={forecastModel:3,payoutMonth:'2026-09',reportMonth:'2026-07',payout:2831.13};
+  const current={forecastModel:4,payoutMonth:'2026-09',reportMonth:'2026-07',payout:2831.13};
   const result=await refreshStoredSalaryForecasts({
     forecasts:[current],
     calculator:async()=>{throw new Error('darf nicht neu rechnen');},
@@ -104,7 +104,7 @@ test('Start ohne gespeicherte Prognose liefert einen leeren, gültigen Zustand',
 
 test('gespeicherte Prognose wird nach PWA-Neustart sofort für die Detailansicht wiederhergestellt',()=>{
   const persisted={
-    forecastModel:3,payoutMonth:'2026-10',reportMonth:'2026-08',
+    forecastModel:4,payoutMonth:'2026-10',reportMonth:'2026-08',
     totalGross:3100,payout:2200,
     reportItems:[{code:'5010',type:'night',hours:4.5,amount:null}],
     unknownCodes:[],needsReview:false,springIn:{duties:0,hours:0}
