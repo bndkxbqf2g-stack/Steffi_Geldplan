@@ -88,3 +88,27 @@ test('Neue UKW-Lohnarten werden fachlich getrennt behandelt',()=>{
   assert.equal(c.needsReview,true);
   assert.equal(c.unpriced[0].code,'5030');
 });
+
+test('5706 liefert Dienstanzahl, aber Zeitkontostunden werden nicht automatisch als Lohn addiert',()=>{
+  const report={items:[
+    {code:'5706',hours:3},
+    {code:'5016',hours:15.39},
+    {code:'5372',hours:8.75},
+    {code:'5388',hours:7.70},
+    {code:'5212',hours:0},
+  ],springIn:{duties:3,hours:0},needsReview:false};
+  const result=reportComponents(report);
+  assert.equal(result.springIn.duties,3);
+  assert.equal(result.springIn.hours,0);
+  assert.equal(result.pay.springIn,450);
+  assert.equal(result.pay.shift,60);
+  assert.equal(result.taxableExtra,510);
+  assert.equal(result.needsReview,true);
+  assert.deepEqual(result.unpriced.map(i=>i.code),['5016','5372','5388','5706']);
+});
+
+test('Einspringdienst 5706 und manuelle Dienstzahl werden nicht doppelt addiert',()=>{
+  const result=reportComponents({items:[{code:'5706',hours:3}],springIn:{duties:3,hours:0}});
+  assert.equal(result.springIn.duties,3);
+  assert.equal(result.pay.springIn,450);
+});
