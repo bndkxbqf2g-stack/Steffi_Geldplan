@@ -66,7 +66,7 @@ test('November-Regel arbeitet jahrübergreifend mit Referenzmonaten des Auszahlu
 test('Detailprognose zeigt November inklusive separater Netto-Sonderzahlung und Gesamtsumme',()=>{
   const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
   const ui=fs.readFileSync(new URL('../lib/salary-ui.js',import.meta.url),'utf8');
-  for(const id of ['pPayoutLabel','pPayoutDetailLabel','pNovemberBreakdown','pRegularPayout','pSpecialGross','pSpecialNet','pNovemberStatus'])assert.ok(html.includes(`id="${id}"`));
+  for(const id of ['pPayoutLabel','pPayoutDetailLabel','pTaxableGrossLabel','pGrossDetailLabel','pLegalNetLabel','pNovemberBreakdown','pRegularPayout','pSpecialGross','pSpecialNet','pNovemberStatus'])assert.ok(html.includes(`id="${id}"`));
   assert.ok(ui.includes('renderTotalForPaymentMonth(forecast.payoutMonth,learned.payout)'));
   assert.ok(ui.includes('renderTotalForPaymentMonth(report.payoutMonth,learned.payout)'));
   assert.ok(ui.includes("set('pPayout','Noch offen')"));
