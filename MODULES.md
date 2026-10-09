@@ -55,3 +55,6 @@ Periodenbezogene Gehaltskontrolle. Verknüpft gespeicherte Zeitnachweis-Prognose
 
 ### `lib/payroll-monthly-control.js`
 Reine Aggregationslogik für eine Kontrollkachel je tatsächlichem bzw. erwarteten Zahlungsmonat. Trennungen von Leistungsmonat, regulärem Auszahlungsmonat und tatsächlichem Zahlungsmonat bleiben erhalten. Variable Bezüge werden nach steuerfrei/steuerpflichtig getrennt summiert; Rückrechnungen werden dedupliziert dem Ursprung zugeordnet. Unsichere Einzelpositionen werden nicht geschätzt und beeinflussen den Status „Abrechnung ausstehend“ nicht.
+
+### `lib/salary-month-payout.js`
+Reine periodenbezogene Aggregation: November-Gesamtnetto = reguläre Auszahlung aus ausgewähltem Zeitnachweis plus separat prognostizierte netto-Jahressonderzahlung. Eine tatsächliche November-Bezügemitteilung enthält bereits die Sonderzahlung und wird nicht doppelt addiert. Bei nicht verfügbaren Steuer-/Netto-Daten wird die Gesamtsumme als offen ausgewiesen. Andere Monate bleiben unverändert.
