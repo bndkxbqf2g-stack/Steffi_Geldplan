@@ -1,3 +1,11 @@
+# v0.99.69 — November-Gesamtauszahlung inklusive Jahressonderzahlung
+
+- Die Detailansicht des ausgewählten September-Zeitnachweises zeigt für den Auszahlungsmonat November die reguläre Netto-Prognose, die nach §20 TV-L prognostizierte Jahressonderzahlung brutto/netto und die addierte November-Gesamtauszahlung.
+- Andere Auszahlungsmonate erhalten keinen Bonus. Vorhandene November-Bezügemitteilungen haben Vorrang, weil die Sonderzahlung bereits in der tatsächlichen Überweisung enthalten ist.
+- Solange der Nettoeffekt noch nicht berechnet werden konnte (z. B. offline), wird keine unvollständige Gesamtauszahlung als vollständiger Novemberbetrag angezeigt.
+- Ein ungebundener Variablenverweis in der Herkunftsanzeige der Lohnkontrollkachel wurde entfernt, der den Kontrollkarten-Renderpfad abbrechen konnte.
+- Nur UI/Anzeige und deduplizierte Aggregation angepasst. Steffis Stammdaten, Einspringprämien, Fixkosten und bestehende lokale Gehaltsdaten bleiben unverändert; Regressionstests und PWA-Version aktualisiert.
+
 # v0.99.68 — September 2026 / Einspringen / Jahres-Sonderzahlung
 
 - UKW-Zeitnachweis-Zeilen 5706 (eingesprungene Dienste), 5016 (ausgeglichene Überstunden), 5372 (Mehrarbeit) und 5388 (Überstunden ohne Zeitzuschlag) werden getrennt eingelesen und gespeichert.
