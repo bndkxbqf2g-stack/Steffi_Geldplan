@@ -1,3 +1,14 @@
+# v0.99.68 — September 2026 / Einspringen / Jahres-Sonderzahlung
+
+- UKW-Zeitnachweis-Zeilen 5706 (eingesprungene Dienste), 5016 (ausgeglichene Überstunden), 5372 (Mehrarbeit) und 5388 (Überstunden ohne Zeitzuschlag) werden getrennt eingelesen und gespeichert.
+- Lohnart 5706 dokumentiert die Dienstanzahl, aber keinen allgemeingültigen festen Zahlbetrag. 150 EUR je Dienst wurden vom Nutzer für Steffi bestätigt und sind in ihrer App-Konfiguration fixiert; 7,70 Zeitkontostunden sind keine automatisch vergüteten Stunden.
+- Einspringprämien werden mit bestätigtem Satz von 150 EUR pro dokumentiertem Dienst berechnet und getrennt angezeigt. Steuer-, SV- und VBL-Abrechnungsdetails bleiben bis zur echten Bezügemitteilung prüfpflichtig. Überstunden-/Mehrarbeitspositionen ohne verifizierte Auszahlung werden nicht unbemerkt eingerechnet.
+- Die Jahressonderzahlung im November verwendet vorrangig die Prognosen der originären Juli–September-Leistungsmonate statt die Bruttowerte der in diesen Monaten ausgezahlten Abrechnungen (die ältere Rückrechnungen enthalten können). Bis zur Bestätigung sind 5706 und Überstunden als prüfpflichtig vom Bemessungsansatz getrennt (§20 TV-L).
+- Die November-Kontrollkachel zeigt reguläre Prognose plus separat prognostizierte Jahressonderzahlung auch in der Gesamtnetto-Zeile; bestätigte Ist-Beträge werden nicht doppelt addiert.
+- Verwaisten Verweis in der Lohnkontrollkachel entfernt, der einen ReferenceError auslösen konnte.
+- Alte gespeicherte Zeitnachweise können vormals unbekannte Lohncodes auf Basis der gespeicherten Textzeilen neu klassifizieren (Prognosemodell 4); keine Änderungen an Fixkosten oder lokaler Datenhaltung.
+- Synthetische Regressionstests für die September-Lohncodes, Prämien-Abgrenzung und November-Bemessungsgrundlage.
+
 # v0.99.67
 
 - Jahressonderzahlung wird jährlich im November separat prognostiziert.

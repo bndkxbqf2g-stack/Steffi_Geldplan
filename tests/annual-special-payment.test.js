@@ -63,3 +63,25 @@ test('Bezügemitteilung erkennt Sonderzahlung TV-L als separates Ist-Element',()
   const components=parsePayslipComponents('Sonderzahlung TVL masch. ELSGZ 2.500,00');
   assert.equal(components.specialPayment,2500);
 });
+
+test('September-Leistungsmonat hat Vorrang vor einer September-Abrechnung mit älteren Rückrechnungen',()=>{
+  const special=annualSpecialPaymentForecast({
+    year:2026,
+    payslips:[{month:'2026-09',totalGross:10000}],
+    forecasts:[{reportMonth:'2026-09',totalGross:3000,taxableGross:2900,components:{springIn:0}}]
+  });
+  assert.equal(special.referenceMonths[2].source,'forecast');
+  assert.equal(special.referenceMonths[2].gross,3000);
+  assert.notEqual(special.referenceMonths[2].gross,10000);
+});
+
+test('vorläufige Einspringprämie erhöht nicht ungeprüft die §20-Bemessung',()=>{
+  const special=annualSpecialPaymentForecast({
+    year:2026,
+    forecasts:[{reportMonth:'2026-09',totalGross:3450,taxableGross:3400,
+      components:{springIn:450,unpriced:[{code:'5706',quantity:3},{code:'5372',quantity:8.75}]}}]
+  });
+  assert.equal(special.referenceMonths[2].gross,3000);
+  assert.equal(special.referenceMonths[2].taxableGross,2950);
+  assert.equal(special.needsReview,true);
+});

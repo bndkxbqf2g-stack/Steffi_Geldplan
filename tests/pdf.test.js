@@ -308,3 +308,20 @@ test('Neue UKW-Codes 5026, 5030 und 5034 werden erkannt',()=>{
   assert.deepEqual(report.items.map(item=>item.type),['saturdayEvening','sundayNight','holiday']);
   assert.equal(report.needsReview,true);
 });
+
+test('September-UKW-Lohnarten erkennen Einspringdienste und unterscheiden Stundenkonten',()=>{
+  const text=[
+    'Z E I T N A C H W E I S 80000000 Testperson Sep 26',
+    '13.09.2026 3A16 5016: ausgegl. Überstunde 15,39',
+    '13.09.2026 3Z88 5388: ÜStd. ohne Zeitzusc 7,70',
+    '20.09.2026 3Z72 5372: Mehrarbeit 8,75',
+    '30.09.2026 3C12 5212: SchiZ§43 1,00',
+    '30.09.2026 5706 eingesprungene Dienste 3,00'
+  ].join('\n');
+  const result=parseTimeReportText(text);
+  assert.equal(result.payoutMonth,'2026-11');
+  assert.equal(result.springIn.duties,3);
+  assert.equal(result.springIn.hours,0);
+  assert.equal(result.unknownCodes.length,0);
+  assert.deepEqual(result.items.map(item=>item.code),['5016','5388','5372','5212','5706']);
+});
