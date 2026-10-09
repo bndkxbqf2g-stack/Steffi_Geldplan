@@ -53,7 +53,11 @@ export const SALARY_2026 = Object.freeze({
     5161: "average21",
     5162: "average21Followup",
     5211: "wechsel",
-    5212: "schicht"
+    5212: "schicht",
+    5706: "springInDuties",
+    5016: "compensatedOvertime",
+    5372: "extraWork",
+    5388: "overtimeWithoutPremium"
   })
 });
 
