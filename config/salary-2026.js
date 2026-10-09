@@ -34,7 +34,7 @@ export const SALARY_2026 = Object.freeze({
     source: 'TV-L §20 Abs. 2 und 5, TdL Stand 14.02.2026'
   }),
   work: Object.freeze({ weeklyHours: 38.5, monthFactor: 4.348 }),
-  springIn: Object.freeze({ basePremium: 150, taxMode: 'taxable-unverified', vblMode: 'unverified' }),
+  springIn: Object.freeze({ basePremium: 150, basePremiumConfirmed: true, taxMode: 'taxable-unverified', vblMode: 'unverified' }),
   taxRules: Object.freeze({ source: '§ 3b EStG / Lohnsteuer-Hinweise 2026; employer observation from June/July 2026 payslips', saturday: 'taxable', saturdayEvening: 'taxFreeEmployerObserved', sunday: 'taxFree', sundayNight: 'taxFree', holiday: 'reviewUntilTimeOffKnown' }),
   profile: Object.freeze({ taxClass: 1, childAllowance: 0, churchTaxRate: 0, kvAdditionalRate: 2.69, childless: true, careChildDeductions: 0, saxony: false, healthInsurance: 'AOK Bayern' }),
   social: Object.freeze({
