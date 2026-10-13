@@ -39,7 +39,10 @@ test('fasst mehrere Leistungsmonate im tatsächlichen Zahlungsmonat zusammen und
   assert.equal(control.taxable.expected,50);
   assert.equal(control.taxFree.open,0);
   assert.equal(control.taxable.open,0);
-  assert.equal(control.status,'settled');
+  // The variable gross is settled, but period-specific net cannot be confirmed
+  // without the legal-net and documented VBL lines in this synthetic fixture.
+  assert.equal(control.status,'review');
+  assert.equal(control.paidRetroNet,null);
   assert.equal(control.totalNet,675);
   assert.equal(control.forecasts.length,2);
 });

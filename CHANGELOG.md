@@ -1,3 +1,13 @@
+# v0.99.70 — LfF-Abrechnungskontrolle und November-Gesamtnetto (Steffi)
+
+- Abgekürzte LfF-Lohnarten wie „Nachtarb.Beginn vor 0 Uhr“, „Wechselsch.mtl.“, „Schichtzul.mtl.“ und §21-Durchschnittszeilen werden pro Rückrechnungsperiode erkannt und mit ursprünglichen Beschriftungen erhalten.
+- Fehlende VBL-Positionen bleiben unbekannt; separat nachgewiesene AN-VBL ermöglicht eine centgenaue Netto-Nachverrechnungsprüfung über sämtliche belegten Rückrechnungsperioden.
+- Kontrollkarten unterscheiden tatsächlich gezahlte Netto-Nachverrechnungen und noch offene Ansprüche. Ist-Auszahlungen bleiben vollständig; unbekannte offene Nettoeinnahmen werden nicht aus Gehaltsdifferenzen erfunden.
+- §21-Ist-Brutto wird getrennt gezeigt. Zusätzliche Ist-Bruttowerte erzeugen keine fiktiv offenen Zuschläge.
+- November-Detailansicht und „Erwartete Löhne“ teilen ihre Monatsberechnung; eine echte November-Überweisung enthält die Jahressonderzahlung bereits — auch ohne separat erkanntes Etikett. Unbekanntes Bonusnetto verhindert eine irreführend vollständige November-Prognose.
+- Keine Änderungen an Steffis 60-%-Stammdaten, Stufen/Vorweggewährungen, Steuermodell, VBL-Sätzen, JobBike-/Fixkosten-/Budgetlogik oder lokalen Speicherformaten. Kein Pfändungsmodell.
+- Synthetische Tests ergänzt; Service-Worker/Modulimporte v0.99.70 synchronisiert.
+
 # v0.99.69 — November-Gesamtauszahlung inklusive Jahressonderzahlung
 
 - Die Detailansicht des ausgewählten September-Zeitnachweises zeigt für den Auszahlungsmonat November die reguläre Netto-Prognose, die nach §20 TV-L prognostizierte Jahressonderzahlung brutto/netto und die addierte November-Gesamtauszahlung.

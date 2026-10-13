@@ -43,3 +43,13 @@ Aktueller lokaler Datenschema-Stand: 7. Backups verwenden Sicherungsversion 7 un
 - Die Fixkostenansicht zeigt reguläre Monatsfixkosten, den nächsten Lohnzyklus und einmalige Anpassungen kompakt in Karten; Einzelanpassungen sind einklappbar.
 
 - In der Übersicht ersetzt eine vorhandene Bezügemitteilung die reine September-/Monatsprognose durch die tatsächliche Auszahlung. Zukünftige Monate können eine stabile lernende Auszahlungskalibrierung verwenden.
+
+
+## Abrechnungskontrolle und November-Auszahlung (v0.99.70)
+
+- Die LfF-PDF-Auswertung erkennt zusätzliche Kurzbeschriftungen und behält die einzelnen Rückrechnungsmonate inklusive Original-Lohnzeilen und belegter AN-VBL bei. Ein fehlender VBL-Wert ist **unbekannt**, nicht 0 €.
+- Historisch bezahlte Netto-Nachverrechnungen erscheinen getrennt von offenen Zuschlagsansprüchen. Eine Netto-Rückrechnung gilt nur als bestätigt, wenn alle dokumentierten Teilnettos mit der Gesamtnachverrechnung centgenau übereinstimmen.
+- Die jährliche Jahressonderzahlung wird weiterhin nach Steffis eigenen TV-L-Grundlagen für November prognostiziert. Übersicht und ausgewählte September-Detailprognose verwenden dieselbe Monatsauszahlungslogik; eine tatsächliche November-Überweisung wird nicht durch einen weiteren Bonus erhöht.
+- Während eine erforderliche Netto-Sonderzahlungsberechnung aussteht, bleibt der November-Gesamtbetrag offen. Prognosen verändern weder Giro/Bargeld noch Budgetzyklen.
+- Unsichere §21-Positionen bleiben als zu prüfende Posten bestehen und setzen bezahlte Zuschläge nicht erneut offen.
+

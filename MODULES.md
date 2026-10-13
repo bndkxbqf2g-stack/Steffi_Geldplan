@@ -58,3 +58,11 @@ Reine Aggregationslogik für eine Kontrollkachel je tatsächlichem bzw. erwartet
 
 ### `lib/salary-month-payout.js`
 Reine periodenbezogene Aggregation: November-Gesamtnetto = reguläre Auszahlung aus ausgewähltem Zeitnachweis plus separat prognostizierte netto-Jahressonderzahlung. Eine tatsächliche November-Bezügemitteilung enthält bereits die Sonderzahlung und wird nicht doppelt addiert. Bei nicht verfügbaren Steuer-/Netto-Daten wird die Gesamtsumme als offen ausgewiesen. Andere Monate bleiben unverändert.
+
+
+### `lib/payroll-settlement.js`
+Reine, belegbasierte Prüfung der Netto-Nachverrechnung: Rückrechnungs-Gesetzliches-Netto minus ausdrücklich dokumentiertem VBL-Arbeitnehmeranteil, anschließend centgenauer Abgleich mit „Nachverrechnung aus Vorm.“. Nur bestätigte Beträge erscheinen als bezahlt; fehlende VBL/§21-Informationen werden nicht geschätzt. Keine Buchung, keine Änderungen an gespeicherten persönlichen Stammdaten.
+
+### Gemeinsame Monatswerte
+`lib/history-ui.js` exportiert `expectedSalaryForPayoutMonth` für die Detailprognose (`lib/salary-month-payout.js`), damit November-Sonderzahlung und Ist-Auszahlung in Übersicht und Details nicht doppelt gezählt werden. `lib/payroll-monthly-control.js` unterscheidet historisch bezahlt, brutto noch offen und netto nur soweit nachgewiesen; `lib/payroll-control-ui.js` visualisiert diese Werte.
+
