@@ -85,3 +85,27 @@ test('vorläufige Einspringprämie erhöht nicht ungeprüft die §20-Bemessung',
   assert.equal(special.referenceMonths[2].taxableGross,2950);
   assert.equal(special.needsReview,true);
 });
+
+test('November Ist ohne erkannte Sonderzahlungszeile bleibt vollständige Einzel-Überweisung',()=>{
+  const slots=expectedSalarySlots({
+    today:new Date(2026,9,5,10,0),
+    payslips:[{month:'2026-11',payout:2800,specialPaymentGross:null}],
+    forecasts:[{payoutMonth:'2026-11',reportMonth:'2026-09',payout:1700}],
+    annualSpecialPayment:{paymentMonth:'2026-11',gross:1000,net:500,needsReview:true}
+  });
+  assert.equal(slots[1].payout,2800);
+  assert.equal(slots[1].specialPayment.actual,true);
+  assert.equal(slots[1].specialPayment.recognizedInActual,false);
+  assert.equal(slots[1].specialPayment.net,null);
+});
+
+test('November forecast remains unknown until special net is available',()=>{
+  const slots=expectedSalarySlots({
+    today:new Date(2026,9,5,10,0),
+    forecasts:[{payoutMonth:'2026-11',reportMonth:'2026-09',payout:1800}],
+    annualSpecialPayment:{paymentMonth:'2026-11',gross:1200,net:null,needsReview:true}
+  });
+  assert.equal(slots[1].payout,null);
+  assert.equal(slots[1].regularPayout,1800);
+  assert.equal(slots[1].needsReview,true);
+});
