@@ -92,3 +92,15 @@ test('unverifiable retro net never masquerades as a confirmed paid amount',()=>{
   assert.equal(month.status,'review');
   assert.equal(month.netEffect.open,0);
 });
+
+test('Ist-Brutto includes unrelated retro periods, but they cannot settle another origin',()=>{
+  const doc=slip([
+    {month:'2026-08',totalGross:70,legalNet:54,vbl:4,vblDocumented:true,components:{night:70}},
+    {month:'2026-09',totalGross:40,legalNet:31,vbl:2,vblDocumented:true,components:{night:40}}
+  ],79);
+  const [month]=buildPayrollMonthlyControls({forecasts:[forecast],payslips:[doc],limit:3});
+  assert.equal(month.actualGross,1110);
+  assert.equal(month.settlement.grossRetro,110);
+  assert.equal(month.totalSurcharges.open,60);
+  assert.deepEqual(month.forecasts[0].actualPayoutMonths,['2026-11']);
+});
