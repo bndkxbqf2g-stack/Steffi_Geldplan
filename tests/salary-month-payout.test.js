@@ -71,3 +71,39 @@ test('Detailprognose zeigt November inklusive separater Netto-Sonderzahlung und 
   assert.ok(ui.includes('renderTotalForPaymentMonth(report.payoutMonth,learned.payout)'));
   assert.ok(ui.includes("set('pPayout','Noch offen')"));
 });
+
+test('November detail uses exactly the same monthly total as expected salaries',async()=>{
+  const forecasts=[{payoutMonth:'2026-11',reportMonth:'2026-09',payout:1800,totalGross:2800,components:{springIn:0}}];
+  const monthly=await calculateDisplayedMonthPayout({
+    payoutMonth:'2026-11',regularNet:1700,forecasts,
+    specialNetCalculator:async()=>({payout:500})
+  });
+  assert.equal(monthly.regularNet,1800);
+  assert.equal(monthly.totalNet,2300);
+});
+
+test('November actual payout prevents double bonus even when detail line was not recognized',async()=>{
+  const result=await calculateDisplayedMonthPayout({
+    payoutMonth:'2026-11',regularNet:1700,
+    payslips:[{month:'2026-11',payout:3000,specialPaymentGross:null}],
+    specialNetCalculator:async()=>{throw new Error('actual must not trigger bonus calculation');}
+  });
+  assert.equal(result.kind,'actual');
+  assert.equal(result.totalNet,3000);
+  assert.equal(result.specialNet,null);
+});
+
+test('an unavailable November net remains unavailable and never becomes a fake complete total',async()=>{
+  const result=await calculateDisplayedMonthPayout({
+    payoutMonth:'2026-11',regularNet:1800,forecasts:[{reportMonth:'2026-09',payoutMonth:'2026-11',payout:1800}],
+    specialNetCalculator:async()=>({payout:null})
+  });
+  assert.equal(result.kind,'unavailable');
+  assert.equal(result.totalNet,null);
+});
+
+test('detail guards against late asynchronous bonus results overwriting the selected month',()=>{
+  const ui=fs.readFileSync(new URL('../lib/salary-ui.js',import.meta.url),'utf8');
+  assert.match(ui,/sequence!==payoutRenderSequence/);
+  assert.match(ui,/\+\+payoutRenderSequence/);
+});
