@@ -4,10 +4,10 @@ Budget, Cycle, Salary, UI, lokale Recovery.
 - `lib/payslip.js`: Parser und Prognose-vs.-Ist-Vergleich für Bezügemitteilungen.
 
 ### `lib/salary-ui.js`
-Verantwortlich für den Gehaltsprognose-Fluss Zeitnachweis → erkannte Zeitlohnarten → Brutto/Netto → Auszahlungsmonat. Ältere gespeicherte Forecast-Modelle werden aus ihren gespeicherten Zeitnachweispositionen einmalig mit den aktuellen Regeln neu aufgebaut, bevor Übersicht und Payroll-Check rendern. `salary-payslip-ui.js` ergänzt den Upload echter Bezügemitteilungen und stößt Soll-/Ist-, Rückrechnungs-, offenen Nettoabgleich sowie die kontrollierte Payroll-Lernhistorie an. Berechnungen bleiben in `salary.js` / `salary-net-effects.js`, PDF-Parsing in `pdf.js` / `payslip.js`.
+Verantwortlich für den Gehaltsprognose-Fluss Zeitnachweis → erkannte Zeitlohnarten → Brutto/Netto → Auszahlungsmonat. Ältere gespeicherte Forecast-Modelle werden aus ihren gespeicherten Zeitnachweispositionen einmalig mit den aktuellen Regeln neu aufgebaut, bevor Übersicht und Payroll-Check rendern. `salary-payslip-ui.js` ergänzt den Upload echter Bezügemitteilungen und stößt Soll-/Ist-, Rückrechnungs-, offenen Nettoabgleich sowie die kontrollierte Payroll-Lernhistorie an. Ein sicher erkannter positiver Ist-Überweisungsbetrag kann dort in die getrennte Lohnvormerkung übernommen werden; Budgetbuchung und Zyklusstart bleiben im bestehenden `budget-ui.js`-Ablauf. Berechnungen bleiben in `salary.js` / `salary-net-effects.js`, PDF-Parsing in `pdf.js` / `payslip.js`.
 
 ### `lib/budget-ui.js`
-Budget-, Bargeld- und Buchungs-UI; Fachlogik bleibt in Budget/Cycle/Storage.
+Budget-, Bargeld- und Buchungs-UI; Fachlogik bleibt in Budget/Cycle/Storage. `pendingSalaryChanged()` aktualisiert den geplanten Lohnbuchungsablauf nach einer Änderung aus dem Bezügemitteilungsimport.
 
 ### `lib/savings-ui.js`
 UI für Sparpositionen und Sparraten.

@@ -31,3 +31,17 @@ test('Gehaltsmodule verwenden nach einem PWA-Update dieselbe neue Modul-URL',()=
   assert.ok(payslipUi.includes(`./salary-net-effects.js?v=${APP_VERSION}`));
   for(const url of [`./lib/salary-ui.js?v=${APP_VERSION}`,`./lib/salary.js?v=${APP_VERSION}`,`./lib/salary-net-effects.js?v=${APP_VERSION}`,`./lib/salary-payslip-ui.js?v=${APP_VERSION}`])assert.ok(sw.includes(url));
 });
+
+test('Betrag ab Auszahlungstag bleibt in Übersicht und Formular einzeilig',()=>{
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const css=fs.readFileSync(path.join(root,'design-refresh.css'),'utf8');
+  const sw=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');
+  for(const id of ['ovPendingAvailable','pendingSalaryProjection']){
+    const row=html.match(new RegExp(`<div class="row pending-available-row">[^\\n]*id="${id}"[^\\n]*`));
+    assert.ok(row,`${id} muss die mobile einzeilige Zeile nutzen`);
+  }
+  assert.ok(css.includes('.pending-available-value{'));
+  assert.ok(css.includes('white-space:nowrap!important'));
+  assert.ok(html.includes('design-refresh.css?v=10'));
+  assert.ok(sw.includes('design-refresh.css?v=10'));
+});
