@@ -1,3 +1,10 @@
+# v0.99.71 — Bezügemitteilung vormerken und mobile Betragsanzeige
+
+- Ein sicher erkannter positiver Überweisungsbetrag aus einer importierten Bezügemitteilung wird automatisch für den geplanten letzten Banktag des Abrechnungsmonats vorgemerkt. Die bestehende Vormerkung bleibt bis zum Zahltag ohne Budgetwirkung.
+- Erneuter Import aktualisiert eine Vormerkung desselben Auszahlungstags. Bereits gebuchte und zurückliegende Monate erzeugen keine Doppel- oder rückwirkende Buchung; eine Vormerkung für einen anderen Zahltag bleibt erhalten.
+- Der voraussichtlich verfügbare Betrag bleibt in der Übersicht und im Vormerkungsformular auf kleinen Displays in einer Zeile.
+- Synthetische Regressionstests ergänzt; sichtbare Version, Stylesheet, PWA-Cache und Gehaltsmodulimporte synchronisiert. Keine Änderung an Steffis Lohnregeln, Fixkosten, Budgetgrundlagen oder lokalen Daten.
+
 # v0.99.70 — LfF-Abrechnungskontrolle und November-Gesamtnetto (Steffi)
 
 - Abgekürzte LfF-Lohnarten wie „Nachtarb.Beginn vor 0 Uhr“, „Wechselsch.mtl.“, „Schichtzul.mtl.“ und §21-Durchschnittszeilen werden pro Rückrechnungsperiode erkannt und mit ursprünglichen Beschriftungen erhalten.
